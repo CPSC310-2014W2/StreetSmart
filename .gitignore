@@ -20,7 +20,7 @@ war/WEB-INF/deploy/
 #caching for already compiled files
 gwt-unitCache/
 
-#gwt junit compilation files
+
 
 
 #old GWT (1.5) created this dir
