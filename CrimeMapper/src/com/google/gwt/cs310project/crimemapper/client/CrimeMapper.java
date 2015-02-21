@@ -54,20 +54,20 @@ public class CrimeMapper implements EntryPoint {
 		mainPanel.add(buildTableTabPanel(), tab1Title);
 		mainPanel.add(buildMapTabPanel(), tab2Title);
 		mainPanel.add(buildSettingsTabPanel(), tab3Title);
-
+		
 		// first tab upon load
 		mainPanel.selectTab(0);
 
 		// set width of mainPanel
-		mainPanel.setWidth("800");
-		mainPanel.setHeight("800");
+		mainPanel.setWidth("1600");
+		mainPanel.setHeight("1600");
 
 		return mainPanel;
 	}
 	
 	/**
-	 * Method for constructing Table Tab Panel
-	 * 
+	 * Method for constructing Table Tab Panel 
+	 *  - style elements for table
 	 */
 	private Panel buildTableTabPanel(){
 		
@@ -86,18 +86,34 @@ public class CrimeMapper implements EntryPoint {
 		FlexCellFormatter crimeTypeCellFormatter = crimeFlexTable.getFlexCellFormatter();
 		crimeTypeCellFormatter.setHorizontalAlignment(0, 1, HasHorizontalAlignment.ALIGN_CENTER);
 		crimeTypeCellFormatter.setColSpan(0, 1, 7);
+		
+		// Add styles to elements in the crime type table
+		crimeFlexTable.addStyleName("crimeData");
+		crimeFlexTable.getCellFormatter().addStyleName(0, 0, "crimeTypeHeader");
+		crimeFlexTable.getCellFormatter().addStyleName(0, 1, "crimeTypeHeader");
+		crimeFlexTable.getCellFormatter().addStyleName(1, 0, "crimeTypeHeader");
+		int i = 1;
+		while(i < 8){
+			crimeFlexTable.getCellFormatter().addStyleName(1, i, "crimeTypeHeaderTitles");
+			i++;
+		}
+		crimeFlexTable.setCellPadding(10);
 
 		
 		// Assemble resetPanel.
 		clearTrendsButtonPanel.add(clearTrendsButton);
 
 		// Date label
-		lastUploadedDateLabel.setText("DATE GOES HERE");
+		lastUploadedDateLabel.setText("MOST RECENT UPDATE DATE GOES HERE");
+		
+		
+		tableVPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 
 		// Assemble Table Panel to insert in Tab1 of Tab Panel
 		tableVPanel.add(crimeFlexTable);
 		tableVPanel.add(clearTrendsButtonPanel);
 		tableVPanel.add(lastUploadedDateLabel);
+		
 		
 		// return table constructed panel
 		return tableVPanel;
@@ -134,7 +150,8 @@ public class CrimeMapper implements EntryPoint {
 	}
 	
 	/**
-	 * Add crimedata to FlexTable, should be added when admin clicks add new data
+	 * Add crimedata to FlexTable 
+	 * Added when admin clicks add new data
 	 * 
 	 */
 }
