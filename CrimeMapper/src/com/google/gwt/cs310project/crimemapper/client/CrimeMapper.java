@@ -3,6 +3,7 @@ package com.google.gwt.cs310project.crimemapper.client;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Button;
@@ -31,7 +32,44 @@ public class CrimeMapper implements EntryPoint {
 	 */
 	
 	public void onModuleLoad() {
+		
+		// Associate the Main panel with the HTML host page
+		RootPanel.get("crimeList").add(buildMainTabPanel());
+	}
+	
+	/**
+	 * Method for constructing Main Panel
+	 */
+	private TabPanel buildMainTabPanel(){
+		
+		//Create titles for tabs
+		String tab1Title = "Trends";
+		String tab2Title = "Map";
+		String tab3Title = "Settings";
 
+		// Create tab to hold Table, Map and Settings
+		// Assemble mainPanel
+		mainPanel.add(buildTableTabPanel(), tab1Title);
+		mainPanel.add(buildMapTabPanel(), tab2Title);
+		mainPanel.add(buildSettingsTabPanel(), tab3Title);
+
+		// first tab upon load
+		mainPanel.selectTab(0);
+
+		// set width of mainPanel
+		mainPanel.setWidth("800");
+		mainPanel.setHeight("800");
+
+
+		return mainPanel;
+	}
+	
+	/**
+	 * Method for constructing Table Tab Panel
+	 * 
+	 */
+	private Panel buildTableTabPanel(){
+		
 		// Create table and table headers for crime data.
 		crimeFlexTable.setText(0, 0, "Crime Type");
 		crimeFlexTable.setText(0, 1, "Mischief under $5000");
@@ -44,22 +82,38 @@ public class CrimeMapper implements EntryPoint {
 
 		// Assemble resetPanel.
 		clearTrendsButtonPanel.add(clearTrendsButton);
-		
+
 		// Date label
 		lastUploadedDateLabel.setText("DATE GOES HERE");
-		
+
 		// Assemble Table Panel to insert in Tab1 of Tab Panel
 		tableVPanel.add(crimeFlexTable);
 		tableVPanel.add(clearTrendsButtonPanel);
 		tableVPanel.add(lastUploadedDateLabel);
 		
+		// return table constructed panel
+		return tableVPanel;
+
+	}
+	
+	/**
+	 *  Method for Constructing Map tab panel
+	 */
+	private Panel buildMapTabPanel(){
 		// Assemble elements for Map Panel
 		Label mapLabel = new Label("MAP WILL GO HERE");
 		mapLabel.setWidth("800");
-		
+
 		// Assemble Map Panel to insert map label
 		mapsVPanel.add(mapLabel);
-		
+
+		return mapsVPanel;
+	}
+	
+	/**
+	 * Method for Constructing Settings tab panel
+	 */
+	private Panel buildSettingsTabPanel(){
 		// Assemble elements for Settings Panel
 		Label settingsLabel = new Label("SETTINGS WILL GO HERE");
 		settingsLabel.setWidth("800");
@@ -68,26 +122,7 @@ public class CrimeMapper implements EntryPoint {
 		settingsVPanel.add(settingsLabel);
 		settingsVPanel.add(loadCrimeDataButton);
 		
-		//Create titles for tabs
-		  String tab1Title = "Trends";
-	      String tab2Title = "Map";
-	      String tab3Title = "Settings";
-	      
-		// Create tab to hold Table, Map and Settings
-	    // Assemble mainPanel
-		mainPanel.add(tableVPanel, tab1Title);
-		mainPanel.add(mapsVPanel, tab2Title);
-		mainPanel.add(settingsVPanel, tab3Title);
-
-		// first tab upon load
-		mainPanel.selectTab(0);
-		
-		// set width of mainPanel
-		mainPanel.setWidth("800");
-		mainPanel.setHeight("800");
-		
-		// Associate the Main panel with the HTML host page
-		RootPanel.get("crimeList").add(mainPanel);
+		return settingsVPanel;
 	}
 	
 	/**
