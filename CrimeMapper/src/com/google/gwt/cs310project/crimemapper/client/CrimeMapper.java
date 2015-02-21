@@ -5,12 +5,10 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
+
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -19,11 +17,14 @@ public class CrimeMapper implements EntryPoint {
 
 	// Create a tab panel with three tabs, each of which displays a different piece of text
 	private TabPanel mainPanel = new TabPanel();
-	private VerticalPanel tableVPanel = new VerticalPanel(); //holds flex table, reset panel
+	private VerticalPanel tableVPanel = new VerticalPanel(); // holds flex table, reset panel
+	private VerticalPanel settingsVPanel = new VerticalPanel();
+	private VerticalPanel mapsVPanel = new VerticalPanel();
 	private FlexTable crimeFlexTable = new FlexTable();
-	private HorizontalPanel resetPanel = new HorizontalPanel();
+	private HorizontalPanel clearTrendsButtonPanel = new HorizontalPanel();
 	private Label lastUploadedDateLabel = new Label();
 	private Button clearTrendsButton = new Button("Clear Trends");
+	private Button loadCrimeDataButton = new Button("Load Data");
 	
 	/**
 	 * Entry point method.
@@ -42,31 +43,41 @@ public class CrimeMapper implements EntryPoint {
 		crimeFlexTable.setText(0, 7, "Commercial break and enter");
 
 		// Assemble resetPanel.
-		resetPanel.add(clearTrendsButton);
+		clearTrendsButtonPanel.add(clearTrendsButton);
+		
+		// Date label
+		lastUploadedDateLabel.setText("DATE GOES HERE");
 		
 		// Assemble Table Panel to insert in Tab1 of Tab Panel
 		tableVPanel.add(crimeFlexTable);
-		tableVPanel.add(resetPanel);
+		tableVPanel.add(clearTrendsButtonPanel);
 		tableVPanel.add(lastUploadedDateLabel);
 		
-		// Assemble temporary labels for Map and Settings tab
-		Label mapLabel = new Label("Map will go here");
-		Label settingsLabel = new Label("Settings will go here");
+		// Assemble elements for Map Panel
+		Label mapLabel = new Label("MAP WILL GO HERE");
+		mapLabel.setWidth("800");
 		
-		// Label holders for settings and maps panel
-		mapLabel.setHeight("200");
-		settingsLabel.setHeight("200");
+		// Assemble Map Panel to insert map label
+		mapsVPanel.add(mapLabel);
+		
+		// Assemble elements for Settings Panel
+		Label settingsLabel = new Label("SETTINGS WILL GO HERE");
+		settingsLabel.setWidth("800");
+		
+		// Assemble Settings Panel to insert Settings 
+		settingsVPanel.add(settingsLabel);
+		settingsVPanel.add(loadCrimeDataButton);
 		
 		//Create titles for tabs
-		  String tab1 = "Tabel";
-	      String tab2 = "Map";
-	      String tab3 = "Settings";
+		  String tab1Title = "Trends";
+	      String tab2Title = "Map";
+	      String tab3Title = "Settings";
 	      
 		// Create tab to hold Table, Map and Settings
 	    // Assemble mainPanel
-		mainPanel.add(tableVPanel, tab1);
-		mainPanel.add(mapLabel, tab2);
-		mainPanel.add(settingsLabel, tab3);
+		mainPanel.add(tableVPanel, tab1Title);
+		mainPanel.add(mapsVPanel, tab2Title);
+		mainPanel.add(settingsVPanel, tab3Title);
 
 		// first tab upon load
 		mainPanel.selectTab(0);
@@ -78,6 +89,11 @@ public class CrimeMapper implements EntryPoint {
 		// Associate the Main panel with the HTML host page
 		RootPanel.get("crimeList").add(mainPanel);
 	}
+	
+	/**
+	 * Add crimedata to FlexTable, should be added when admin clicks add new data
+	 * 
+	 */
 }
 
 
