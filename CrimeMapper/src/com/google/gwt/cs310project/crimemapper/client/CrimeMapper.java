@@ -2,6 +2,8 @@ package com.google.gwt.cs310project.crimemapper.client;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -60,7 +62,6 @@ public class CrimeMapper implements EntryPoint {
 		mainPanel.setWidth("800");
 		mainPanel.setHeight("800");
 
-
 		return mainPanel;
 	}
 	
@@ -71,15 +72,22 @@ public class CrimeMapper implements EntryPoint {
 	private Panel buildTableTabPanel(){
 		
 		// Create table and table headers for crime data.
-		crimeFlexTable.setText(0, 0, "Crime Type");
-		crimeFlexTable.setText(0, 1, "Mischief under $5000");
-		crimeFlexTable.setText(0, 2, "Mischief over $5000");
-		crimeFlexTable.setText(0, 3, "Theft from auto under $5000");
-		crimeFlexTable.setText(0, 4, "Theft from auto over $5000");
-		crimeFlexTable.setText(0, 5, "Theft of auto under $5000");
-		crimeFlexTable.setText(0, 6, "Theft of auto over $5000");
-		crimeFlexTable.setText(0, 7, "Commercial break and enter");
+		crimeFlexTable.setText(1, 0, "Year");
+		crimeFlexTable.setText(0, 1, "Crime Type");
+		crimeFlexTable.setText(1, 1, "Mischief under $5000");
+		crimeFlexTable.setText(1, 2, "Mischief over $5000");
+		crimeFlexTable.setText(1, 3, "Theft from auto under $5000");
+		crimeFlexTable.setText(1, 4, "Theft from auto over $5000");
+		crimeFlexTable.setText(1, 5, "Theft of auto under $5000");
+		crimeFlexTable.setText(1, 6, "Theft of auto over $5000");
+		crimeFlexTable.setText(1, 7, "Commercial break and enter");
+		
+		// Merging Crime Type to be over the Crime Types
+		FlexCellFormatter crimeTypeCellFormatter = crimeFlexTable.getFlexCellFormatter();
+		crimeTypeCellFormatter.setHorizontalAlignment(0, 1, HasHorizontalAlignment.ALIGN_CENTER);
+		crimeTypeCellFormatter.setColSpan(0, 1, 7);
 
+		
 		// Assemble resetPanel.
 		clearTrendsButtonPanel.add(clearTrendsButton);
 
