@@ -1,24 +1,17 @@
 package com.google.gwt.cs310project.crimemapper.client;
 
 import com.google.gwt.core.client.EntryPoint;
-
-import com.google.gwt.dom.client.Style.Unit;
-
-import com.google.gwt.user.client.ui.Button;
-
 import com.google.gwt.user.client.ui.FlexTable;
-
-import com.google.gwt.user.client.ui.HTML;
-
-import com.google.gwt.user.client.ui.HorizontalPanel;
-
 import com.google.gwt.user.client.ui.Label;
-
+import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootPanel;
-
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
-import com.google.gwt.user.client.ui.VerticalPanel;
 
 
 
@@ -31,7 +24,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  */
 
 public class CrimeMapper implements EntryPoint {
-
 
 
 	// Create a tab panel with three tabs, each of which displays a different piece of text
@@ -103,7 +95,7 @@ public class CrimeMapper implements EntryPoint {
 
 		// Assemble Main panel
 		// TODO Needs proper implementation
-		
+
 		//mainPanel.add(tableVPanel, mainPanel.getTabWidget(0));
 		
 		// Associate the Main panel with the HTML host page
