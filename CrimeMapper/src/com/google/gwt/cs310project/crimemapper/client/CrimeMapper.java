@@ -19,7 +19,8 @@ import com.google.gwt.user.client.ui.RootPanel;
 public class CrimeMapper implements EntryPoint {
 
 	// Create a tab panel with three tabs, each of which displays a different piece of text
-	private TabPanel mainPanel = new TabPanel();
+	private VerticalPanel mainPanel = new VerticalPanel();
+	private TabPanel tabPanel = new TabPanel();
 	private VerticalPanel tableVPanel = new VerticalPanel(); // holds flex table, reset panel
 	private VerticalPanel settingsVPanel = new VerticalPanel();
 	private VerticalPanel mapsVPanel = new VerticalPanel();
@@ -36,13 +37,22 @@ public class CrimeMapper implements EntryPoint {
 	public void onModuleLoad() {
 		
 		// Associate the Main panel with the HTML host page
-		RootPanel.get("crimeList").add(buildMainTabPanel());
+		RootPanel.get("crimeList").add(buildMainPanel());
 	}
 	
 	/**
 	 * Method for constructing Main Panel
 	 */
-	private TabPanel buildMainTabPanel(){
+	private Panel buildMainPanel(){
+		mainPanel.add(buildTabPanel());
+		
+		return mainPanel;
+	}
+	
+	/**
+	 * Method for constructing Tab Panel
+	 */
+	private TabPanel buildTabPanel(){
 		
 		//Create titles for tabs
 		String tab1Title = "Trends";
@@ -51,18 +61,18 @@ public class CrimeMapper implements EntryPoint {
 
 		// Create tab to hold Table, Map and Settings
 		// Assemble mainPanel
-		mainPanel.add(buildTableTabPanel(), tab1Title);
-		mainPanel.add(buildMapTabPanel(), tab2Title);
-		mainPanel.add(buildSettingsTabPanel(), tab3Title);
+		tabPanel.add(buildTableTabPanel(), tab1Title);
+		tabPanel.add(buildMapTabPanel(), tab2Title);
+		tabPanel.add(buildSettingsTabPanel(), tab3Title);
 		
 		// first tab upon load
-		mainPanel.selectTab(0);
+		tabPanel.selectTab(0);
 
 		// set width of mainPanel
-		mainPanel.setWidth("1600");
-		mainPanel.setHeight("1600");
+		tabPanel.setWidth("1600");
+		tabPanel.setHeight("1600");
 
-		return mainPanel;
+		return tabPanel;
 	}
 	
 	/**
