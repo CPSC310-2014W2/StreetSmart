@@ -73,6 +73,7 @@ public class CrimeMapper implements EntryPoint {
 		// set width of mainPanel
 		tabPanel.setWidth("1600");
 		tabPanel.setHeight("1600");
+		// TODO Refactor to get rid of magic number
 
 		return tabPanel;
 	}
@@ -93,6 +94,8 @@ public class CrimeMapper implements EntryPoint {
 		crimeFlexTable.setText(1, 5, "Theft of auto under $5000");
 		crimeFlexTable.setText(1, 6, "Theft of auto over $5000");
 		crimeFlexTable.setText(1, 7, "Commercial break and enter");
+		// TODO Possibly use enum to denote crime types and
+		// a loop to automatically add all crime types to table
 		
 		// Merging Crime Type to be over the Crime Types
 		FlexCellFormatter crimeTypeCellFormatter = crimeFlexTable.getFlexCellFormatter();
@@ -106,6 +109,8 @@ public class CrimeMapper implements EntryPoint {
 		crimeFlexTable.getCellFormatter().addStyleName(1, 0, "crimeTypeHeader");
 		int i = 1;
 		while(i < 8){
+			// TODO Possibly refactor to get rid of magic number and
+			// use the size of the enum of crime types
 			crimeFlexTable.getCellFormatter().addStyleName(1, i, "crimeTypeHeaderTitles");
 			i++;
 		}
@@ -139,6 +144,7 @@ public class CrimeMapper implements EntryPoint {
 		// Assemble elements for Map Panel
 		Label mapLabel = new Label("MAP WILL GO HERE");
 		mapLabel.setWidth("800");
+		// TODO Refactor to get rid of magic number
 
 		// Assemble Map Panel to insert map label
 		mapsVPanel.add(mapLabel);
@@ -153,6 +159,7 @@ public class CrimeMapper implements EntryPoint {
 		// Assemble elements for Settings Panel
 		Label settingsLabel = new Label("SETTINGS WILL GO HERE");
 		settingsLabel.setWidth("800");
+		// TODO Refactor to get rid of magic number
 		
 		// Assemble Settings Panel to insert Settings 
 		settingsVPanel.add(settingsLabel);
