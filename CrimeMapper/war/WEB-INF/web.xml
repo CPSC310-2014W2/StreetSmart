@@ -6,6 +6,8 @@
          xmlns="http://java.sun.com/xml/ns/javaee">
 
   <!-- Servlets -->
+  
+  <!-- Crime Data Servlet  -->
 	<servlet>
     <servlet-name>crimeDataServiceImpl</servlet-name>
     <servlet-class>com.google.gwt.cs310project.crimemapper.server.CrimeDataServiceImpl</servlet-class>
@@ -15,6 +17,8 @@
     <servlet-name>crimeDataServiceImpl</servlet-name>
     <url-pattern>/crimemapper/crimeData</url-pattern>
   </servlet-mapping>
+  
+  <!-- Login Servlet -->
   
   <servlet>
     <servlet-name>loginService</servlet-name>
