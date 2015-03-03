@@ -16,6 +16,16 @@
     <url-pattern>/crimemapper/crimeData</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+    <servlet-name>loginService</servlet-name>
+    <servlet-class>com.google.gwt.cs310project.crimemapper.server.LoginServiceImpl</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>loginService</servlet-name>
+    <url-pattern>/crimemapper/login</url-pattern>
+  </servlet-mapping>
+  
   <!-- Default page to serve -->
   <welcome-file-list>
     <welcome-file>CrimeMapper.html</welcome-file>
