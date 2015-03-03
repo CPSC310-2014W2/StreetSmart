@@ -69,11 +69,8 @@ public class CrimeMapper implements EntryPoint {
 		
 		// first tab upon load
 		tabPanel.selectTab(0);
-
-		// set width of mainPanel
-		tabPanel.setWidth("1600");
-		tabPanel.setHeight("1600");
-		// TODO Refactor to get rid of magic number
+		
+		tabPanel.setAnimationEnabled(true);
 
 		return tabPanel;
 	}
@@ -125,8 +122,12 @@ public class CrimeMapper implements EntryPoint {
 		
 		
 		tableVPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		
+		//Label at top of page
+		Label testSizeLabel = new Label("Test Size");
 
 		// Assemble Table Panel to insert in Tab1 of Tab Panel
+		tableVPanel.add(testSizeLabel);
 		tableVPanel.add(crimeFlexTable);
 		tableVPanel.add(clearTrendsButtonPanel);
 		tableVPanel.add(lastUploadedDateLabel);
@@ -143,12 +144,9 @@ public class CrimeMapper implements EntryPoint {
 	private Panel buildMapTabPanel(){
 		// Assemble elements for Map Panel
 		Label mapLabel = new Label("MAP WILL GO HERE");
-		mapLabel.setWidth("800");
-		// TODO Refactor to get rid of magic number
 
 		// Assemble Map Panel to insert map label
 		mapsVPanel.add(mapLabel);
-
 		return mapsVPanel;
 	}
 	
@@ -158,8 +156,6 @@ public class CrimeMapper implements EntryPoint {
 	private Panel buildSettingsTabPanel(){
 		// Assemble elements for Settings Panel
 		Label settingsLabel = new Label("SETTINGS WILL GO HERE");
-		settingsLabel.setWidth("800");
-		// TODO Refactor to get rid of magic number
 		
 		// Assemble Settings Panel to insert Settings 
 		settingsVPanel.add(settingsLabel);
