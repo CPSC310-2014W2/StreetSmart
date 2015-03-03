@@ -1,7 +1,13 @@
 package com.google.gwt.cs310project.crimemapper.client;
 
+import java.util.ArrayList;
+
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -9,6 +15,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -20,6 +27,7 @@ import com.google.gwt.user.client.ui.RootPanel;
  */
 public class CrimeMapper implements EntryPoint {
 
+	private String CRIME_DATA_URL = null;
 	// Create a tab panel with three tabs, each of which displays a different piece of text
 	private VerticalPanel mainPanel = new VerticalPanel();
 	private TabPanel tabPanel = new TabPanel();
@@ -31,6 +39,12 @@ public class CrimeMapper implements EntryPoint {
 	private Label lastUploadedDateLabel = new Label();
 	private Button clearTrendsButton = new Button("Clear Trends");
 	private Button loadCrimeDataButton = new Button("Load Data");
+	private TextBox newUrlTextBox = new TextBox();
+	
+	
+	//CrimeData RPC fields
+	private ArrayList<CrimeData> crimes = new ArrayList<CrimeData>();
+	private CrimeDataServiceAsync crimeDataSvc = GWT.create(CrimeDataService.class);
 	
 	/**
 	 * Entry point method.
@@ -38,6 +52,12 @@ public class CrimeMapper implements EntryPoint {
 	
 	public void onModuleLoad() {
 		
+		// Listen for mouse events on the Add button.
+	    loadCrimeDataButton.addClickHandler(new ClickHandler() {
+	      public void onClick(ClickEvent event) {
+	    	  CRIME_DATA_URL = newUrlTextBox.getText();
+	      }
+	    });
 		// Associate the Main panel with the HTML host page
 		RootPanel.get("crimeList").add(buildMainPanel());
 	}
@@ -162,6 +182,8 @@ public class CrimeMapper implements EntryPoint {
 		
 		// Assemble Settings Panel to insert Settings 
 		settingsVPanel.add(settingsLabel);
+		newUrlTextBox.setName("Paste Crime Data URL");
+		settingsVPanel.add(newUrlTextBox);
 		settingsVPanel.add(loadCrimeDataButton);
 		
 		return settingsVPanel;
@@ -172,6 +194,29 @@ public class CrimeMapper implements EntryPoint {
 	 * Added when admin clicks add new data
 	 * 
 	 */
+	
+	private void refreshCrimeList(){
+		//Initialize the service proxy.
+		if(crimeDataSvc == null){
+			crimeDataSvc = GWT.create(CrimeDataService.class);
+		}
+		
+		// Set up the callback object.
+		AsyncCallback<ArrayList<CrimeData>> callback = new AsyncCallback<ArrayList<CrimeData>>(){
+			public void onFailure(Throwable caught){
+				//TODO: Do something with errors.
+			}
+			
+			public void onSuccess(ArrayList<CrimeData> result){
+				updateTable(result);
+			}
+		};
+		
+		// Make the call to the stock price service.
+		crimeDataSvc.getCrimeData(CRIME_DATA_URL, callback);
+	}
+	
+	private void updateTable(ArrayList<CrimeData> crimes){}
 }
 
 

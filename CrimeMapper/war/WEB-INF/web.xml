@@ -6,14 +6,14 @@
          xmlns="http://java.sun.com/xml/ns/javaee">
 
   <!-- Servlets -->
-  <servlet>
-    <servlet-name>greetServlet</servlet-name>
-    <servlet-class>com.google.gwt.cs310project.crimemapper.server.GreetingServiceImpl</servlet-class>
+	<servlet>
+    <servlet-name>crimeDataServiceImpl</servlet-name>
+    <servlet-class>com.google.gwt.cs310project.crimemapper.server.CrimeDataServiceImpl</servlet-class>
   </servlet>
   
   <servlet-mapping>
-    <servlet-name>greetServlet</servlet-name>
-    <url-pattern>/crimemapper/greet</url-pattern>
+    <servlet-name>crimeDataServiceImpl</servlet-name>
+    <url-pattern>/crimemapper/crimeData</url-pattern>
   </servlet-mapping>
   
   <!-- Default page to serve -->
