@@ -137,6 +137,7 @@ public class CrimeMapper implements EntryPoint {
 		crimeFlexTable.setText(1, 7, "Commercial break and enter");
 		
 		int row = crimeFlexTable.getRowCount();
+		// TEST ROW 
 		crimeFlexTable.setText(row, 0, "2003");
 		// TODO Possibly use enum to denote crime types and
 		// a loop to automatically add all crime types to table
@@ -158,7 +159,7 @@ public class CrimeMapper implements EntryPoint {
 			crimeFlexTable.getCellFormatter().addStyleName(1, i, "crimeTypeHeaderTitles");
 			i++;
 		}
-		crimeFlexTable.setCellPadding(10);
+		crimeFlexTable.setCellPadding(20);
 
 		
 		// Assemble resetPanel.
@@ -169,12 +170,8 @@ public class CrimeMapper implements EntryPoint {
 		
 		
 		tableVPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		
-		//Label at top of page
-		Label testSizeLabel = new Label("Test Size");
 
 		// Assemble Table Panel to insert in Tab1 of Tab Panel
-		tableVPanel.add(testSizeLabel);
 		tableVPanel.add(crimeFlexTable);
 		tableVPanel.add(clearTrendsButtonPanel);
 		tableVPanel.add(lastUploadedDateLabel);
