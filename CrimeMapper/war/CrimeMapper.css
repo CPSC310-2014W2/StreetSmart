@@ -19,6 +19,17 @@ h1 {
 	text-align: center;
 }
 
+/* row selected color change*/
+.rowSelectedShadow{
+	background-color: #EEEEEE;
+	color: black;
+}
+
+/* row unselected color change*/
+.rowUnselectedShadow {
+	color: black;
+}
+
 /* crime type header titles row*/
 .crimeTypeHeaderTitles{
 	background-color: #a5c0e2;

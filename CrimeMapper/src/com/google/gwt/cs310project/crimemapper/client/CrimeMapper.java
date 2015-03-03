@@ -10,6 +10,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
+import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
@@ -39,6 +40,8 @@ public class CrimeMapper implements EntryPoint {
 	private Button clearTrendsButton = new Button("Clear Trends");
 	private Button loadCrimeDataButton = new Button("Load Data");
 	private TextBox newUrlTextBox = new TextBox();
+	private final int NO_SELECTION_FLAG = -1;
+	private int selectedRow;
 	
 	
 	//CrimeData RPC fields
@@ -59,6 +62,23 @@ public class CrimeMapper implements EntryPoint {
 	    	  newUrlTextBox.setText("");
 	      }
 	    });
+	    
+	    // Listen for mouse click on the Rows in table and Highlight row.
+	    crimeFlexTable.addClickHandler(new ClickHandler(){
+	    	public void onClick(ClickEvent event){
+	    		Cell cell = crimeFlexTable.getCellForEvent(event);
+	    		int receiverRowIndex = cell.getRowIndex();
+	    		if (receiverRowIndex == selectedRow)
+	    		{
+	    			crimeFlexTable.getRowFormatter().setStyleName(receiverRowIndex, "rowUnselectedShadow");
+	    			selectedRow = NO_SELECTION_FLAG;
+	    		} else {
+	    			crimeFlexTable.getRowFormatter().setStyleName(receiverRowIndex, "rowSelectedShadow");
+	    			selectedRow = receiverRowIndex;
+	    		}
+	    	}
+	    });
+	    
 		// Associate the Main panel with the HTML host page
 		RootPanel.get("crimeList").add(buildMainPanel());
 	}
@@ -115,6 +135,9 @@ public class CrimeMapper implements EntryPoint {
 		crimeFlexTable.setText(1, 5, "Theft of auto under $5000");
 		crimeFlexTable.setText(1, 6, "Theft of auto over $5000");
 		crimeFlexTable.setText(1, 7, "Commercial break and enter");
+		
+		int row = crimeFlexTable.getRowCount();
+		crimeFlexTable.setText(row, 0, "2003");
 		// TODO Possibly use enum to denote crime types and
 		// a loop to automatically add all crime types to table
 		
