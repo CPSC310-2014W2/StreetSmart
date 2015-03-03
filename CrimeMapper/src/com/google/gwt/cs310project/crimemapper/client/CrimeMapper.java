@@ -56,6 +56,9 @@ public class CrimeMapper implements EntryPoint {
 	 */
 	private TabPanel buildTabPanel(){
 		
+		tabPanel.setAnimationEnabled(true);;
+		tabPanel.getElement().getStyle().setMarginBottom(10.0, Unit.PX);
+		
 		//Create titles for tabs
 		String tab1Title = "Trends";
 		String tab2Title = "Map";
@@ -70,7 +73,7 @@ public class CrimeMapper implements EntryPoint {
 		// first tab upon load
 		tabPanel.selectTab(0);
 		
-		tabPanel.setAnimationEnabled(true);
+		
 
 		return tabPanel;
 	}
