@@ -26,8 +26,7 @@ import com.google.gwt.user.client.ui.RootPanel;
  * Entry point classes define <code>onModuleLoad()</code>.
  */
 public class CrimeMapper implements EntryPoint {
-
-	private String CRIME_DATA_URL = null;
+	
 	// Create a tab panel with three tabs, each of which displays a different piece of text
 	private VerticalPanel mainPanel = new VerticalPanel();
 	private TabPanel tabPanel = new TabPanel();
@@ -55,7 +54,8 @@ public class CrimeMapper implements EntryPoint {
 		// Listen for mouse events on the Add button.
 	    loadCrimeDataButton.addClickHandler(new ClickHandler() {
 	      public void onClick(ClickEvent event) {
-	    	  CRIME_DATA_URL = newUrlTextBox.getText();
+	    	  String crimeURL = newUrlTextBox.getText();
+	    	  refreshCrimeList(crimeURL);
 	      }
 	    });
 		// Associate the Main panel with the HTML host page
@@ -195,7 +195,7 @@ public class CrimeMapper implements EntryPoint {
 	 * 
 	 */
 	
-	private void refreshCrimeList(){
+	private void refreshCrimeList(String crimeURL){
 		//Initialize the service proxy.
 		if(crimeDataSvc == null){
 			crimeDataSvc = GWT.create(CrimeDataService.class);
@@ -213,7 +213,7 @@ public class CrimeMapper implements EntryPoint {
 		};
 		
 		// Make the call to the stock price service.
-		crimeDataSvc.getCrimeData(CRIME_DATA_URL, callback);
+		crimeDataSvc.getCrimeData(crimeURL, callback);
 	}
 	
 	private void updateTable(ArrayList<CrimeData> crimes){}
