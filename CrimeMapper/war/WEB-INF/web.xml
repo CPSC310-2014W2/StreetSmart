@@ -7,7 +7,7 @@
 
   <!-- Servlets -->
   
-  <!-- Crime Data Servlet  -->
+  <!-- Crime Data Servlet/Mapping  -->
 	<servlet>
     <servlet-name>crimeDataServiceImpl</servlet-name>
     <servlet-class>com.google.gwt.cs310project.crimemapper.server.CrimeDataServiceImpl</servlet-class>
@@ -18,7 +18,7 @@
     <url-pattern>/crimemapper/crimeData</url-pattern>
   </servlet-mapping>
   
-  <!-- Login Servlet -->
+  <!-- Login Servlet/Mapping -->
   
   <servlet>
     <servlet-name>loginService</servlet-name>
@@ -28,6 +28,18 @@
   <servlet-mapping>
     <servlet-name>loginService</servlet-name>
     <url-pattern>/crimemapper/login</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Crime Servlet/Mapping -->
+  
+   <servlet>
+    <servlet-name>crimeService</servlet-name>
+    <servlet-class>com.google.gwt.cs310project.crimemapper.server.CrimeServiceImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>crimeService</servlet-name>
+    <url-pattern>/crimemapper/crime</url-pattern>
   </servlet-mapping>
   
   <!-- Default page to serve -->

@@ -56,6 +56,7 @@ public class CrimeMapper implements EntryPoint {
 	      public void onClick(ClickEvent event) {
 	    	  String crimeURL = newUrlTextBox.getText();
 	    	  refreshCrimeList(crimeURL);
+	    	  newUrlTextBox.setText("");
 	      }
 	    });
 		// Associate the Main panel with the HTML host page
