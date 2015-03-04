@@ -10,6 +10,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
@@ -42,7 +43,6 @@ public class CrimeMapper implements EntryPoint {
 	private TextBox newUrlTextBox = new TextBox();
 	private final int NO_SELECTION_FLAG = -1;
 	private int selectedRow;
-	
 	
 	//CrimeData RPC fields
 	private ArrayList<CrimeData> crimes = new ArrayList<CrimeData>();
@@ -97,23 +97,32 @@ public class CrimeMapper implements EntryPoint {
 	 */
 	private TabPanel buildTabPanel(){
 		
-		tabPanel.setAnimationEnabled(true);;
-		tabPanel.getElement().getStyle().setMarginBottom(10.0, Unit.PX);
+		tabPanel.setAnimationEnabled(true);
 		
 		//Create titles for tabs
 		String tab1Title = "Trends";
 		String tab2Title = "Map";
 		String tab3Title = "Settings";
 
+		//Create Custom FlowPanels to add to TabPanel
+		FlowPanel flowpanel;
 		// Create tab to hold Table, Map and Settings
 		// Assemble mainPanel
-		tabPanel.add(buildTableTabPanel(), tab1Title);
-		tabPanel.add(buildMapTabPanel(), tab2Title);
-		tabPanel.add(buildSettingsTabPanel(), tab3Title);
+		flowpanel = new FlowPanel();
+		flowpanel.add(buildTableTabPanel());
+		tabPanel.add(flowpanel, tab1Title);
+		
+		flowpanel = new FlowPanel();
+		flowpanel.add(buildMapTabPanel());
+		tabPanel.add(flowpanel, tab2Title);
+		
+		flowpanel = new FlowPanel();
+		flowpanel.add(buildSettingsTabPanel());
+		tabPanel.add(flowpanel, tab3Title);
 		
 		// first tab upon load
 		tabPanel.selectTab(0);
-		
+		tabPanel.setSize("1200px", "1200px");
 		
 
 		return tabPanel;
