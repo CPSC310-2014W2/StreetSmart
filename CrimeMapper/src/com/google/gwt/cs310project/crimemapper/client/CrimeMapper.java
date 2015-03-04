@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.StackPanel;
@@ -233,9 +234,13 @@ public class CrimeMapper implements EntryPoint {
 	private Panel buildMapTabPanel(){
 		// Assemble elements for Map Panel
 		Label mapLabel = new Label("MAP WILL GO HERE");
-
-		// Assemble Map Panel to insert map label
+		Image dummyMap = new Image("images/vancouver-dummy-map.jpg");
+		
+		mapsVPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		// Assemble Map Panel to insert map label/image
 		mapsVPanel.add(mapLabel);
+		mapsVPanel.add(dummyMap);
+		
 		return mapsVPanel;
 	}
 
