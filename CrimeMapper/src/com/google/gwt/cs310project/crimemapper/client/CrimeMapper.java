@@ -61,7 +61,7 @@ public class CrimeMapper implements EntryPoint {
 	private final String crime4 = "Theft From Auto Over $5000";
 	private final String crime5 = "Theft Of Auto Under $5000";
 	private final String crime6 = "Theft Of Auto Over $5000";
-	private final String crime7 = "Commercial BE";
+	private final String crime7 = "Commercial Break and Enter";
 
 	//CrimeData RPC fields
 	private ArrayList<CrimeData> crimes = new ArrayList<CrimeData>();
