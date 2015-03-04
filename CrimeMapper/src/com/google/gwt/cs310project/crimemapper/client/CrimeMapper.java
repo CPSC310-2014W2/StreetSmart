@@ -273,7 +273,15 @@ public class CrimeMapper implements EntryPoint {
 
 	private Panel buildFaqTabPanel(){
 		// Application facts
-		String appFact1 = "Fact 1";
+		String appFact1 = "The Vancouver Police Department (VPD) has changed the way in "
+				+ "which it reports its crime statistics. Historically, it reported data "
+				+ "based on Statistics Canada reporting requirements, which meant that "
+				+ "only the most serious offence per incident was counted. Now, the all "
+				+ "violations method is used. Other policing agencies like Edmonton, "
+				+ "Toronto, Ottawa and Calgary also present their crime statistics using "
+				+ "the all violations method. It is important to note these differences "
+				+ "in reporting when comparing our crime statistics to other Police "
+				+ "Agencies and Statistics Canada.";
 		String appFact2 = "Fact 2";
 		String appFact3 = "Fact 3";
 
@@ -290,7 +298,7 @@ public class CrimeMapper implements EntryPoint {
 
 		//Application Facts
 		label = new Label(appFact1);
-		faqPanel.add(label, "App Fact1", false);
+		faqPanel.add(label, "Comparing Crime Statistics", false);
 
 		label = new Label(appFact2);
 		faqPanel.add(label, "App Fact2", false);
