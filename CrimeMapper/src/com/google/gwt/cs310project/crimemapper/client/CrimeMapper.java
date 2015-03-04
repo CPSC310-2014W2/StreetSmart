@@ -1,7 +1,6 @@
 package com.google.gwt.cs310project.crimemapper.client;
 
 import java.util.ArrayList;
-
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -44,6 +43,7 @@ public class CrimeMapper implements EntryPoint {
 	private FlexTable crimeFlexTable = new FlexTable();
 	private Button clearTrendsButton = new Button("Clear Trends");
 	private Label lastUploadedDateLabel = new Label();
+	private final int COLUMN_COUNT = 8;
 	private int selectedRow;
 	
 	private Button loadCrimeDataButton = new Button("Load Data");
@@ -55,13 +55,13 @@ public class CrimeMapper implements EntryPoint {
 	private int selectedTextBox = CLEAR_TEXT_BOX_FLAG;
 	
 	//Crime Types
-	private String crime1 = "Mischief under $5000";
-	private String crime2 = "Mischief over $5000";
-	private String crime3 = "Theft from auto under $5000";
-	private String crime4 = "Theft from auto over $5000";
-	private String crime5 = "Theft of auto under $5000";
-	private String crime6 = "Theft of auto over $5000";
-	private String crime7 = "Commercial break and enter";
+	private final String crime1 = "Mischief Under $5000";
+	private final String crime2 = "Mischief Over $5000";
+	private final String crime3 = "Theft From Auto Under $5000";
+	private final String crime4 = "Theft From Auto Over $5000";
+	private final String crime5 = "Theft Of Auto Under $5000";
+	private final String crime6 = "Theft Of Auto Over $5000";
+	private final String crime7 = "Commercial BE";
 
 	//CrimeData RPC fields
 	private ArrayList<CrimeData> crimes = new ArrayList<CrimeData>();
@@ -111,15 +111,29 @@ public class CrimeMapper implements EntryPoint {
 					selectedRow = NO_TABLE_SELECTION_FLAG;
 				} else {
 					crimeFlexTable.getRowFormatter().setStyleName(receiverRowIndex, "rowSelectedShadow");
+					// TODO Trends method
+					updateTableTrends(receiverRowIndex);
 					selectedRow = receiverRowIndex;
 				}
 			}
 		});
 	}
+	
+	/**
+	 * Update table view with trends labels
+	 * @param receiverRowIndex
+	 */
+	protected void updateTableTrends(int receiverRowIndex) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	/**
 	 * Method for constructing Main Panel
 	 */
 	private Panel buildMainPanel(){
+		
+		
 		mainPanel.add(buildTabPanel());
 
 		return mainPanel;
@@ -183,9 +197,6 @@ public class CrimeMapper implements EntryPoint {
 		crimeFlexTable.setText(1, 6, crime6);
 		crimeFlexTable.setText(1, 7, crime7);
 
-		int row = crimeFlexTable.getRowCount();
-		// TEST ROW 
-		crimeFlexTable.setText(row, 0, "2003");
 		// TODO Possibly use enum to denote crime types and
 		// a loop to automatically add all crime types to table
 
@@ -200,7 +211,7 @@ public class CrimeMapper implements EntryPoint {
 		crimeFlexTable.getCellFormatter().addStyleName(0, 1, "crimeTypeHeader");
 		crimeFlexTable.getCellFormatter().addStyleName(1, 0, "crimeTypeHeader");
 		int i = 1;
-		while(i < 8){
+		while(i < COLUMN_COUNT){
 			// TODO Possibly refactor to get rid of magic number and
 			// use the size of the enum of crime types
 			crimeFlexTable.getCellFormatter().addStyleName(1, i, "crimeTypeHeaderTitles");
@@ -318,29 +329,85 @@ public class CrimeMapper implements EntryPoint {
 	 * Added when admin clicks add new data
 	 * 
 	 */
-
 	private void refreshCrimeList(String crimeURL){
 		//Initialize the service proxy.
 		if(crimeDataSvc == null){
 			crimeDataSvc = GWT.create(CrimeDataService.class);
 		}
-
+		
+				
 		// Set up the callback object.
+		// Make the call to the crime data service.
 		AsyncCallback<ArrayList<CrimeData>> callback = new AsyncCallback<ArrayList<CrimeData>>(){
 			public void onFailure(Throwable caught){
 				//TODO: Do something with errors.
 			}
-
+			
 			public void onSuccess(ArrayList<CrimeData> result){
-				updateTable(result);
+				loadCrimeDataSet(result);
 			}
-		};
-
-		// Make the call to the stock price service.
+		}; 
+		
 		crimeDataSvc.getCrimeData(crimeURL, callback);
 	}
 
-	private void updateTable(ArrayList<CrimeData> crimes){}
+	/**
+	 *  Fill table with crime data
+	 * @param crimes
+	 */
+	
+	private void loadCrimeDataSet(ArrayList<CrimeData> crimes){
+		// Crime ListData
+		ArrayList<CrimeData> crime1List = new ArrayList<CrimeData>();
+		ArrayList<CrimeData> crime2List = new ArrayList<CrimeData>();
+		ArrayList<CrimeData> crime3List = new ArrayList<CrimeData>();
+		ArrayList<CrimeData> crime4List = new ArrayList<CrimeData>();
+		ArrayList<CrimeData> crime5List = new ArrayList<CrimeData>();
+		ArrayList<CrimeData> crime6List = new ArrayList<CrimeData>();
+		ArrayList<CrimeData> crime7List = new ArrayList<CrimeData>();
+		
+		ArrayList<ArrayList<CrimeData>> crimeList = new ArrayList<ArrayList<CrimeData>>();
+		int year = crimes.get(0).getYear();
+		
+		for (CrimeData crime: crimes){
+			
+			String crimeType = crime.getType();
+	        switch (crimeType) {
+	            case crime1:  crime1List.add(crime);
+	            case crime2:  crime2List.add(crime);
+	            case crime3:  crime3List.add(crime);
+	            case crime4:  crime4List.add(crime);
+	            case crime5:  crime5List.add(crime);
+	            case crime6:  crime6List.add(crime);
+	            case crime7:  crime7List.add(crime);
+	                     break;
+	            default: break;
+	        }
+		}
+		
+		crimeList.add(crime1List);
+		crimeList.add(crime2List);
+		crimeList.add(crime3List);
+		crimeList.add(crime4List);
+		crimeList.add(crime5List);
+		crimeList.add(crime6List);
+		crimeList.add(crime7List);
+		
+		updateTableView(crimeList, year);
+	}
+
+	// Inserting Data into table
+	private void updateTableView(ArrayList<ArrayList<CrimeData>> crimeList, int yr) {
+		String year = "" + yr;
+		int row = crimeFlexTable.getRowCount();
+		crimeFlexTable.setText(row, 0, year);
+		int i = 1;
+		while(i < COLUMN_COUNT){
+			crimeFlexTable.setText(row, i, "" + crimeList.get(i).size());
+			i++;
+		}
+		
+	}
 }
 
 

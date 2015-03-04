@@ -10,6 +10,9 @@ public class CrimeData implements Serializable {
 	private String location;
 	private String id;
 	
+	@SuppressWarnings("unused")
+	private CrimeData(){}
+	
 	public CrimeData(String type, int year, int month, String location){
 		this.type = type;
 		this.year = year;
