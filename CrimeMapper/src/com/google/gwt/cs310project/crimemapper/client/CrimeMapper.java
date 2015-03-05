@@ -44,6 +44,7 @@ public class CrimeMapper implements EntryPoint {
 	private HorizontalPanel clearTrendsButtonPanel = new HorizontalPanel();
 	private final String width = "100%";
 	private final String height = "100%";
+	private final int spacing = 20;
 
 	// Table features
 	private FlexTable crimeFlexTable = new FlexTable();
@@ -195,6 +196,7 @@ public class CrimeMapper implements EntryPoint {
 	private Panel buildTableTabPanel(){
 		tableVPanel.setSize(width, height);
 		tableVPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		tableVPanel.setSpacing(spacing);
 		
 		// Create table and table headers for crime data.
 		crimeFlexTable.setText(1, 0, "Year");
@@ -228,8 +230,7 @@ public class CrimeMapper implements EntryPoint {
 			i++;
 		}
 		crimeFlexTable.setCellPadding(20);
-
-
+		
 		// Assemble resetPanel.
 		clearTrendsButtonPanel.add(clearTrendsButton);
 
@@ -252,6 +253,7 @@ public class CrimeMapper implements EntryPoint {
 	private Panel buildMapTabPanel(){
 		mapsVPanel.setSize(width, height);
 		mapsVPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		mapsVPanel.setSpacing(spacing);
 		// Assemble elements for Map Panel
 		Label mapLabel = new Label("MAP WILL GO HERE");
 		Image dummyMap = new Image("images/vancouver-dummy-map.jpg");
@@ -270,7 +272,7 @@ public class CrimeMapper implements EntryPoint {
 		
 		settingsVPanel.setSize(width, height);
 		settingsVPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		settingsVPanel.setSpacing(20);
+		settingsVPanel.setSpacing(spacing);
 		// Assemble elements for Settings Panel
 		Label settingsLabel = new Label("SETTINGS WILL GO HERE");
 
