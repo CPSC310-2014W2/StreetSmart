@@ -16,15 +16,17 @@ public class CrimeDataServiceImpl extends RemoteServiceServlet implements CrimeD
 		// TODO: Shouldn't we make this method static?
 
 		ArrayList<CrimeData> crimeDataList = new ArrayList<CrimeData>();
-
 		try {
 			URL crime = new URL(url);
 			BufferedReader crimeIn = new BufferedReader(
 				new InputStreamReader(crime.openStream()));
 			String inputLine = crimeIn.readLine();
+			int lineNumber = 1;
 			// The first line of the CSV file contains no data
 			while ((inputLine = crimeIn.readLine()) != null) {
-				crimeDataList.add(parseCrimeDataLine(inputLine));
+				CrimeData cd = parseCrimeDataLine(inputLine);
+				cd.setID(lineNumber);
+				crimeDataList.add(cd);
 			}
 			crimeIn.close();
 		} catch (Exception e) {

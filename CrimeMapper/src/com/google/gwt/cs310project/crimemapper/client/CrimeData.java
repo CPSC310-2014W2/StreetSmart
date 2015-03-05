@@ -19,7 +19,6 @@ public class CrimeData implements Serializable {
 		this.year = year;
 		this.month = month;
 		this.location = location;
-		this.id = null;
 	}
 	
 	public String getId(){
@@ -45,8 +44,8 @@ public class CrimeData implements Serializable {
 		return location;
 	}
 
-	public void setID(String lineNumber){
-		this.id = "" + month + "" + year;
+	public void setID(int lineNumber){
+		this.id = "" + month + "" + year + "" + lineNumber;
 	}
 
 	public void setType(String type) {
