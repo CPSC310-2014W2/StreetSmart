@@ -17,6 +17,7 @@ public class CrimeData implements Serializable {
 	public CrimeData(String type, int year, int month, String location){
 		this.type = type;
 		this.year = year;
+		this.month = month;
 		this.location = location;
 		this.id = null;
 	}
@@ -67,6 +68,20 @@ public class CrimeData implements Serializable {
 		this.location = location;
 	}
 	
-	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null || obj.getClass() != CrimeData.class) {
+			return false;
+		}
+		boolean eq = ((CrimeData) obj).getType().equals(this.type)
+				&& ((CrimeData) obj).getYear() == this.year
+				&& ((CrimeData) obj).getMonth() == this.month
+				&& ((CrimeData) obj).getLocation().equals(this.location);
+		String id2 = ((CrimeData) obj).getId();
+		if (id2 != null) {
+			eq = eq && (id2.equals(this.id));
+		}
+		return eq;
+	}
 
 }

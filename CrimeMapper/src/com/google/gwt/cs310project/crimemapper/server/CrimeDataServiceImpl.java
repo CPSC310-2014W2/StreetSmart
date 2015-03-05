@@ -13,6 +13,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 public class CrimeDataServiceImpl extends RemoteServiceServlet implements CrimeDataService {
 
 	public ArrayList<CrimeData> getCrimeData(String url) {
+		// TODO: Shouldn't we make this method static?
 
 		ArrayList<CrimeData> crimeDataList = new ArrayList<CrimeData>();
 
