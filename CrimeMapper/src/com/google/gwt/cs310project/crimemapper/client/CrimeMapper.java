@@ -17,8 +17,10 @@ import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.StackPanel;
+import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -56,7 +58,8 @@ public class CrimeMapper implements EntryPoint {
 	private Button loadCrimeDataButton = new Button("Load Data");
 
 	// Settings Text Box flags
-	private TextBox newUrlTextBox = new TextBox();
+	private MultiWordSuggestOracle oracle = new MultiWordSuggestOracle();
+	private SuggestBox newUrlTextBox = new SuggestBox(oracle);
 	private final int NO_TABLE_SELECTION_FLAG = -1;
 	private final int CLEAR_TEXT_BOX_FLAG = -1;
 	private int selectedTextBox = CLEAR_TEXT_BOX_FLAG;
@@ -88,7 +91,7 @@ public class CrimeMapper implements EntryPoint {
 
 	private void applicationHandlers(){
 		// Clear Text box when mouse places icon
-		newUrlTextBox.addClickHandler(new ClickHandler(){
+		newUrlTextBox.getValueBox().addClickHandler(new ClickHandler(){
 			public void onClick(ClickEvent event){
 				if(selectedTextBox == CLEAR_TEXT_BOX_FLAG){
 					newUrlTextBox.setText("");
@@ -102,6 +105,7 @@ public class CrimeMapper implements EntryPoint {
 			public void onKeyDown(KeyDownEvent event) {
 				if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
 					String crimeURL = newUrlTextBox.getText();
+					oracle.add(crimeURL);
 					refreshCrimeList(crimeURL);
 					newUrlTextBox.setText("Paste Crime URL here");
 					selectedTextBox = CLEAR_TEXT_BOX_FLAG;
@@ -113,6 +117,7 @@ public class CrimeMapper implements EntryPoint {
 		loadCrimeDataButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				String crimeURL = newUrlTextBox.getText();
+				oracle.add(crimeURL);
 				refreshCrimeList(crimeURL);
 				newUrlTextBox.setText("Paste Crime URL here");
 				selectedTextBox = CLEAR_TEXT_BOX_FLAG;
@@ -426,7 +431,7 @@ public class CrimeMapper implements EntryPoint {
 		crimeFlexTable.setText(row, 0, year);
 		int i = 1;
 		while(i < COLUMN_COUNT){
-			crimeFlexTable.setText(row, i, "" + i);
+			crimeFlexTable.setText(row, i, "" + crimeList.get(i - 1).size());
 			i++;
 		}
 	}
