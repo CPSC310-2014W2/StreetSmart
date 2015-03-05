@@ -21,7 +21,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootPanel;
-
+import com.google.gwt.user.client.ui.Anchor;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -66,17 +66,55 @@ public class CrimeMapper implements EntryPoint {
 	//CrimeData RPC fields
 	private ArrayList<CrimeData> crimes = new ArrayList<CrimeData>();
 	private CrimeDataServiceAsync crimeDataSvc = GWT.create(CrimeDataService.class);
-
+	
+	
+	//Login Fields
+	private LoginInfo loginInfo = null;
+	private VerticalPanel loginPanel = new VerticalPanel();
+	private Label loginLabel = new Label(
+	      "Please sign in to your Account to access the CrimeMapper.");
+	private Anchor signInLink = new Anchor("Sign In");
+	private Anchor signOutLink = new Anchor("Sign Out");
+	
 	/**
 	 * Entry point method.
 	 */
 
 	public void onModuleLoad() {
 		
-		applicationHandlers();
+		// Check login status using login service.
+	    LoginServiceAsync loginService = GWT.create(LoginService.class);
+	    loginService.login(GWT.getHostPageBaseURL(), new AsyncCallback<LoginInfo>() {
+	      public void onFailure(Throwable error) {
+	      }
+
+	      public void onSuccess(LoginInfo result) {
+	        loginInfo = result;
+	        if(loginInfo.isLoggedIn()) {
+	          loadMainPanel();
+	        } else {
+	          loadLogin();
+	        }
+	      }
+	    });
+	}
+	
+	
+	private void loadMainPanel(){
 		
+		signOutLink.setHref(loginInfo.getLogoutUrl());
+		applicationHandlers();
 		// Associate the Main panel with the HTML host page
 		RootPanel.get("crimeList").add(buildMainPanel());
+	}
+	
+	private void loadLogin(){
+		signInLink.setHref(loginInfo.getLoginUrl());
+		loginPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+	    loginPanel.add(loginLabel);
+	    loginPanel.add(signInLink);
+	    loginPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+	    RootPanel.get("crimeList").add(loginPanel);
 	}
 
 	private void applicationHandlers(){
@@ -222,6 +260,7 @@ public class CrimeMapper implements EntryPoint {
 
 		// Assemble resetPanel.
 		clearTrendsButtonPanel.add(clearTrendsButton);
+		
 
 		// Date label
 		lastUploadedDateLabel.setText("MOST RECENT UPDATE DATE GOES HERE");
@@ -233,6 +272,7 @@ public class CrimeMapper implements EntryPoint {
 		tableVPanel.add(crimeFlexTable);
 		tableVPanel.add(clearTrendsButtonPanel);
 		tableVPanel.add(lastUploadedDateLabel);
+		tableVPanel.add(signOutLink);
 
 
 		// return table constructed panel
