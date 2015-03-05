@@ -84,4 +84,11 @@ public class CrimeData implements Serializable {
 		return eq;
 	}
 
+	@Override
+	public String toString() {
+		
+		String crimeString = "In " + year + " in the " + month + " month, this crime of [" + type +"] " 
+		                + "took place at " + location + ", Vancouver, BC.";
+		return crimeString;
+	}
 }
