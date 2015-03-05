@@ -345,7 +345,6 @@ public class CrimeMapper implements EntryPoint {
 		
 				
 		// Set up the callback object.
-		// Make the call to the crime data service.
 		AsyncCallback<ArrayList<CrimeData>> callback = new AsyncCallback<ArrayList<CrimeData>>(){
 			public void onFailure(Throwable caught){
 				//TODO: Do something with errors.
@@ -356,6 +355,7 @@ public class CrimeMapper implements EntryPoint {
 			}
 		}; 
 		
+		// Make the call to the crime data service.
 		crimeDataSvc.getCrimeData(crimeURL, callback);
 	}
 

@@ -9,6 +9,7 @@ import com.google.gwt.cs310project.crimemapper.client.CrimeData;
 import com.google.gwt.cs310project.crimemapper.client.CrimeDataService;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
+@SuppressWarnings("serial")
 public class CrimeDataServiceImpl extends RemoteServiceServlet implements CrimeDataService {
 
 	public ArrayList<CrimeData> getCrimeData(String url) {
@@ -39,7 +40,8 @@ public class CrimeDataServiceImpl extends RemoteServiceServlet implements CrimeD
 		String type = sc.next();
 		// change type "Commercial BE" to "Commercial Break and Enter"
 		if (type.equals("Commercial BE")){
-			type = "Commercial Break and Enter";}
+			type = "Commercial Break and Enter";
+			}
 		int year = Integer.parseInt(sc.next());
 		int month = Integer.parseInt(sc.next());
 		String location = sc.next();
