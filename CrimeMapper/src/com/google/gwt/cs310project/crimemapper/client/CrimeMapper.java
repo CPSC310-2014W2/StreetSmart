@@ -22,7 +22,6 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.StackPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TabPanel;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -327,27 +326,28 @@ public class CrimeMapper implements EntryPoint {
 		label = new Label(appFact3);
 		faqPanel.add(label, "App Fact3", false);
 
+		String whatIs = "What is ";
 		//Crime facts
 		label = new Label(cr1);
-		faqPanel.add(label, crime1, false);
+		faqPanel.add(label, whatIs + crime1, false);
 
 		label = new Label(cr2);
-		faqPanel.add(label, crime2, false);
+		faqPanel.add(label, whatIs + crime2, false);
 
 		label = new Label(cr3);
-		faqPanel.add(label, crime3, false);
+		faqPanel.add(label, whatIs + crime3, false);
 
 		label = new Label(cr4);
-		faqPanel.add(label, crime4, false);
+		faqPanel.add(label, whatIs + crime4, false);
 
 		label = new Label(cr5);
-		faqPanel.add(label, crime5, false);
+		faqPanel.add(label, whatIs + crime5, false);
 
 		label = new Label(cr6);
-		faqPanel.add(label, crime6, false);
+		faqPanel.add(label, whatIs + crime6, false);
 
 		label = new Label(cr7);
-		faqPanel.add(label, crime7, false);
+		faqPanel.add(label, whatIs + crime7, false);
 
 		return faqPanel;
 	}
@@ -401,15 +401,28 @@ public class CrimeMapper implements EntryPoint {
 
 			String crimeType = crime.getType();
 			switch (crimeType) {
-			case crime1:  crime1List.add(crime);
-			case crime2:  crime2List.add(crime);
-			case crime3:  crime3List.add(crime);
-			case crime4:  crime4List.add(crime);
-			case crime5:  crime5List.add(crime);
-			case crime6:  crime6List.add(crime);
-			case crime7:  crime7List.add(crime);
-			break;
-			default: break;
+				case crime1:  
+					crime1List.add(crime);
+					break;
+				case crime2:  
+					crime2List.add(crime);
+					break;
+				case crime3:  
+					crime3List.add(crime);
+					break;
+				case crime4:  
+					crime4List.add(crime);
+					break;
+				case crime5:  
+					crime5List.add(crime);
+					break;
+				case crime6:  
+					crime6List.add(crime);
+					break;
+				case crime7:  
+					crime7List.add(crime);
+					break;
+				default: break;
 			}
 		}
 
@@ -431,7 +444,10 @@ public class CrimeMapper implements EntryPoint {
 		crimeFlexTable.setText(row, 0, year);
 		int i = 1;
 		while(i < COLUMN_COUNT){
-			crimeFlexTable.setText(row, i, "" + crimeList.get(i - 1).size());
+			int crimeFreq = crimeList.get(i - 1).size();
+			String crimeFreqS = "" + crimeFreq + "";
+			crimeFlexTable.setText(row, i, crimeFreqS);
+			crimeFreq = 0;
 			i++;
 		}
 	}
