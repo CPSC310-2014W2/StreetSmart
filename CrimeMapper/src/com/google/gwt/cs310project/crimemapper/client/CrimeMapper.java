@@ -256,13 +256,9 @@ public class CrimeMapper implements EntryPoint {
 		// Create table and table headers for crime data.
 		crimeFlexTable.setText(1, 0, "Year");
 		crimeFlexTable.setText(0, 1, "Crime Type");
-		crimeFlexTable.setText(1, 1, crime1);
-		crimeFlexTable.setText(1, 2, crime2);
-		crimeFlexTable.setText(1, 3, crime3);
-		crimeFlexTable.setText(1, 4, crime4);
-		crimeFlexTable.setText(1, 5, crime5);
-		crimeFlexTable.setText(1, 6, crime6);
-		crimeFlexTable.setText(1, 7, crime7);
+		for (int i = 0; i < CrimeTypes.getNumberOfTypes(); i++) {
+			crimeFlexTable.setText(1, i + 1, CrimeTypes.getType(i));
+		}
 
 		// TODO Possibly use enum to denote crime types and
 		// a loop to automatically add all crime types to table
