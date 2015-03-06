@@ -78,57 +78,57 @@ public class CrimeMapper implements EntryPoint {
 	// CrimeData RPC fields
 	private ArrayList<CrimeData> crimes = new ArrayList<CrimeData>();
 	private CrimeDataServiceAsync crimeDataSvc = GWT.create(CrimeDataService.class);
-	
+
 	//Login Fields
 	private LoginInfo loginInfo = null;
 	private VerticalPanel loginPanel = new VerticalPanel();
 	private Label loginLabel = new Label(
-	      "Please sign in to your Account to access the CrimeMapper.");
+			"Please sign in to your Account to access the CrimeMapper.");
 	private Anchor signInLink = new Anchor("Sign In");
 	private Anchor signOutLink = new Anchor("Sign Out");
-	
+
 	// Databases 
-	TreeMap<String, ArrayList<ArrayList<CrimeData>>> dataStore = 
+	TreeMap<String, ArrayList<ArrayList<CrimeData>>> crimeDataBase = 
 			new TreeMap<String, ArrayList<ArrayList<CrimeData>>>();
 	/**
 	 * Entry point method.
 	 */
 
 	public void onModuleLoad() {
-		
-		// Check login status using login service.
-	    LoginServiceAsync loginService = GWT.create(LoginService.class);
-	    loginService.login(GWT.getHostPageBaseURL(), new AsyncCallback<LoginInfo>() {
-	      public void onFailure(Throwable error) {
-	      }
 
-	      public void onSuccess(LoginInfo result) {
-	        loginInfo = result;
-	        if(loginInfo.isLoggedIn()) {
-	          loadMainPanel();
-	        } else {
-	          loadLogin();
-	        }
-	      }
-	    });
+		// Check login status using login service.
+		LoginServiceAsync loginService = GWT.create(LoginService.class);
+		loginService.login(GWT.getHostPageBaseURL(), new AsyncCallback<LoginInfo>() {
+			public void onFailure(Throwable error) {
+			}
+
+			public void onSuccess(LoginInfo result) {
+				loginInfo = result;
+				if(loginInfo.isLoggedIn()) {
+					loadMainPanel();
+				} else {
+					loadLogin();
+				}
+			}
+		});
 	}
-	
-	
+
+
 	private void loadMainPanel(){
-		
+
 		signOutLink.setHref(loginInfo.getLogoutUrl());
 		applicationHandlers();
 		// Associate the Main panel with the HTML host page
 		RootPanel.get("crimeList").add(buildMainPanel());
 	}
-	
+
 	private void loadLogin(){
 		signInLink.setHref(loginInfo.getLoginUrl());
 		loginPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-	    loginPanel.add(loginLabel);
-	    loginPanel.add(signInLink);
-	    loginPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-	    RootPanel.get("crimeList").add(loginPanel);
+		loginPanel.add(loginLabel);
+		loginPanel.add(signInLink);
+		loginPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		RootPanel.get("crimeList").add(loginPanel);
 	}
 
 	private void applicationHandlers(){
@@ -176,7 +176,7 @@ public class CrimeMapper implements EntryPoint {
 		newUrlTextBox.setText("Paste Crime URL here");
 		selectedTextBox = CLEAR_TEXT_BOX_FLAG;
 		lastUploadedDateLabel.setText("Last update : "
-			    + DateTimeFormat.getMediumDateTimeFormat().format(new Date()));
+				+ DateTimeFormat.getMediumDateTimeFormat().format(new Date()));
 	}
 
 	private void selectRow(int rowIndex){
@@ -216,7 +216,7 @@ public class CrimeMapper implements EntryPoint {
 		String tab2Title = "Map";
 		String tab3Title = "FAQ";
 		String tab4Title = "Admin";
-		
+
 
 		//Create Custom FlowPanels to add to TabPanel
 		FlowPanel flowpanel;
@@ -229,7 +229,7 @@ public class CrimeMapper implements EntryPoint {
 		flowpanel = new FlowPanel();
 		flowpanel.add(buildMapTabPanel());
 		tabPanel.add(flowpanel, tab2Title);
-		
+
 		flowpanel = new FlowPanel();
 		flowpanel.add(buildFaqTabPanel());
 		tabPanel.add(flowpanel, tab3Title);
@@ -238,7 +238,7 @@ public class CrimeMapper implements EntryPoint {
 		flowpanel.add(buildSettingsTabPanel());
 		tabPanel.add(flowpanel, tab4Title);
 
-		
+
 
 		// first tab upon load
 		tabPanel.selectTab(0);
@@ -285,11 +285,11 @@ public class CrimeMapper implements EntryPoint {
 
 		// Assemble resetPanel.
 		clearTrendsButtonPanel.add(clearTrendsButton);
-		
+
 
 		// Date label
 		lastUploadedDateLabel.setText("Last update : "
-			    + DateTimeFormat.getMediumDateTimeFormat().format(new Date()));
+				+ DateTimeFormat.getMediumDateTimeFormat().format(new Date()));
 
 		// Assemble Table Panel to insert in Tab1 of Tab Panel
 		tableVPanel.add(crimeFlexTable);
@@ -379,7 +379,7 @@ public class CrimeMapper implements EntryPoint {
 		faqPanel.add(label, "App Fact3", false);
 
 		String whatIs = "What is ";
-		
+
 		//Crime facts
 		for (int i = 0; i < CrimeTypes.getNumberOfTypes(); i++) {
 			label = new Label(explanations.get(i));
@@ -470,10 +470,10 @@ public class CrimeMapper implements EntryPoint {
 		crimeList.add(crime5List);
 		crimeList.add(crime6List);
 		crimeList.add(crime7List);
-		
-		
-		dataStore.put(""+year, crimeList);
-		
+
+
+		crimeDataBase.put(""+year, crimeList);
+
 		updateTableView(crimeList, year);
 	}
 

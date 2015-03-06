@@ -1,8 +1,10 @@
 package com.google.gwt.cs310project.crimemapper.client;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
-public final class CrimeTypes {
+@SuppressWarnings("serial")
+public final class CrimeTypes implements Serializable {
 	
 	private static HashMap<Integer, String> crimeTypes = new HashMap<Integer, String>();
 	

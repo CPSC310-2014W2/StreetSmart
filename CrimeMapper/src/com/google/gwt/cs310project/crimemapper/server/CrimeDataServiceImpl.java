@@ -27,6 +27,7 @@ public class CrimeDataServiceImpl extends RemoteServiceServlet implements CrimeD
 				CrimeData cd = parseCrimeDataLine(inputLine);
 				cd.setID(lineNumber);
 				crimeDataList.add(cd);
+				lineNumber++;
 			}
 			crimeIn.close();
 		} catch (Exception e) {
