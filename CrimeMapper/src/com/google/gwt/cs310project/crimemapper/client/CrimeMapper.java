@@ -354,13 +354,14 @@ public class CrimeMapper implements EntryPoint {
 		String appFact3 = "Fact 3";
 
 		// Crime Types
-		String cr1 = "Explanation 1";
-		String cr2 = "Explanation 2";
-		String cr3 = "Explanation 3";
-		String cr4 = "Explanation 4";
-		String cr5 = "Explanation 5";
-		String cr6 = "Explanation 6";
-		String cr7 = "Explanation 7";
+		ArrayList<String> explanations = new ArrayList<String>();
+		explanations.add(0, "Explanation 1");
+		explanations.add(1, "Explanation 2");
+		explanations.add(2, "Explanation 3");
+		explanations.add(3, "Explanation 4");
+		explanations.add(4, "Explanation 5");
+		explanations.add(5, "Explanation 6");
+		explanations.add(6, "Explanation 7");
 
 		faqPanel.setSize(width,height);
 
@@ -377,27 +378,12 @@ public class CrimeMapper implements EntryPoint {
 		faqPanel.add(label, "App Fact3", false);
 
 		String whatIs = "What is ";
+		
 		//Crime facts
-		label = new Label(cr1);
-		faqPanel.add(label, whatIs + crime1, false);
-
-		label = new Label(cr2);
-		faqPanel.add(label, whatIs + crime2, false);
-
-		label = new Label(cr3);
-		faqPanel.add(label, whatIs + crime3, false);
-
-		label = new Label(cr4);
-		faqPanel.add(label, whatIs + crime4, false);
-
-		label = new Label(cr5);
-		faqPanel.add(label, whatIs + crime5, false);
-
-		label = new Label(cr6);
-		faqPanel.add(label, whatIs + crime6, false);
-
-		label = new Label(cr7);
-		faqPanel.add(label, whatIs + crime7, false);
+		for (int i = 0; i < CrimeTypes.getNumberOfTypes(); i++) {
+			label = new Label(explanations.get(i));
+			faqPanel.add(label, whatIs + CrimeTypes.getType(i), false);
+		}
 
 		return faqPanel;
 	}
