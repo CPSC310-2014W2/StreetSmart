@@ -90,7 +90,6 @@ public class CrimeMapper implements EntryPoint {
 	 */
 
 	public void onModuleLoad() {
-<<<<<<< HEAD
 		
 		// Check login status using login service.
 	    LoginServiceAsync loginService = GWT.create(LoginService.class);
@@ -114,11 +113,6 @@ public class CrimeMapper implements EntryPoint {
 		
 		signOutLink.setHref(loginInfo.getLogoutUrl());
 		applicationHandlers();
-=======
-
-		applicationHandlers();
-
->>>>>>> c4cd737e6e70a0874458a1a7f7973a4cb8342e2b
 		// Associate the Main panel with the HTML host page
 		RootPanel.get("crimeList").add(buildMainPanel());
 	}

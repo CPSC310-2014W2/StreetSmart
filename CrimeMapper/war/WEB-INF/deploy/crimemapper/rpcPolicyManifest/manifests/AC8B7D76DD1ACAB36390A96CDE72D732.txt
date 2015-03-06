@@ -1,0 +1,2 @@
+serviceClass: com.google.gwt.cs310project.crimemapper.client.LoginService
+path: 5EEF6ADE60B1ABBB935CB44825CE78FC.gwt.rpc
