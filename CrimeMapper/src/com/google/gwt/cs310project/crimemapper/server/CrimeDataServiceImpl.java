@@ -9,20 +9,24 @@ import com.google.gwt.cs310project.crimemapper.client.CrimeData;
 import com.google.gwt.cs310project.crimemapper.client.CrimeDataService;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
+@SuppressWarnings("serial")
 public class CrimeDataServiceImpl extends RemoteServiceServlet implements CrimeDataService {
 
 	public ArrayList<CrimeData> getCrimeData(String url) {
+		// TODO: Shouldn't we make this method static?
 
 		ArrayList<CrimeData> crimeDataList = new ArrayList<CrimeData>();
-
 		try {
 			URL crime = new URL(url);
 			BufferedReader crimeIn = new BufferedReader(
 				new InputStreamReader(crime.openStream()));
 			String inputLine = crimeIn.readLine();
+			int lineNumber = 1;
 			// The first line of the CSV file contains no data
 			while ((inputLine = crimeIn.readLine()) != null) {
-				crimeDataList.add(parseCrimeDataLine(inputLine));
+				CrimeData cd = parseCrimeDataLine(inputLine);
+				cd.setID(lineNumber);
+				crimeDataList.add(cd);
 			}
 			crimeIn.close();
 		} catch (Exception e) {
@@ -38,8 +42,9 @@ public class CrimeDataServiceImpl extends RemoteServiceServlet implements CrimeD
 		sc.useDelimiter(",");
 		String type = sc.next();
 		// change type "Commercial BE" to "Commercial Break and Enter"
-		if (type.equals("Commercial BE"))
+		if (type.equals("Commercial BE")){
 			type = "Commercial Break and Enter";
+			}
 		int year = Integer.parseInt(sc.next());
 		int month = Integer.parseInt(sc.next());
 		String location = sc.next();

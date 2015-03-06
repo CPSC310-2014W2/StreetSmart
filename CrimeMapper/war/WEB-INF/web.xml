@@ -5,17 +5,32 @@
          version="2.5"
          xmlns="http://java.sun.com/xml/ns/javaee">
 
+ <!-- Default page to serve -->
+  <welcome-file-list>
+    <welcome-file>CrimeMapper.html</welcome-file>
+  </welcome-file-list>
+  
   <!-- Servlets -->
   
-<servlet>
+  <servlet>
     <servlet-name>crimeDataServiceImpl</servlet-name>
     <servlet-class>com.google.gwt.cs310project.crimemapper.server.CrimeDataServiceImpl</servlet-class>
   </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>crimeDataServiceImpl</servlet-name>
+    <url-pattern>/crimemapper/crimeData</url-pattern>
+  </servlet-mapping>
   
   <servlet>
     <servlet-name>crimeService</servlet-name>
     <servlet-class>com.google.gwt.cs310project.crimemapper.server.CrimeServiceImpl</servlet-class>
   </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>crimeService</servlet-name>
+    <url-pattern>/crimemapper/crime</url-pattern>
+  </servlet-mapping>
   
   <servlet>
     <servlet-name>loginService</servlet-name>
@@ -27,21 +42,4 @@
     <url-pattern>/crimemapper/login</url-pattern>
   </servlet-mapping>
   
-  
-   <servlet-mapping>
-    <servlet-name>crimeDataServiceImpl</servlet-name>
-    <url-pattern>/crimemapper/crimeData</url-pattern>
-  </servlet-mapping>
-  
-  
-  <servlet-mapping>
-    <servlet-name>crimeService</servlet-name>
-    <url-pattern>/crimemapper/crime</url-pattern>
-  </servlet-mapping>
-  
-  <!-- Default page to serve -->
-  <welcome-file-list>
-    <welcome-file>CrimeMapper.html</welcome-file>
-  </welcome-file-list>
-
 </web-app>
