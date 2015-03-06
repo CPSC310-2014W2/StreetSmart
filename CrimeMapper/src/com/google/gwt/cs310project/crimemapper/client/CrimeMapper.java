@@ -2,6 +2,7 @@ package com.google.gwt.cs310project.crimemapper.client;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.TreeMap;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -86,9 +87,9 @@ public class CrimeMapper implements EntryPoint {
 	private Anchor signInLink = new Anchor("Sign In");
 	private Anchor signOutLink = new Anchor("Sign Out");
 	
-	// Databases
-	ArrayList<Integer[]> yearRows = new ArrayList<Integer[]>(); 
-	
+	// Databases 
+	TreeMap<String, ArrayList<ArrayList<CrimeData>>> dataStore = 
+			new TreeMap<String, ArrayList<ArrayList<CrimeData>>>();
 	/**
 	 * Entry point method.
 	 */
@@ -483,7 +484,10 @@ public class CrimeMapper implements EntryPoint {
 		crimeList.add(crime5List);
 		crimeList.add(crime6List);
 		crimeList.add(crime7List);
-
+		
+		
+		dataStore.put(""+year, crimeList);
+		
 		updateTableView(crimeList, year);
 	}
 
