@@ -44,7 +44,7 @@ public class CrimeTest {
 				2013, 2, "9XX BEATTY ST"));
 		cdl1.add(new CrimeData("Mischief Under $5000",
 				2012, 3, "10XX BEATTY ST"));
-		cdl1.add(new CrimeData("Theft From Auto Over  $5000",
+		cdl1.add(new CrimeData("Theft From Auto Over $5000",
 				2011, 4, "11XX BEATTY ST"));
 		cdl1.add(new CrimeData("Theft From Auto Under $5000",
 				2010, 5, "12XX BEATTY ST"));
