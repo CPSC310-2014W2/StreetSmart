@@ -213,8 +213,9 @@ public class CrimeMapper implements EntryPoint {
 		//Create titles for tabs
 		String tab1Title = "Trends";
 		String tab2Title = "Map";
-		String tab3Title = "Settings";
-		String tab4Title = "FAQ";
+		String tab3Title = "FAQ";
+		String tab4Title = "Admin";
+		
 
 		//Create Custom FlowPanels to add to TabPanel
 		FlowPanel flowpanel;
@@ -227,14 +228,16 @@ public class CrimeMapper implements EntryPoint {
 		flowpanel = new FlowPanel();
 		flowpanel.add(buildMapTabPanel());
 		tabPanel.add(flowpanel, tab2Title);
-
+		
 		flowpanel = new FlowPanel();
-		flowpanel.add(buildSettingsTabPanel());
+		flowpanel.add(buildFaqTabPanel());
 		tabPanel.add(flowpanel, tab3Title);
 
 		flowpanel = new FlowPanel();
-		flowpanel.add(buildFaqTabPanel());
+		flowpanel.add(buildSettingsTabPanel());
 		tabPanel.add(flowpanel, tab4Title);
+
+		
 
 		// first tab upon load
 		tabPanel.selectTab(0);
@@ -288,7 +291,8 @@ public class CrimeMapper implements EntryPoint {
 		
 
 		// Date label
-		lastUploadedDateLabel.setText("MOST RECENT UPDATE DATE GOES HERE");
+		lastUploadedDateLabel.setText("Last update : "
+			    + DateTimeFormat.getMediumDateTimeFormat().format(new Date()));
 
 		// Assemble Table Panel to insert in Tab1 of Tab Panel
 		tableVPanel.add(crimeFlexTable);

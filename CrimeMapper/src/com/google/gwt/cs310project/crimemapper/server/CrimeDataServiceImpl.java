@@ -41,10 +41,15 @@ public class CrimeDataServiceImpl extends RemoteServiceServlet implements CrimeD
 		Scanner sc = new Scanner(inputLine);
 		sc.useDelimiter(",");
 		String type = sc.next();
-		// change type "Commercial BE" to "Commercial Break and Enter"
+		
 		if (type.equals("Commercial BE")){
 			type = "Commercial Break and Enter";
 			}
+		
+		if (type.equals("Theft From Auto Over  $5000")){
+			type = "Theft From Auto Over $5000";
+			}
+		
 		int year = Integer.parseInt(sc.next());
 		int month = Integer.parseInt(sc.next());
 		String location = sc.next();
