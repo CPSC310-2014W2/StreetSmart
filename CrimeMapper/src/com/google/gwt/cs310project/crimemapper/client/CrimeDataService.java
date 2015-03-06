@@ -6,5 +6,5 @@ import java.util.ArrayList;
 
 @RemoteServiceRelativePath("crimeData")
 public interface CrimeDataService extends RemoteService {
-	ArrayList<CrimeData> getCrimeData(String url);
+	CrimeDataByYear getCrimeDataByYear(String url);
 }

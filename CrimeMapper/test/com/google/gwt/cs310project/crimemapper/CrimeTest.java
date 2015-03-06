@@ -14,20 +14,19 @@ public class CrimeTest {
 
 	// TODO: Create test cases for the 'soon to be created' test files.
 	CrimeDataServiceImpl cdsi;
-	ArrayList<CrimeData> cdl2003;
+	CrimeDataByYear cdl2003;
 	int crimeYear;
 	String crimeType;
 	int crimeTypeNum;
-	CrimeDataByYear crimeDataByYear;
 
 	@Before
 	public void setUp(){
 		cdsi = new CrimeDataServiceImpl();
-		cdl2003 = cdsi.getCrimeData("file:./data/crime_2003.csv");
-		crimeYear = cdl2003.get(0).getYear();
+		cdl2003 = cdsi.getCrimeDataByYear("file:./data/crime_2003.csv");
+		crimeYear = cdl2003.getYear();
 		crimeType = "Theft From Auto Over $5000";
 		crimeTypeNum = 215;
-		crimeDataByYear = new CrimeDataByYear(crimeYear, cdl2003);
+		
 	}
 
 	@Test
@@ -78,10 +77,11 @@ public class CrimeTest {
 			id++;
 		}
 
-		ArrayList<CrimeData> cdl2 = cdsi.getCrimeData("file:./test/test.csv");
-		assertTrue(cdl1.size() == cdl2.size());
+		CrimeDataByYear cdl2 = cdsi.getCrimeDataByYear("file:./test/test.csv");
+		
+		assertTrue(cdl1.size() == cdl2.getCrimes().size());
 		for (int i = 0; i < 7; i++) {
-			assertTrue(cdl1.get(i).equals(cdl2.get(i)));
+			assertTrue(cdl1.get(i).equals(cdl2.getCrimes().get(i)));
 		}
 	}
 
@@ -93,30 +93,30 @@ public class CrimeTest {
 
 	@Test 
 	public void testGetSortedCrimeListSize(){
-		assertEquals(crimeDataByYear.getSortedCrimeList().size(), 7);
+		assertEquals(cdl2003.getSortedCrimeList().size(), 7);
 	}
 	
 	@Test
 	public void testGetSortedCrimeListFirstElementSize(){
-		assertEquals(crimeDataByYear.getSortedCrimeList().get(0).size(), 6341);
+		assertEquals(cdl2003.getSortedCrimeList().get(0).size(), 6341);
 	}
 	
 	@Test
 	public void testGetSortedCrimeListFourthElementCrimeType(){
-		assertEquals(crimeDataByYear.getSortedCrimeList().get(3).get(0).getType(), crimeType);
+		assertEquals(cdl2003.getSortedCrimeList().get(3).get(0).getType(), crimeType);
 	}
 	
 	@Test 
 	public void testIsCrimeType(){
 
 		//testing crime types
-		assertTrue(crimeDataByYear.isCrimeType(crimeType));
+		assertTrue(cdl2003.isCrimeType(crimeType));
 	}
 
 	@Test 
 	public void testNumberOfOccurences(){
 		//testing number of occurrences
-		int num = crimeDataByYear.getNumberOfCrimeTypeOccurrences(crimeType);
+		int num = cdl2003.getNumberOfCrimeTypeOccurrences(crimeType);
 		assertEquals(crimeTypeNum, num);
 	}
 
@@ -124,7 +124,7 @@ public class CrimeTest {
 	public void testFilterByCrimeType(){
 
 		//testing filterByCrimeType Theft Of Auto Over $5000
-		ArrayList<CrimeData> cdlT = crimeDataByYear.filterByCrimeType(crimeType);
+		ArrayList<CrimeData> cdlT = cdl2003.filterByCrimeType(crimeType);
 		for (CrimeData cd: cdlT){
 			assertEquals(crimeType, cd.getType());
 		}

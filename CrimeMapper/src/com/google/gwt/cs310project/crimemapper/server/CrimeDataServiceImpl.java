@@ -6,16 +6,18 @@ import java.net.*;
 import java.io.*;
 
 import com.google.gwt.cs310project.crimemapper.client.CrimeData;
+import com.google.gwt.cs310project.crimemapper.client.CrimeDataByYear;
 import com.google.gwt.cs310project.crimemapper.client.CrimeDataService;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 @SuppressWarnings("serial")
 public class CrimeDataServiceImpl extends RemoteServiceServlet implements CrimeDataService {
 
-	public ArrayList<CrimeData> getCrimeData(String url) {
+	public CrimeDataByYear getCrimeDataByYear(String url) {
 		// TODO: Shouldn't we make this method static?
 
 		ArrayList<CrimeData> crimeDataList = new ArrayList<CrimeData>();
+		CrimeDataByYear cdby = null;
 		try {
 			URL crime = new URL(url);
 			BufferedReader crimeIn = new BufferedReader(
@@ -29,13 +31,16 @@ public class CrimeDataServiceImpl extends RemoteServiceServlet implements CrimeD
 				crimeDataList.add(cd);
 				lineNumber++;
 			}
+			int year = crimeDataList.get(0).getYear();
+			cdby = new CrimeDataByYear(year, crimeDataList);
 			crimeIn.close();
 		} catch (Exception e) {
 			// Assume the URL works correctly for now, so do nothing
 			e.printStackTrace();
 		}
-
-		return crimeDataList;
+		
+		
+		return cdby;
 	}
 	
 	private CrimeData parseCrimeDataLine(String inputLine) {

@@ -2,6 +2,7 @@ package com.google.gwt.cs310project.crimemapper.client;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+
 import com.google.gwt.cs310project.crimemapper.client.CrimeTypes;
 
 @SuppressWarnings("serial")
@@ -23,7 +24,10 @@ public class CrimeDataByYear implements Serializable {
 	public int getYear(){
 		return this.year;
 	}
-
+	
+	public String yearToString(){
+		return  "" + this.year;
+	}
 	public ArrayList<ArrayList<CrimeData>> getSortedCrimeList(){
 		return filterByCrimeTypeList;
 	}
@@ -82,5 +86,34 @@ public class CrimeDataByYear implements Serializable {
 	
 	public String toString(){
 		return "" + getYear() + " had a total of " + crimesDataList.size() + " crimes.";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((crimesDataList == null) ? 0 : crimesDataList.hashCode());
+		result = prime * result + year;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CrimeDataByYear other = (CrimeDataByYear) obj;
+		if (crimesDataList == null) {
+			if (other.crimesDataList != null)
+				return false;
+		} else if (!crimesDataList.equals(other.crimesDataList))
+			return false;
+		if (year != other.year)
+			return false;
+		return true;
 	}
 }

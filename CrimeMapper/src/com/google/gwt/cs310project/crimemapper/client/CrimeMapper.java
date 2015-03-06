@@ -2,6 +2,7 @@ package com.google.gwt.cs310project.crimemapper.client;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
 import java.util.TreeMap;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -55,6 +56,7 @@ public class CrimeMapper implements EntryPoint {
 	private Button clearTrendsButton = new Button("Clear Trends");
 	private Label lastUploadedDateLabel = new Label();
 	private final int COLUMN_COUNT = 8;
+	private final int startOfDataRows = 2;
 	private int selectedRow;
 
 	private Button loadCrimeDataButton = new Button("Load Data");
@@ -402,102 +404,71 @@ public class CrimeMapper implements EntryPoint {
 
 
 		// Set up the callback object.
-		AsyncCallback<ArrayList<CrimeData>> callback = new AsyncCallback<ArrayList<CrimeData>>(){
+		AsyncCallback<CrimeDataByYear> callback = new AsyncCallback<CrimeDataByYear>(){
 			public void onFailure(Throwable caught){
 				//TODO: Do something with errors.
 			}
 
-			public void onSuccess(ArrayList<CrimeData> result){
-				loadCrimeDataSet(result);
+
+			@Override
+			public void onSuccess(CrimeDataByYear result) {
+				addCrimeDataSet(result);
+
 			}
+
 		}; 
 
 		// Make the call to the crime data service.
-		crimeDataSvc.getCrimeData(crimeURL, callback);
+		crimeDataSvc.getCrimeDataByYear(crimeURL, callback);
 	}
 
-	/**
-	 *  Fill table with crime data
-	 * @param crimes
-	 */
+	private TreeMap<Integer, CrimeDataByYear> crimeDataMap = new TreeMap<Integer, CrimeDataByYear>();
 
-	private void loadCrimeDataSet(ArrayList<CrimeData> crimes){
-		// Crime ListData
-		ArrayList<CrimeData> crime1List = new ArrayList<CrimeData>();
-		ArrayList<CrimeData> crime2List = new ArrayList<CrimeData>();
-		ArrayList<CrimeData> crime3List = new ArrayList<CrimeData>();
-		ArrayList<CrimeData> crime4List = new ArrayList<CrimeData>();
-		ArrayList<CrimeData> crime5List = new ArrayList<CrimeData>();
-		ArrayList<CrimeData> crime6List = new ArrayList<CrimeData>();
-		ArrayList<CrimeData> crime7List = new ArrayList<CrimeData>();
 
-		ArrayList<ArrayList<CrimeData>> crimeList = new ArrayList<ArrayList<CrimeData>>();
-		int year = crimes.get(0).getYear();
+	private void addCrimeDataSet(CrimeDataByYear result) {
+		// TODO Insert Persistent Method for DataStore
 
-		for (CrimeData crime: crimes){
+		
+			crimeDataMap.put(result.getYear(), result);
+			updateTableView(crimeDataMap);
+		
 
-			String crimeType = crime.getType();
-			switch (crimeType) {
-			case crime1:  
-				crime1List.add(crime);
-				break;
-			case crime2:  
-				crime2List.add(crime);
-				break;
-			case crime3:  
-				crime3List.add(crime);
-				break;
-			case crime4:  
-				crime4List.add(crime);
-				break;
-			case crime5:  
-				crime5List.add(crime);
-				break;
-			case crime6:  
-				crime6List.add(crime);
-				break;
-			case crime7:  
-				crime7List.add(crime);
-				break;
-			default: break;
+	}
+
+
+	private void updateTableView(TreeMap<Integer, CrimeDataByYear> crimeDataMap2) {
+
+		// remove rows to reload new data
+		refreshRows(crimeFlexTable.getRowCount());
+
+		for (Map.Entry<Integer, CrimeDataByYear> entry: crimeDataMap2.entrySet()){
+			int row = crimeFlexTable.getRowCount();
+			CrimeDataByYear value = entry.getValue(); 
+			crimeFlexTable.setText(row, 0, value.yearToString());
+			int i = 1;
+			while(i < COLUMN_COUNT){
+				int crimeOccurences = value.getNumberOfCrimeTypeOccurrences(CrimeTypes.getType(i-1));
+				crimeFlexTable.setText(row, i, ""+crimeOccurences);
+				i++;
 			}
 		}
-
-		crimeList.add(crime1List);
-		crimeList.add(crime2List);
-		crimeList.add(crime3List);
-		crimeList.add(crime4List);
-		crimeList.add(crime5List);
-		crimeList.add(crime6List);
-		crimeList.add(crime7List);
-
-
-		crimeDataBase.put(""+year, crimeList);
-
-		updateTableView(crimeList, year);
 	}
 
-	// Inserting Data into table
-	private void updateTableView(ArrayList<ArrayList<CrimeData>> crimeList, int yr) {
-		String year = "" + yr;
-		int row = crimeFlexTable.getRowCount();
-		crimeFlexTable.setText(row, 0, year);
-		int i = 1;
-		while(i < COLUMN_COUNT){
-			int crimeFreq = crimeList.get(i - 1).size();
-			String crimeFreqS = "" + crimeFreq + "";
-			crimeFlexTable.setText(row, i, crimeFreqS);
-			crimeFreq = 0;
-			i++;
+	private void refreshRows(int rowCount) {
+		int n = startOfDataRows;
+		while(rowCount > n){
+			crimeFlexTable.removeRow(rowCount-1);
+			rowCount--;
 		}
 	}
+
 
 	/**
 	 * Update table view with trends labels
 	 * @param receiverRowIndex
 	 */
 	private void updateTableTrends(int rowIndex) {
-		// TODO Auto-generated method stub
+		
 	}
 
 }
