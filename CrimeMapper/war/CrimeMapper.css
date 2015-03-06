@@ -10,6 +10,9 @@ h1 {
 	color: #2062B8;
 }
 
+#crimeScene{
+	background-color: blue;
+}
 /* crime type header row*/
 .crimeTypeHeader{
 	background-color: #2062B8;
@@ -38,7 +41,7 @@ h1 {
 
 /* crime data flex table */
 .crimeData {
-	border: 1px solid silver;
+	border: 2px solid silver;
 	padding: 1px;
 	margin-bottom:10px;
 }
