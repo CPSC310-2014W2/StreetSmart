@@ -47,7 +47,7 @@ public class CrimeMapper implements EntryPoint {
 	private VerticalPanel settingsVPanel = new VerticalPanel();
 	private VerticalPanel mapsVPanel = new VerticalPanel();
 	private HorizontalPanel clearTrendsButtonPanel = new HorizontalPanel();
-	
+
 	// Dimensions and Spacing
 	private final String width = "100%";
 	private final String height = "100%";
@@ -61,14 +61,14 @@ public class CrimeMapper implements EntryPoint {
 	private final int startOfDataRows = 2;
 	private int selectedRow;
 	private final int NO_TABLE_SELECTION_FLAG = -1;
-	
+
 	// Settings Tab elements
 	private Button loadCrimeDataButton = new Button("Load Data");
 	private MultiWordSuggestOracle oracle = new MultiWordSuggestOracle();
 	private SuggestBox newUrlTextBox = new SuggestBox(oracle);
 	private final int CLEAR_TEXT_BOX_FLAG = -1;
 	private int selectedTextBox = CLEAR_TEXT_BOX_FLAG;
-
+	private Label settingsLabel = new Label("");
 	// CrimeData RPC fields
 	private CrimeDataServiceAsync crimeDataSvc = GWT.create(CrimeDataService.class);
 
@@ -82,7 +82,7 @@ public class CrimeMapper implements EntryPoint {
 
 	// Databases 
 	private TreeMap<Integer, CrimeDataByYear> crimeDataMap = new TreeMap<Integer, CrimeDataByYear>();
-	
+
 	/**
 	 * Entry point method.
 	 */
@@ -127,6 +127,7 @@ public class CrimeMapper implements EntryPoint {
 		newUrlTextBox.getValueBox().addClickHandler(new ClickHandler(){
 			public void onClick(ClickEvent event){
 				if(selectedTextBox == CLEAR_TEXT_BOX_FLAG){
+					settingsLabel.setText("");
 					newUrlTextBox.setText("");
 					selectedTextBox = 0;
 				} 
@@ -177,7 +178,16 @@ public class CrimeMapper implements EntryPoint {
 			crimeFlexTable.getRowFormatter().setStyleName(rowIndex, "rowUnselectedShadow");
 			selectedRow = NO_TABLE_SELECTION_FLAG;
 		} else {
-			crimeFlexTable.getRowFormatter().setStyleName(rowIndex, "rowSelectedShadow");
+			int row = crimeFlexTable.getRowCount();
+			int i = startOfDataRows;
+			while(i < row){
+				if(i == rowIndex){
+					crimeFlexTable.getRowFormatter().setStyleName(rowIndex, "rowSelectedShadow");
+				} else {
+					crimeFlexTable.getRowFormatter().setStyleName(i, "rowUnselectedShadow");
+				}
+				i++;
+			}
 			// TODO Trends method
 			updateTableTrends(rowIndex);
 			selectedRow = rowIndex;
@@ -316,7 +326,7 @@ public class CrimeMapper implements EntryPoint {
 		settingsVPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		settingsVPanel.setSpacing(spacing);
 		// Assemble elements for Settings Panel
-		Label settingsLabel = new Label("SETTINGS WILL GO HERE");
+		
 
 		// Assemble Settings Panel to insert Settings 
 		settingsVPanel.add(settingsLabel);
@@ -392,9 +402,14 @@ public class CrimeMapper implements EntryPoint {
 			public void onFailure(Throwable caught){
 				//TODO: Do something with errors.
 			}
-			
+
 			public void onSuccess(CrimeDataByYear result) {
-				addCrimeDataSet(result);
+				if(!(result.getYear() == 0)){
+					settingsLabel.setText("Data Loaded Successfully");
+					addCrimeDataSet(result);
+				} else {
+					settingsLabel.setText("Seems Like an Error Loading Data");
+				}
 			}
 		}; 
 
@@ -404,8 +419,8 @@ public class CrimeMapper implements EntryPoint {
 
 	private void addCrimeDataSet(CrimeDataByYear result) {
 		// TODO Insert Persistent Method for DataStore
-			crimeDataMap.put(result.getYear(), result);
-			updateTableView(crimeDataMap);
+		crimeDataMap.put(result.getYear(), result);
+		updateTableView(crimeDataMap);
 	}
 
 	private void updateTableView(TreeMap<Integer, CrimeDataByYear> crimeDataMap2) {
@@ -444,7 +459,7 @@ public class CrimeMapper implements EntryPoint {
 	 * @param receiverRowIndex
 	 */
 	private void updateTableTrends(int rowIndex) {
-		
+
 	}
 
 }
