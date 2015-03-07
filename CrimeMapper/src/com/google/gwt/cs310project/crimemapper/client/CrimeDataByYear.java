@@ -2,7 +2,6 @@ package com.google.gwt.cs310project.crimemapper.client;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import com.google.gwt.cs310project.crimemapper.client.CrimeTypes;
 
@@ -11,23 +10,20 @@ public class CrimeDataByYear implements Serializable {
 
 	private int year;
 	
-	private HashMap<String, ArrayList<CrimeData>> crimesDataList;
+	private ArrayList<ArrayList<CrimeData>> crimesDataList;
 
 	public CrimeDataByYear(int year, ArrayList<CrimeData> crimes){
 		
 		this.year = year;
 		
-		crimesDataList = new HashMap<String, ArrayList<CrimeData>>();
+		crimesDataList = new ArrayList<ArrayList<CrimeData>>();
 		
 		for (int i = 0; i < CrimeTypes.getNumberOfTypes(); i++) {
-			crimesDataList.put(CrimeTypes.getType(i), new ArrayList<CrimeData>());
+			crimesDataList.add(new ArrayList<CrimeData>());
 		}
 		
 		for (CrimeData crime : crimes) {
-			if (!crimesDataList.containsKey(crime.getType())) {
-				System.out.println(crime.getType());
-			}
-			crimesDataList.get(crime.getType()).add(crime);
+			crimesDataList.get(CrimeTypes.getIndexFromType(crime.getType())).add(crime);
 		}
 	}
 
@@ -40,13 +36,13 @@ public class CrimeDataByYear implements Serializable {
 	}
 
 	public int getNumberOfCrimeTypeOccurrences(String crimeType){
-		return crimesDataList.get(crimeType).size();
+		return crimesDataList.get(CrimeTypes.getIndexFromType(crimeType)).size();
 	}
 	
 	public String toString(){
 		int numCrimes = 0;
 		for (int i = 0; i < CrimeTypes.getNumberOfTypes(); i++) {
-			numCrimes = numCrimes + crimesDataList.get(CrimeTypes.getType(i)).size();
+			numCrimes = numCrimes + crimesDataList.get(i).size();
 		}
 		return "" + getYear() + " had a total of " + numCrimes + " crimes.";
 	}

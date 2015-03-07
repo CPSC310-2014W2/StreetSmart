@@ -2,11 +2,13 @@ package com.google.gwt.cs310project.crimemapper.client;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Iterator;
 
 @SuppressWarnings("serial")
 public final class CrimeTypes implements Serializable {
 	
 	private static HashMap<Integer, String> crimeTypes = new HashMap<Integer, String>();
+	private static HashMap<String, Integer> reverseMap = new HashMap<String, Integer>();
 	
 	private CrimeTypes() {
 		// Do not allow instantiation of this class
@@ -20,10 +22,19 @@ public final class CrimeTypes implements Serializable {
 		crimeTypes.put(4, "Theft Of Auto Under $5000");
 		crimeTypes.put(5, "Theft Of Auto Over $5000");
 		crimeTypes.put(6, "Commercial Break and Enter");
+		Iterator<Integer> it = crimeTypes.keySet().iterator();
+		while (it.hasNext()) {
+			int i = it.next();
+			reverseMap.put(crimeTypes.get(i), i);
+		}
 	}
 	
 	public static String getType(int i) {
 		return crimeTypes.get(i);
+	}
+	
+	public static int getIndexFromType(String crimeType) {
+		return reverseMap.get(crimeType);
 	}
 	
 	public static int getNumberOfTypes() {
