@@ -38,8 +38,6 @@ public class CrimeDataServiceImpl extends RemoteServiceServlet implements CrimeD
 			// Assume the URL works correctly for now, so do nothing
 			e.printStackTrace();
 		}
-		
-		
 		return cdby;
 	}
 	
@@ -55,7 +53,10 @@ public class CrimeDataServiceImpl extends RemoteServiceServlet implements CrimeD
 		if (type.equals("Theft From Auto Over  $5000")){
 			type = "Theft From Auto Over $5000";
 			}
-		
+		if (type.equals("Thef Of Auto Under $5000")) {
+			type = "Theft Of Auto Under $5000";
+		}
+
 		int year = Integer.parseInt(sc.next());
 		int month = Integer.parseInt(sc.next());
 		String location = sc.next();
