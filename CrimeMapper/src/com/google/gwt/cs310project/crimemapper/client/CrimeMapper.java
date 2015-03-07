@@ -37,6 +37,12 @@ import com.google.gwt.user.client.ui.Anchor;
  */
 public class CrimeMapper implements EntryPoint {
 
+	// Constants
+	private static final int YEAR_COLUMN = 0;
+	private static final int COLUMN_COUNT = 8;
+	private static final int START_OF_DATA_ROWS = 2;
+	private static final int NO_TABLE_SELECTION_FLAG = -1;
+	
 	// Dynamic Panels
 	private TabPanel tabPanel = new TabPanel();
 	private StackPanel faqPanel = new StackPanel();
@@ -57,10 +63,9 @@ public class CrimeMapper implements EntryPoint {
 	private FlexTable crimeFlexTable = new FlexTable();
 	private Button clearTrendsButton = new Button("Clear Trends");
 	private Label lastUploadedDateLabel = new Label();
-	private final int COLUMN_COUNT = 8;
-	private final int startOfDataRows = 2;
+	private Label selectedYearLabel = new Label();
 	private int selectedRow;
-	private final int NO_TABLE_SELECTION_FLAG = -1;
+	
 
 	// Settings Tab elements
 	private Button loadCrimeDataButton = new Button("Load Data");
@@ -69,6 +74,7 @@ public class CrimeMapper implements EntryPoint {
 	private final int CLEAR_TEXT_BOX_FLAG = -1;
 	private int selectedTextBox = CLEAR_TEXT_BOX_FLAG;
 	private Label settingsLabel = new Label("");
+	
 	// CrimeData RPC fields
 	private CrimeDataServiceAsync crimeDataSvc = GWT.create(CrimeDataService.class);
 
@@ -178,13 +184,15 @@ public class CrimeMapper implements EntryPoint {
 		if (rowIndex == selectedRow)
 		{
 			crimeFlexTable.getRowFormatter().setStyleName(rowIndex, "rowUnselectedShadow");
+			selectedYearLabel.setText("");
 			selectedRow = NO_TABLE_SELECTION_FLAG;
 		} else {
 			int row = crimeFlexTable.getRowCount();
-			int i = startOfDataRows;
+			int i = START_OF_DATA_ROWS;
 			while(i < row){
 				if(i == rowIndex){
 					crimeFlexTable.getRowFormatter().setStyleName(rowIndex, "rowSelectedShadow");
+					selectedYearLabel.setText(""+getYearFromTable(rowIndex));
 				} else {
 					crimeFlexTable.getRowFormatter().setStyleName(i, "rowUnselectedShadow");
 				}
@@ -292,6 +300,7 @@ public class CrimeMapper implements EntryPoint {
 				+ DateTimeFormat.getMediumDateTimeFormat().format(new Date()));
 
 		// Assemble Table Panel to insert in Tab1 of Tab Panel
+		tableVPanel.add(selectedYearLabel);
 		tableVPanel.add(crimeFlexTable);
 		tableVPanel.add(clearTrendsButtonPanel);
 		tableVPanel.add(lastUploadedDateLabel);
@@ -448,14 +457,19 @@ public class CrimeMapper implements EntryPoint {
 	 * @param rowCount
 	 */
 	private void refreshRows(int rowCount) {
-		int n = startOfDataRows;
+		int n = START_OF_DATA_ROWS;
 		while(rowCount > n){
 			crimeFlexTable.removeRow(rowCount-1);
 			rowCount--;
 		}
 	}
 
-
+	private int getYearFromTable(int index){
+		int year = 0;
+		year = Integer.parseInt(crimeFlexTable.getText(index, YEAR_COLUMN));
+		return year;
+	}
+	
 	/**
 	 * Update table view with trends labels
 	 * @param receiverRowIndex
