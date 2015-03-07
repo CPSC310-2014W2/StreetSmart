@@ -11,6 +11,7 @@ public class CrimeDataByYear implements Serializable {
 
 	private int year;
 	
+	//String is type of crime
 	private HashMap<String, ArrayList<CrimeData>> crimesDataList;
 	
 	private CrimeDataByYear(){}

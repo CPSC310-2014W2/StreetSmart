@@ -161,6 +161,8 @@ public class CrimeMapper implements EntryPoint {
 
 	}
 
+
+
 	@SuppressWarnings("deprecation")
 	private void loadCrime(){
 		String crimeURL = newUrlTextBox.getText().trim();
@@ -326,7 +328,7 @@ public class CrimeMapper implements EntryPoint {
 		settingsVPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		settingsVPanel.setSpacing(spacing);
 		// Assemble elements for Settings Panel
-		
+
 
 		// Assemble Settings Panel to insert Settings 
 		settingsVPanel.add(settingsLabel);
@@ -460,6 +462,26 @@ public class CrimeMapper implements EntryPoint {
 	 */
 	private void updateTableTrends(int rowIndex) {
 
+	}
+
+	private ArrayList<ArrayList<Integer>> getTrends(int index) {
+		ArrayList<ArrayList<Integer>> trendsByYear = new ArrayList<>();
+		if (index<startOfDataRows) {return null;}
+		int baseYear = getYearFromTable(index);
+		CrimeDataByYear baseYearCrimeData = crimeDataMap.get(baseYear);
+		for (Map.Entry<Integer, CrimeDataByYear> otherYear: crimeDataMap.entrySet()){
+			CrimeDataByYear otherYearCrimeData = otherYear.getValue();
+			ArrayList<Integer> trendsByType = new ArrayList<>();
+			for (int i = 0; i < CrimeTypes.getNumberOfTypes(); i++) {
+				String type = CrimeTypes.getType(i);
+				int base = baseYearCrimeData.getNumberOfCrimeTypeOccurrences(type);
+				int other = otherYearCrimeData.getNumberOfCrimeTypeOccurrences(type);
+				int percentChange = (((other-base)/base)*100);
+				trendsByType.add(percentChange);
+			}
+			trendsByYear.add(trendsByType);
+		}
+		return trendsByYear;
 	}
 
 }
