@@ -13,6 +13,7 @@ import javax.jdo.Query;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.gwt.cs310project.crimemapper.client.CrimeDataByYear;
 import com.google.gwt.cs310project.crimemapper.client.NotLoggedInException;
 import com.google.gwt.cs310project.crimemapper.client.CrimeService;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -23,54 +24,33 @@ public class CrimeServiceImpl extends RemoteServiceServlet implements CrimeServi
 	  private static final PersistenceManagerFactory PMF =
 	      JDOHelper.getPersistenceManagerFactory("transactions-optional");
 
-	  public void addCrime(String year) throws NotLoggedInException {
+	  public void addCrime(CrimeDataByYear crimeDBYear) throws NotLoggedInException {
 	    checkLoggedIn();
 	    PersistenceManager pm = getPersistenceManager();
 	    try {
-	      pm.makePersistent(new Crime(getUser(), year));
+	      pm.makePersistent(new Crime(getUser(), crimeDBYear));
 	    } finally {
 	      pm.close();
 	    }
 	  }
 
-	  public void removeCrime(String year) throws NotLoggedInException {
-	    checkLoggedIn();
-	    PersistenceManager pm = getPersistenceManager();
-	    try {
-	      long deleteCount = 0;
-	      Query q = pm.newQuery(Crime.class, "user == u");
-	      q.declareParameters("com.google.appengine.api.users.User u");
-	      List<Crime> crimes = (List<Crime>) q.execute(getUser());
-	      for (Crime crime : crimes) {
-	        if (year.equals(crime.getYear())) {
-	          deleteCount++;
-	          pm.deletePersistent(crime);
-	        }
-	      }
-	      if (deleteCount != 1) {
-	        LOG.log(Level.WARNING, "removeCrime deleted "+deleteCount+" Crimes");
-	      }
-	    } finally {
-	      pm.close();
-	    }
-	  }
 
-	  public String[] getCrimes() throws NotLoggedInException {
+	  public CrimeDataByYear[] getCrimes() throws NotLoggedInException {
 	    checkLoggedIn();
 	    PersistenceManager pm = getPersistenceManager();
-	    List<String> years = new ArrayList<String>();
+	    List<CrimeDataByYear> crimeDBYear = new ArrayList<CrimeDataByYear>();
 	    try {
 	      Query q = pm.newQuery(Crime.class, "user == u");
 	      q.declareParameters("com.google.appengine.api.users.User u");
 	      q.setOrdering("createDate");
 	      List<Crime> crimes = (List<Crime>) q.execute(getUser());
 	      for (Crime crime : crimes) {
-	        years.add(crime.getYear());
+	        crimeDBYear.add(crime.getCrimeDBYear());
 	      }
 	    } finally {
 	      pm.close();
 	    }
-	    return (String[]) years.toArray(new String[0]);
+	    return (CrimeDataByYear[]) crimeDBYear.toArray(new CrimeDataByYear[0]);
 	  }
 
 	  private void checkLoggedIn() throws NotLoggedInException {

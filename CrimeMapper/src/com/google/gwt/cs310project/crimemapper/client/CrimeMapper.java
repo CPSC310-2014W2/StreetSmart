@@ -2,6 +2,8 @@ package com.google.gwt.cs310project.crimemapper.client;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
+import java.util.TreeMap;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -41,93 +43,83 @@ public class CrimeMapper implements EntryPoint {
 
 	// Static Panels
 	private VerticalPanel mainPanel = new VerticalPanel();
-	private VerticalPanel tableVPanel = new VerticalPanel(); // holds flex table, reset panel
+	private VerticalPanel tableVPanel = new VerticalPanel();
 	private VerticalPanel settingsVPanel = new VerticalPanel();
 	private VerticalPanel mapsVPanel = new VerticalPanel();
 	private HorizontalPanel clearTrendsButtonPanel = new HorizontalPanel();
+
+	// Dimensions and Spacing
 	private final String width = "100%";
 	private final String height = "100%";
 	private final int spacing = 20;
 
-	// Table features
+	// Table Tab elements
 	private FlexTable crimeFlexTable = new FlexTable();
 	private Button clearTrendsButton = new Button("Clear Trends");
 	private Label lastUploadedDateLabel = new Label();
 	private final int COLUMN_COUNT = 8;
+	private final int startOfDataRows = 2;
 	private int selectedRow;
+	private final int NO_TABLE_SELECTION_FLAG = -1;
 
+	// Settings Tab elements
 	private Button loadCrimeDataButton = new Button("Load Data");
-
-	// Settings Text Box flags
 	private MultiWordSuggestOracle oracle = new MultiWordSuggestOracle();
 	private SuggestBox newUrlTextBox = new SuggestBox(oracle);
-	private final int NO_TABLE_SELECTION_FLAG = -1;
 	private final int CLEAR_TEXT_BOX_FLAG = -1;
 	private int selectedTextBox = CLEAR_TEXT_BOX_FLAG;
-
-	// Crime Types
-	private final String crime1 = "Mischief Under $5000";
-	private final String crime2 = "Mischief Over $5000";
-	private final String crime3 = "Theft From Auto Under $5000";
-	private final String crime4 = "Theft From Auto Over $5000";
-	private final String crime5 = "Theft Of Auto Under $5000";
-	private final String crime6 = "Theft Of Auto Over $5000";
-	private final String crime7 = "Commercial Break and Enter";
-
+	private Label settingsLabel = new Label("");
 	// CrimeData RPC fields
-	private ArrayList<CrimeData> crimes = new ArrayList<CrimeData>();
 	private CrimeDataServiceAsync crimeDataSvc = GWT.create(CrimeDataService.class);
-	
-	//Login Fields
+
+	// Login Fields
 	private LoginInfo loginInfo = null;
 	private VerticalPanel loginPanel = new VerticalPanel();
 	private Label loginLabel = new Label(
-	      "Please sign in to your Account to access the CrimeMapper.");
+			"Please sign in to your Account to access the CrimeMapper.");
 	private Anchor signInLink = new Anchor("Sign In");
 	private Anchor signOutLink = new Anchor("Sign Out");
-	
-	// Databases
-	ArrayList<Integer[]> yearRows = new ArrayList<Integer[]>(); 
-	
+
+	// Databases 
+	private TreeMap<Integer, CrimeDataByYear> crimeDataMap = new TreeMap<Integer, CrimeDataByYear>();
+
 	/**
 	 * Entry point method.
 	 */
-
 	public void onModuleLoad() {
-		
-		// Check login status using login service.
-	    LoginServiceAsync loginService = GWT.create(LoginService.class);
-	    loginService.login(GWT.getHostPageBaseURL(), new AsyncCallback<LoginInfo>() {
-	      public void onFailure(Throwable error) {
-	      }
 
-	      public void onSuccess(LoginInfo result) {
-	        loginInfo = result;
-	        if(loginInfo.isLoggedIn()) {
-	          loadMainPanel();
-	        } else {
-	          loadLogin();
-	        }
-	      }
-	    });
+		// Check login status using login service.
+		LoginServiceAsync loginService = GWT.create(LoginService.class);
+		loginService.login(GWT.getHostPageBaseURL(), new AsyncCallback<LoginInfo>() {
+			public void onFailure(Throwable error) {
+			}
+
+			public void onSuccess(LoginInfo result) {
+				loginInfo = result;
+				if(loginInfo.isLoggedIn()) {
+					loadMainPanel();
+				} else {
+					loadLogin();
+				}
+			}
+		});
 	}
-	
-	
+
 	private void loadMainPanel(){
-		
+
 		signOutLink.setHref(loginInfo.getLogoutUrl());
 		applicationHandlers();
 		// Associate the Main panel with the HTML host page
 		RootPanel.get("crimeList").add(buildMainPanel());
 	}
-	
+
 	private void loadLogin(){
 		signInLink.setHref(loginInfo.getLoginUrl());
 		loginPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-	    loginPanel.add(loginLabel);
-	    loginPanel.add(signInLink);
-	    loginPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-	    RootPanel.get("crimeList").add(loginPanel);
+		loginPanel.add(loginLabel);
+		loginPanel.add(signInLink);
+		loginPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		RootPanel.get("crimeList").add(loginPanel);
 	}
 
 	private void applicationHandlers(){
@@ -135,6 +127,7 @@ public class CrimeMapper implements EntryPoint {
 		newUrlTextBox.getValueBox().addClickHandler(new ClickHandler(){
 			public void onClick(ClickEvent event){
 				if(selectedTextBox == CLEAR_TEXT_BOX_FLAG){
+					settingsLabel.setText("");
 					newUrlTextBox.setText("");
 					selectedTextBox = 0;
 				} 
@@ -168,6 +161,7 @@ public class CrimeMapper implements EntryPoint {
 
 	}
 
+	@SuppressWarnings("deprecation")
 	private void loadCrime(){
 		String crimeURL = newUrlTextBox.getText().trim();
 		oracle.add(crimeURL);
@@ -175,7 +169,7 @@ public class CrimeMapper implements EntryPoint {
 		newUrlTextBox.setText("Paste Crime URL here");
 		selectedTextBox = CLEAR_TEXT_BOX_FLAG;
 		lastUploadedDateLabel.setText("Last update : "
-			    + DateTimeFormat.getMediumDateTimeFormat().format(new Date()));
+				+ DateTimeFormat.getMediumDateTimeFormat().format(new Date()));
 	}
 
 	private void selectRow(int rowIndex){
@@ -184,7 +178,16 @@ public class CrimeMapper implements EntryPoint {
 			crimeFlexTable.getRowFormatter().setStyleName(rowIndex, "rowUnselectedShadow");
 			selectedRow = NO_TABLE_SELECTION_FLAG;
 		} else {
-			crimeFlexTable.getRowFormatter().setStyleName(rowIndex, "rowSelectedShadow");
+			int row = crimeFlexTable.getRowCount();
+			int i = startOfDataRows;
+			while(i < row){
+				if(i == rowIndex){
+					crimeFlexTable.getRowFormatter().setStyleName(rowIndex, "rowSelectedShadow");
+				} else {
+					crimeFlexTable.getRowFormatter().setStyleName(i, "rowUnselectedShadow");
+				}
+				i++;
+			}
 			// TODO Trends method
 			updateTableTrends(rowIndex);
 			selectedRow = rowIndex;
@@ -213,8 +216,9 @@ public class CrimeMapper implements EntryPoint {
 		//Create titles for tabs
 		String tab1Title = "Trends";
 		String tab2Title = "Map";
-		String tab3Title = "Settings";
-		String tab4Title = "FAQ";
+		String tab3Title = "FAQ";
+		String tab4Title = "Admin";
+
 
 		//Create Custom FlowPanels to add to TabPanel
 		FlowPanel flowpanel;
@@ -229,11 +233,11 @@ public class CrimeMapper implements EntryPoint {
 		tabPanel.add(flowpanel, tab2Title);
 
 		flowpanel = new FlowPanel();
-		flowpanel.add(buildSettingsTabPanel());
+		flowpanel.add(buildFaqTabPanel());
 		tabPanel.add(flowpanel, tab3Title);
 
 		flowpanel = new FlowPanel();
-		flowpanel.add(buildFaqTabPanel());
+		flowpanel.add(buildSettingsTabPanel());
 		tabPanel.add(flowpanel, tab4Title);
 
 		// first tab upon load
@@ -245,6 +249,7 @@ public class CrimeMapper implements EntryPoint {
 	 * Method for constructing Table Tab Panel 
 	 *  - style elements for table
 	 */
+	@SuppressWarnings("deprecation")
 	private Panel buildTableTabPanel(){
 		tableVPanel.setSize(width, height);
 		tableVPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
@@ -253,16 +258,9 @@ public class CrimeMapper implements EntryPoint {
 		// Create table and table headers for crime data.
 		crimeFlexTable.setText(1, 0, "Year");
 		crimeFlexTable.setText(0, 1, "Crime Type");
-		crimeFlexTable.setText(1, 1, crime1);
-		crimeFlexTable.setText(1, 2, crime2);
-		crimeFlexTable.setText(1, 3, crime3);
-		crimeFlexTable.setText(1, 4, crime4);
-		crimeFlexTable.setText(1, 5, crime5);
-		crimeFlexTable.setText(1, 6, crime6);
-		crimeFlexTable.setText(1, 7, crime7);
-
-		// TODO Possibly use enum to denote crime types and
-		// a loop to automatically add all crime types to table
+		for (int i = 0; i < CrimeTypes.getNumberOfTypes(); i++) {
+			crimeFlexTable.setText(1, i + 1, CrimeTypes.getType(i));
+		}
 
 		// Merging Crime Type to be over the Crime Types
 		FlexCellFormatter crimeTypeCellFormatter = crimeFlexTable.getFlexCellFormatter();
@@ -285,17 +283,17 @@ public class CrimeMapper implements EntryPoint {
 
 		// Assemble resetPanel.
 		clearTrendsButtonPanel.add(clearTrendsButton);
-		
+
 
 		// Date label
-		lastUploadedDateLabel.setText("MOST RECENT UPDATE DATE GOES HERE");
+		lastUploadedDateLabel.setText("Last update : "
+				+ DateTimeFormat.getMediumDateTimeFormat().format(new Date()));
 
 		// Assemble Table Panel to insert in Tab1 of Tab Panel
 		tableVPanel.add(crimeFlexTable);
 		tableVPanel.add(clearTrendsButtonPanel);
 		tableVPanel.add(lastUploadedDateLabel);
 		tableVPanel.add(signOutLink);
-
 
 		// return table constructed panel
 		return tableVPanel;
@@ -328,7 +326,7 @@ public class CrimeMapper implements EntryPoint {
 		settingsVPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		settingsVPanel.setSpacing(spacing);
 		// Assemble elements for Settings Panel
-		Label settingsLabel = new Label("SETTINGS WILL GO HERE");
+		
 
 		// Assemble Settings Panel to insert Settings 
 		settingsVPanel.add(settingsLabel);
@@ -354,19 +352,20 @@ public class CrimeMapper implements EntryPoint {
 		String appFact3 = "Fact 3";
 
 		// Crime Types
-		String cr1 = "Explanation 1";
-		String cr2 = "Explanation 2";
-		String cr3 = "Explanation 3";
-		String cr4 = "Explanation 4";
-		String cr5 = "Explanation 5";
-		String cr6 = "Explanation 6";
-		String cr7 = "Explanation 7";
+		ArrayList<String> explanations = new ArrayList<String>();
+		explanations.add("Explanation 1");
+		explanations.add("Explanation 2");
+		explanations.add("Explanation 3");
+		explanations.add("Explanation 4");
+		explanations.add("Explanation 5");
+		explanations.add("Explanation 6");
+		explanations.add("Explanation 7");
 
 		faqPanel.setSize(width,height);
 
 		Label label;
 
-		//Application Facts
+		// Application Facts
 		label = new Label(appFact1);
 		faqPanel.add(label, "Comparing Crime Statistics", false);
 
@@ -377,27 +376,12 @@ public class CrimeMapper implements EntryPoint {
 		faqPanel.add(label, "App Fact3", false);
 
 		String whatIs = "What is ";
-		//Crime facts
-		label = new Label(cr1);
-		faqPanel.add(label, whatIs + crime1, false);
 
-		label = new Label(cr2);
-		faqPanel.add(label, whatIs + crime2, false);
-
-		label = new Label(cr3);
-		faqPanel.add(label, whatIs + crime3, false);
-
-		label = new Label(cr4);
-		faqPanel.add(label, whatIs + crime4, false);
-
-		label = new Label(cr5);
-		faqPanel.add(label, whatIs + crime5, false);
-
-		label = new Label(cr6);
-		faqPanel.add(label, whatIs + crime6, false);
-
-		label = new Label(cr7);
-		faqPanel.add(label, whatIs + crime7, false);
+		// Crime facts
+		for (int i = 0; i < CrimeTypes.getNumberOfTypes(); i++) {
+			label = new Label(explanations.get(i));
+			faqPanel.add(label, whatIs + CrimeTypes.getType(i), false);
+		}
 
 		return faqPanel;
 	}
@@ -413,101 +397,69 @@ public class CrimeMapper implements EntryPoint {
 			crimeDataSvc = GWT.create(CrimeDataService.class);
 		}
 
-
 		// Set up the callback object.
-		AsyncCallback<ArrayList<CrimeData>> callback = new AsyncCallback<ArrayList<CrimeData>>(){
+		AsyncCallback<CrimeDataByYear> callback = new AsyncCallback<CrimeDataByYear>(){
 			public void onFailure(Throwable caught){
 				//TODO: Do something with errors.
 			}
 
-			public void onSuccess(ArrayList<CrimeData> result){
-				loadCrimeDataSet(result);
+			public void onSuccess(CrimeDataByYear result) {
+				if(!(result.getYear() == 0)){
+					settingsLabel.setText("Data Loaded Successfully");
+					addCrimeDataSet(result);
+				} else {
+					settingsLabel.setText("Seems Like an Error Loading Data");
+				}
 			}
 		}; 
 
 		// Make the call to the crime data service.
-		crimeDataSvc.getCrimeData(crimeURL, callback);
+		crimeDataSvc.getCrimeDataByYear(crimeURL, callback);
+	}
+
+	private void addCrimeDataSet(CrimeDataByYear result) {
+		// TODO Insert Persistent Method for DataStore
+		crimeDataMap.put(result.getYear(), result);
+		updateTableView(crimeDataMap);
+	}
+
+	private void updateTableView(TreeMap<Integer, CrimeDataByYear> crimeDataMap2) {
+
+		// remove rows to reload new data
+		refreshRows(crimeFlexTable.getRowCount());
+
+		for (Map.Entry<Integer, CrimeDataByYear> entry: crimeDataMap2.entrySet()){
+			int row = crimeFlexTable.getRowCount();
+			CrimeDataByYear value = entry.getValue(); 
+			crimeFlexTable.setText(row, 0, value.yearToString());
+			int i = 1;
+			while(i < COLUMN_COUNT){
+				int crimeOccurences = value.getNumberOfCrimeTypeOccurrences(CrimeTypes.getType(i-1));
+				crimeFlexTable.setText(row, i, ""+crimeOccurences);
+				i++;
+			}
+		}
 	}
 
 	/**
-	 *  Fill table with crime data
-	 * @param crimes
+	 * 
+	 * @param rowCount
 	 */
-
-	private void loadCrimeDataSet(ArrayList<CrimeData> crimes){
-		// Crime ListData
-		ArrayList<CrimeData> crime1List = new ArrayList<CrimeData>();
-		ArrayList<CrimeData> crime2List = new ArrayList<CrimeData>();
-		ArrayList<CrimeData> crime3List = new ArrayList<CrimeData>();
-		ArrayList<CrimeData> crime4List = new ArrayList<CrimeData>();
-		ArrayList<CrimeData> crime5List = new ArrayList<CrimeData>();
-		ArrayList<CrimeData> crime6List = new ArrayList<CrimeData>();
-		ArrayList<CrimeData> crime7List = new ArrayList<CrimeData>();
-
-		ArrayList<ArrayList<CrimeData>> crimeList = new ArrayList<ArrayList<CrimeData>>();
-		int year = crimes.get(0).getYear();
-
-		for (CrimeData crime: crimes){
-
-			String crimeType = crime.getType();
-			switch (crimeType) {
-			case crime1:  
-				crime1List.add(crime);
-				break;
-			case crime2:  
-				crime2List.add(crime);
-				break;
-			case crime3:  
-				crime3List.add(crime);
-				break;
-			case crime4:  
-				crime4List.add(crime);
-				break;
-			case crime5:  
-				crime5List.add(crime);
-				break;
-			case crime6:  
-				crime6List.add(crime);
-				break;
-			case crime7:  
-				crime7List.add(crime);
-				break;
-			default: break;
-			}
-		}
-
-		crimeList.add(crime1List);
-		crimeList.add(crime2List);
-		crimeList.add(crime3List);
-		crimeList.add(crime4List);
-		crimeList.add(crime5List);
-		crimeList.add(crime6List);
-		crimeList.add(crime7List);
-
-		updateTableView(crimeList, year);
-	}
-
-	// Inserting Data into table
-	private void updateTableView(ArrayList<ArrayList<CrimeData>> crimeList, int yr) {
-		String year = "" + yr;
-		int row = crimeFlexTable.getRowCount();
-		crimeFlexTable.setText(row, 0, year);
-		int i = 1;
-		while(i < COLUMN_COUNT){
-			int crimeFreq = crimeList.get(i - 1).size();
-			String crimeFreqS = "" + crimeFreq + "";
-			crimeFlexTable.setText(row, i, crimeFreqS);
-			crimeFreq = 0;
-			i++;
+	private void refreshRows(int rowCount) {
+		int n = startOfDataRows;
+		while(rowCount > n){
+			crimeFlexTable.removeRow(rowCount-1);
+			rowCount--;
 		}
 	}
+
 
 	/**
 	 * Update table view with trends labels
 	 * @param receiverRowIndex
 	 */
 	private void updateTableTrends(int rowIndex) {
-		// TODO Auto-generated method stub
+
 	}
 
 }

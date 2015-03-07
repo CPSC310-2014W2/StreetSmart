@@ -1,12 +1,15 @@
 package com.google.gwt.cs310project.crimemapper.server;
 
 import java.util.Date;
+
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
+
 import com.google.appengine.api.users.User;
+import com.google.gwt.cs310project.crimemapper.client.CrimeDataByYear;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class Crime {
@@ -16,7 +19,7 @@ public class Crime {
 	  @Persistent
 	  private User user;
 	  @Persistent
-	  private String year;
+	  private CrimeDataByYear crimeDBYear;
 	  @Persistent
 	  private Date createDate;
 
@@ -24,10 +27,10 @@ public class Crime {
 	    this.createDate = new Date();
 	  }
 
-	  public Crime(User user, String year) {
+	  public Crime(User user, CrimeDataByYear crimeDBYear) {
 	    this();
 	    this.user = user;
-	    this.year = year;
+	    this.crimeDBYear = crimeDBYear;
 	  }
 
 	  public Long getId() {
@@ -38,8 +41,8 @@ public class Crime {
 	    return this.user;
 	  }
 
-	  public String getYear() {
-	    return this.year;
+	  public CrimeDataByYear getCrimeDBYear() {
+	    return this.crimeDBYear;
 	  }
 
 	  public Date getCreateDate() {
@@ -50,8 +53,8 @@ public class Crime {
 	    this.user = user;
 	  }
 
-	  public void setYear(String year) {
-	    this.year = year;
+	  public void setCrimeDBYear(CrimeDataByYear crimeDBYear) {
+	    this.crimeDBYear = crimeDBYear;
 	  }
 	}
 	
