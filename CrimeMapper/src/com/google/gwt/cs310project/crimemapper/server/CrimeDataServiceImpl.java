@@ -17,11 +17,20 @@ public class CrimeDataServiceImpl extends RemoteServiceServlet implements CrimeD
 		// TODO: Shouldn't we make this method static?
 
 		ArrayList<CrimeData> crimeDataList = new ArrayList<CrimeData>();
-		CrimeDataByYear cdby = null;
+		crimeDataList = parseCrimeData(url);
+		int year = 0;
+		if(crimeDataList.size() > 0){
+			year = crimeDataList.get(0).getYear();
+		}
+		return new CrimeDataByYear(year, crimeDataList);
+	}
+
+	public ArrayList<CrimeData> parseCrimeData(String url) {
+		ArrayList<CrimeData> crimeDataList = new ArrayList<CrimeData>();
 		try {
 			URL crime = new URL(url);
 			BufferedReader crimeIn = new BufferedReader(
-				new InputStreamReader(crime.openStream()));
+					new InputStreamReader(crime.openStream()));
 			String inputLine = crimeIn.readLine();
 			int lineNumber = 1;
 			// The first line of the CSV file contains no data
@@ -31,28 +40,28 @@ public class CrimeDataServiceImpl extends RemoteServiceServlet implements CrimeD
 				crimeDataList.add(cd);
 				lineNumber++;
 			}
-			int year = crimeDataList.get(0).getYear();
-			cdby = new CrimeDataByYear(year, crimeDataList);
 			crimeIn.close();
 		} catch (Exception e) {
 			// Assume the URL works correctly for now, so do nothing
 			e.printStackTrace();
 		}
-		return cdby;
+
+		return crimeDataList;
 	}
-	
+
 	private CrimeData parseCrimeDataLine(String inputLine) {
 		Scanner sc = new Scanner(inputLine);
 		sc.useDelimiter(",");
 		String type = sc.next();
-		
+
 		if (type.equals("Commercial BE")){
 			type = "Commercial Break and Enter";
-			}
-		
+		}
+
 		if (type.equals("Theft From Auto Over  $5000")){
 			type = "Theft From Auto Over $5000";
 			}
+
 		if (type.equals("Thef Of Auto Under $5000")) {
 			type = "Theft Of Auto Under $5000";
 		}
