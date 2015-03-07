@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.StackPanel;
@@ -42,7 +43,7 @@ public class CrimeMapper implements EntryPoint {
 	private static final int COLUMN_COUNT = 8;
 	private static final int START_OF_DATA_ROWS = 2;
 	private static final int NO_TABLE_SELECTION_FLAG = -1;
-	
+
 	// Dynamic Panels
 	private TabPanel tabPanel = new TabPanel();
 	private StackPanel faqPanel = new StackPanel();
@@ -53,6 +54,7 @@ public class CrimeMapper implements EntryPoint {
 	private VerticalPanel settingsVPanel = new VerticalPanel();
 	private VerticalPanel mapsVPanel = new VerticalPanel();
 	private HorizontalPanel clearTrendsButtonPanel = new HorizontalPanel();
+	private VerticalPanel dataVisualizationPanel = new VerticalPanel();
 
 	// Dimensions and Spacing
 	private final String width = "100%";
@@ -65,7 +67,7 @@ public class CrimeMapper implements EntryPoint {
 	private Label lastUploadedDateLabel = new Label();
 	private Label selectedYearLabel = new Label();
 	private int selectedRow;
-	
+
 
 	// Settings Tab elements
 	private Button loadCrimeDataButton = new Button("Load Data");
@@ -74,7 +76,7 @@ public class CrimeMapper implements EntryPoint {
 	private final int CLEAR_TEXT_BOX_FLAG = -1;
 	private int selectedTextBox = CLEAR_TEXT_BOX_FLAG;
 	private Label settingsLabel = new Label("");
-	
+
 	// CrimeData RPC fields
 	private CrimeDataServiceAsync crimeDataSvc = GWT.create(CrimeDataService.class);
 
@@ -335,7 +337,7 @@ public class CrimeMapper implements EntryPoint {
 		settingsVPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		settingsVPanel.setSpacing(spacing);
 		// Assemble elements for Settings Panel
-		
+
 
 		// Assemble Settings Panel to insert Settings 
 		settingsVPanel.add(settingsLabel);
@@ -418,6 +420,7 @@ public class CrimeMapper implements EntryPoint {
 					addCrimeDataSet(result);
 				} else {
 					settingsLabel.setText("Seems Like an Error Loading Data");
+					
 				}
 			}
 		}; 
@@ -467,7 +470,7 @@ public class CrimeMapper implements EntryPoint {
 		year = Integer.parseInt(crimeFlexTable.getText(index, YEAR_COLUMN));
 		return year;
 	}
-	
+
 	/**
 	 * Update table view with trends labels
 	 * @param receiverRowIndex
