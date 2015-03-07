@@ -2,6 +2,7 @@ package com.google.gwt.cs310project.crimemapper.client;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.google.gwt.cs310project.crimemapper.client.CrimeTypes;
 
@@ -9,16 +10,25 @@ import com.google.gwt.cs310project.crimemapper.client.CrimeTypes;
 public class CrimeDataByYear implements Serializable {
 
 	private int year;
-	private ArrayList<CrimeData> crimesDataList;
-	private ArrayList<ArrayList<CrimeData>> filterByCrimeTypeList;
-	@SuppressWarnings("unused")
-	private CrimeDataByYear(){}
+	
+	private HashMap<String, ArrayList<CrimeData>> crimesDataList;
 
 	public CrimeDataByYear(int year, ArrayList<CrimeData> crimes){
+		
 		this.year = year;
-		this.crimesDataList = crimes;
-		filterByCrimeTypeList = new ArrayList<ArrayList<CrimeData>>();
-		sortCrimeType();
+		
+		crimesDataList = new HashMap<String, ArrayList<CrimeData>>();
+		
+		for (int i = 0; i < CrimeTypes.getNumberOfTypes(); i++) {
+			crimesDataList.put(CrimeTypes.getType(i), new ArrayList<CrimeData>());
+		}
+		
+		for (CrimeData crime : crimes) {
+			if (!crimesDataList.containsKey(crime.getType())) {
+				System.out.println(crime.getType());
+			}
+			crimesDataList.get(crime.getType()).add(crime);
+		}
 	}
 
 	public int getYear(){
@@ -28,64 +38,17 @@ public class CrimeDataByYear implements Serializable {
 	public String yearToString(){
 		return  "" + this.year;
 	}
-	public ArrayList<ArrayList<CrimeData>> getSortedCrimeList(){
-		return filterByCrimeTypeList;
-	}
-	public ArrayList<CrimeData> getCrimes(){
-		return this.crimesDataList;
-	}
-
-	public ArrayList<CrimeData> filterByCrimeType(String crimeType){
-
-		ArrayList<CrimeData> filteredCrimeData = new ArrayList<CrimeData>();
-
-		if(isCrimeType(crimeType)){
-			for (CrimeData crime: this.crimesDataList){
-
-				if(crime.getType().equals(crimeType))
-					filteredCrimeData.add(crime);
-			}
-		}
-
-		return filteredCrimeData;
-	}
-	
-	private void sortCrimeType(){
-		int n = CrimeTypes.getNumberOfTypes();
-		int i = 0; 
-		while(i < n){
-			filterByCrimeTypeList.add(filterByCrimeType(CrimeTypes.getType(i)));
-			i++;
-		}
-		
-	}
 
 	public int getNumberOfCrimeTypeOccurrences(String crimeType){
-		int num = 0;
-		
-		if(isCrimeType(crimeType)){
-			num = filterByCrimeType(crimeType).size();
-		}
-		return num;
-	}
-	
-	public boolean isCrimeType(String crimeType){
-		boolean isCrimeType = false;
-
-		int i = 0;
-		int n = CrimeTypes.getNumberOfTypes();
-		while(i < n){
-			String type = CrimeTypes.getType(i);
-			if(type.equals(crimeType)){
-				isCrimeType = true;
-			}
-			i++;
-		}
-		return isCrimeType;
+		return crimesDataList.get(crimeType).size();
 	}
 	
 	public String toString(){
-		return "" + getYear() + " had a total of " + crimesDataList.size() + " crimes.";
+		int numCrimes = 0;
+		for (int i = 0; i < CrimeTypes.getNumberOfTypes(); i++) {
+			numCrimes = numCrimes + crimesDataList.get(CrimeTypes.getType(i)).size();
+		}
+		return "" + getYear() + " had a total of " + numCrimes + " crimes.";
 	}
 
 	@Override
