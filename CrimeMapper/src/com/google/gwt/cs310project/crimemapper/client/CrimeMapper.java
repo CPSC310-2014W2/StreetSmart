@@ -54,7 +54,6 @@ public class CrimeMapper implements EntryPoint {
 	private VerticalPanel settingsVPanel = new VerticalPanel();
 	private VerticalPanel mapsVPanel = new VerticalPanel();
 	private HorizontalPanel clearTrendsButtonPanel = new HorizontalPanel();
-	private VerticalPanel dataVisualizationPanel = new VerticalPanel();
 
 	// Dimensions and Spacing
 	private final String width = "100%";
@@ -449,7 +448,7 @@ public class CrimeMapper implements EntryPoint {
 			int i = 1;
 			while(i < COLUMN_COUNT){
 				int crimeOccurences = value.getNumberOfCrimeTypeOccurrences(CrimeTypes.getType(i-1));
-				crimeFlexTable.setText(row, i, ""+crimeOccurences);
+				crimeFlexTable.setText(row, i, ""+crimeOccurences+"");
 				i++;
 			}
 		}
