@@ -248,10 +248,11 @@ public class CrimeMapper implements EntryPoint {
 		flowpanel.add(buildFaqTabPanel());
 		tabPanel.add(flowpanel, tab3Title);
 
-		flowpanel = new FlowPanel();
-		flowpanel.add(buildSettingsTabPanel());
-		tabPanel.add(flowpanel, tab4Title);
-
+		if(loginInfo.isAdmin()){
+			flowpanel = new FlowPanel();
+			flowpanel.add(buildSettingsTabPanel());
+			tabPanel.add(flowpanel, tab4Title);
+		}
 		// first tab upon load
 		tabPanel.selectTab(0);
 		return tabPanel;

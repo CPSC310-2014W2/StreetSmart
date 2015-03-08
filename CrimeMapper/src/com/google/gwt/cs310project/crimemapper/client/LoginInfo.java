@@ -9,6 +9,7 @@ public class LoginInfo implements Serializable {
 	private String logoutUrl;
 	private String emailAddress;
 	private String nickname;
+	private boolean bAdmin=false;
 
 	public boolean isLoggedIn() {
 		return loggedIn;
@@ -49,4 +50,13 @@ public class LoginInfo implements Serializable {
 	public void setNickname(String nickname) {
 		this.nickname = nickname;
 	}
+	
+	public void setAdmin(boolean b){
+		this.bAdmin = b;
+	}
+	
+	public boolean isAdmin(){
+		return bAdmin;
+	}
+	
 }
