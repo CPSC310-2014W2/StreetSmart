@@ -188,20 +188,23 @@ public class CrimeMapper implements EntryPoint {
 			crimeFlexTable.getRowFormatter().setStyleName(rowIndex, "rowUnselectedShadow");
 			selectedYearLabel.setText("");
 			selectedRow = NO_TABLE_SELECTION_FLAG;
+			//TODO clear trends
 		} else {
 			int row = crimeFlexTable.getRowCount();
 			int i = START_OF_DATA_ROWS;
+		//	ArrayList<ArrayList<Integer>> trends = getTrends(rowIndex);
+		//	updateTableTrends(trends);
 			while(i < row){
 				if(i == rowIndex){
 					crimeFlexTable.getRowFormatter().setStyleName(rowIndex, "rowSelectedShadow");
-					selectedYearLabel.setText(""+getYearFromTable(rowIndex));
+					selectedYearLabel.setText("Selected Base Year: "+getYearFromTable(rowIndex));
 				} else {
 					crimeFlexTable.getRowFormatter().setStyleName(i, "rowUnselectedShadow");
 				}
+				System.out.println(i);
 				i++;
 			}
-			// TODO Trends method
-			updateTableTrends(getTrends(rowIndex));
+
 			selectedRow = rowIndex;
 		}
 	}
@@ -422,7 +425,7 @@ public class CrimeMapper implements EntryPoint {
 					addCrimeDataSet(result);
 				} else {
 					settingsLabel.setText("Seems Like an Error Loading Data");
-					
+
 				}
 			}
 		}; 
@@ -473,10 +476,11 @@ public class CrimeMapper implements EntryPoint {
 		return year;
 	}
 
-	private ArrayList<ArrayList<Integer>> getTrends(int index) {
+	/*private ArrayList<ArrayList<Integer>> getTrends(int index) {
 		ArrayList<ArrayList<Integer>> trendsByYear = new ArrayList<>();
 		if (index<START_OF_DATA_ROWS) {return null;}
 		int baseYear = getYearFromTable(index);
+		System.out.println(baseYear);
 		CrimeDataByYear baseYearCrimeData = crimeDataMap.get(baseYear);
 		for (Map.Entry<Integer, CrimeDataByYear> otherYear: crimeDataMap.entrySet()){
 			CrimeDataByYear otherYearCrimeData = otherYear.getValue();
@@ -486,21 +490,36 @@ public class CrimeMapper implements EntryPoint {
 				int base = baseYearCrimeData.getNumberOfCrimeTypeOccurrences(type);
 				int other = otherYearCrimeData.getNumberOfCrimeTypeOccurrences(type);
 				int percentChange = (((other-base)/base)*100);
+				System.out.println(percentChange);
 				trendsByType.add(percentChange);
 			}
 			trendsByYear.add(trendsByType);
 		}
 		return trendsByYear;
-}
+	}*/
 
 	/**
 	 * Update table view with trends labels
 	 * @param receiverRowIndex
 	 */
-	private void updateTableTrends(ArrayList<ArrayList<Integer>> trendsByYear) {
-
-	}
-
+	/*private void updateTableTrends(ArrayList<ArrayList<Integer>> trendsByRow) {
+		int row = crimeFlexTable.getRowCount();
+		int currentRow = START_OF_DATA_ROWS;
+		int i = 1;
+		while (currentRow < row){
+			while(i < COLUMN_COUNT){
+				String cellText = crimeFlexTable.getText(currentRow, i);
+				crimeFlexTable.setText(currentRow, i, cellText 
+						+ " (" + trendsByRow.get(currentRow).get(i) + "%)");
+				System.out.println(i);
+				i++;
+			}
+			System.out.println(currentRow);
+			currentRow++;
+		}
+	} */
 }
+
+
 
 
