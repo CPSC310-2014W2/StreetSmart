@@ -43,6 +43,8 @@ public class CrimeMapper implements EntryPoint {
 	private static final int COLUMN_COUNT = 8;
 	private static final int START_OF_DATA_ROWS = 2;
 	private static final int NO_TABLE_SELECTION_FLAG = -1;
+	private static final int BASE_YEAR = 2003;
+	private static final int NUM_YEARS = 12;
 
 	// Dynamic Panels
 	private TabPanel tabPanel = new TabPanel();
@@ -76,6 +78,11 @@ public class CrimeMapper implements EntryPoint {
 	private final int CLEAR_TEXT_BOX_FLAG = -1;
 	private int selectedTextBox = CLEAR_TEXT_BOX_FLAG;
 	private Label settingsLabel = new Label("");
+	private VerticalPanel localBackupPanel = new VerticalPanel();
+	private ListBox localBackupListBox = new ListBox();
+	private Label localBackupLabel = new Label("Please choose a file to load from local backup:");
+	private Button localBackupAddButton = new Button("Add");
+	private Button localBackupCancelButton = new Button("Cancel");
 
 	// CrimeData RPC fields
 	private CrimeDataServiceAsync crimeDataSvc = GWT.create(CrimeDataService.class);
@@ -164,6 +171,23 @@ public class CrimeMapper implements EntryPoint {
 				Cell cell = crimeFlexTable.getCellForEvent(event);
 				int rowIndex = cell.getRowIndex();
 				selectRow(rowIndex);
+			}
+		});
+
+		// Listen for mouse events on local backup Add button
+		localBackupAddButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				int year = BASE_YEAR + localBackupListBox.getSelectedIndex();
+				String filePath = "http://127.0.0.1:8888/data/crime_" + year + ".csv";
+				refreshCrimeList(filePath);
+			}
+		});
+
+		// Listen for mouse events on local backup Cancel button
+		localBackupCancelButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				localBackupPanel.setVisible(false);
+				settingsLabel.setText("");
 			}
 		});
 
@@ -347,6 +371,19 @@ public class CrimeMapper implements EntryPoint {
 		settingsVPanel.add(newUrlTextBox);
 		settingsVPanel.add(loadCrimeDataButton);
 
+		// Assemble the listbox that loads backup data from local
+		localBackupPanel.setVisible(false);
+		localBackupPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		localBackupPanel.add(localBackupLabel);
+		localBackupPanel.add(localBackupListBox);
+		localBackupLabel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		settingsVPanel.add(localBackupPanel);
+		for (int i = 0; i < NUM_YEARS; i++) {
+			localBackupListBox.addItem(Integer.toString(BASE_YEAR + i));
+		}
+		localBackupPanel.add(localBackupAddButton);
+		localBackupPanel.add(localBackupCancelButton);
+
 		return settingsVPanel;
 	}
 
@@ -420,9 +457,10 @@ public class CrimeMapper implements EntryPoint {
 				if(!(result.getYear() == 0)){
 					settingsLabel.setText("Data Loaded Successfully");
 					addCrimeDataSet(result);
+					localBackupPanel.setVisible(false);
 				} else {
 					settingsLabel.setText("Seems Like an Error Loading Data");
-					
+					localBackupPanel.setVisible(true);
 				}
 			}
 		}; 
@@ -508,7 +546,7 @@ public class CrimeMapper implements EntryPoint {
 		}
 
 		return trendsByYear;
-}
+	}
 
 	/**
 	 * Update table view with trends labels
