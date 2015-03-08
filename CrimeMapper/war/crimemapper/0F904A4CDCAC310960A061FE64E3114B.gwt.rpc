@@ -1,4 +1,5 @@
 com.google.gwt.cs310project.crimemapper.client.CrimeData, true, true, false, false, com.google.gwt.cs310project.crimemapper.client.CrimeData/959761761, 959761761
+com.google.gwt.cs310project.crimemapper.client.CrimeDataByYear, true, true, false, false, com.google.gwt.cs310project.crimemapper.client.CrimeDataByYear/1321459471, 1321459471
 com.google.gwt.cs310project.crimemapper.client.CrimeDataService, false, false, false, false, _, 4250682300
 com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException, true, true, true, true, com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException/3936916533, 3936916533
 com.google.gwt.user.client.rpc.RpcTokenException, true, true, false, false, com.google.gwt.user.client.rpc.RpcTokenException/2345075298, 2345075298
@@ -8,3 +9,5 @@ java.lang.RuntimeException, true, false, true, false, java.lang.RuntimeException
 java.lang.String, true, true, true, true, java.lang.String/2004016611, 2004016611
 java.lang.Throwable, true, false, true, false, java.lang.Throwable/2953622131, 2953622131
 java.util.ArrayList, true, true, false, false, java.util.ArrayList/4159755760, 4159755760
+java.util.HashMap, true, true, false, false, java.util.HashMap/1797211028, 1797211028
+java.util.LinkedHashMap, true, true, false, false, java.util.LinkedHashMap/3008245022, 3008245022
