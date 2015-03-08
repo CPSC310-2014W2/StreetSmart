@@ -22,7 +22,7 @@ public class CrimeTest {
 	@Before
 	public void setUp(){
 		cdsi = new CrimeDataServiceImpl();
-		cdl2003 = cdsi.getCrimeDataByYear("file:./data/crime_2003.csv");
+		cdl2003 = cdsi.getCrimeDataByYear("file:./war/data/crime_2003.csv");
 		crimeYear = cdl2003.getYear();
 		crimeType = "Theft From Auto Over $5000";
 		crimeTypeNum = 215;
