@@ -463,11 +463,8 @@ public class CrimeMapper implements EntryPoint {
 					localBackupPanel.setVisible(false);
 				} else {
 					settingsLabel.setText("Seems Like an Error Loading Data");
-<<<<<<< HEAD
 
-=======
 					localBackupPanel.setVisible(true);
->>>>>>> 7acda44147d1871323196c3cfdbd97d1d6617eb2
 				}
 			}
 		}; 
@@ -512,7 +509,7 @@ public class CrimeMapper implements EntryPoint {
 		}
 	}
 
-	private int getYearFromTable(int index){
+	private int getYearFromTable(int index) {
 		int year = 0;
 		year = Integer.parseInt(crimeFlexTable.getText(index, YEAR_COLUMN));
 		return year;
@@ -538,11 +535,8 @@ public class CrimeMapper implements EntryPoint {
 			trendsByYear.add(trendsByType);
 		}
 		return trendsByYear;
-<<<<<<< HEAD
 	}*/
-=======
-	}
->>>>>>> 7acda44147d1871323196c3cfdbd97d1d6617eb2
+
 
 	/**
 	 * Update table view with trends labels
