@@ -42,6 +42,7 @@ public class CrimeMapper implements EntryPoint {
 	private static final int YEAR_COLUMN = 0;
 	private static final int COLUMN_COUNT = 8;
 	private static final int START_OF_DATA_ROWS = 2;
+	private static final int START_OF_DATA_COLUMNS = 1;
 	private static final int NO_TABLE_SELECTION_FLAG = -1;
 	private static final int BASE_YEAR = 2003;
 	private static final int NUM_YEARS = 12;
@@ -559,15 +560,15 @@ public class CrimeMapper implements EntryPoint {
 		int row = crimeFlexTable.getRowCount();
 		int r = START_OF_DATA_ROWS;
 		while (r < row){
-			for (int i=1; i < COLUMN_COUNT; i++){
+			for (int i=START_OF_DATA_COLUMNS; i < COLUMN_COUNT; i++){
 				String cellText = crimeFlexTable.getText(r, i);
 				if (cellText.contains("(")){
 				int cutoff = ((cellText.indexOf("("))-1);
 				String newCellText = cellText.substring(0, cutoff);
 				crimeFlexTable.setText(r, i, newCellText 
-						+ " (" + trendsByRow.get(r-2).get(i-1) + "%)");}
+						+ " (" + trendsByRow.get(r-START_OF_DATA_ROWS).get(i-START_OF_DATA_COLUMNS) + "%)");}
 				else {crimeFlexTable.setText(r, i, cellText 
-						+ " (" + trendsByRow.get(r-2).get(i-1) + "%)");}
+						+ " (" + trendsByRow.get(r-START_OF_DATA_ROWS).get(i-START_OF_DATA_COLUMNS) + "%)");}
 			}
 			r++;
 		}
@@ -578,7 +579,7 @@ public class CrimeMapper implements EntryPoint {
 			int row = crimeFlexTable.getRowCount();
 			int r = START_OF_DATA_ROWS;
 			while (r < row){
-				for (int i=1; i < COLUMN_COUNT; i++){
+				for (int i=START_OF_DATA_COLUMNS; i < COLUMN_COUNT; i++){
 					String cellText = crimeFlexTable.getText(r, i);
 					int cutoff = ((cellText.indexOf("("))-1);
 					String newCellText = cellText.substring(0, cutoff);
