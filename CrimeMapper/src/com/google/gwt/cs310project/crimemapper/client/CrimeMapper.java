@@ -45,6 +45,7 @@ public class CrimeMapper implements EntryPoint {
 	private static final int YEAR_COLUMN = 0;
 	private static final int COLUMN_COUNT = 8;
 	private static final int START_OF_DATA_ROWS = 2;
+	private static final int START_OF_DATA_COLUMNS = 1;
 	private static final int NO_TABLE_SELECTION_FLAG = -1;
 	private static final int BASE_YEAR = 2003;
 	private static final int NUM_YEARS = 12;
@@ -61,7 +62,7 @@ public class CrimeMapper implements EntryPoint {
 	private HorizontalPanel clearTrendsButtonPanel = new HorizontalPanel();
 	private VerticalPanel trendsVPanel = new VerticalPanel();
 	private DockLayoutPanel barChartPanel;
-	
+
 	// Dimensions and Spacing
 	private final String WIDTH = "100%";
 	private final String HEIGHT = "100%";
@@ -170,6 +171,21 @@ public class CrimeMapper implements EntryPoint {
 			}
 		});
 
+		// Listen for mouse events on Clear Trends btn
+		clearTrendsButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				clearTrends();
+				selectedYearLabel.setText("");
+				selectedRow = NO_TABLE_SELECTION_FLAG;
+				int row = crimeFlexTable.getRowCount();
+				int i = START_OF_DATA_ROWS;
+				while(i < row){
+					crimeFlexTable.getRowFormatter().setStyleName(i, "rowUnselectedShadow");
+					i++;
+				}
+			}
+		});
+
 		// Listen for mouse click on the Rows in table and Highlight row.
 		crimeFlexTable.addClickHandler(new ClickHandler(){
 			public void onClick(ClickEvent event){
@@ -215,11 +231,16 @@ public class CrimeMapper implements EntryPoint {
 		if (rowIndex == selectedRow)
 		{
 			crimeFlexTable.getRowFormatter().setStyleName(rowIndex, "rowUnselectedShadow");
+			clearTrends();
 			selectedYearLabel.setText("");
 			selectedRow = NO_TABLE_SELECTION_FLAG;
 		} else {
 			int row = crimeFlexTable.getRowCount();
 			int i = START_OF_DATA_ROWS;
+
+			ArrayList<ArrayList<Double>> trends = getTrends(rowIndex);
+			updateTableTrends(trends);
+
 			while(i < row){
 				if(i == rowIndex){
 					crimeFlexTable.getRowFormatter().setStyleName(rowIndex, "rowSelectedShadow");
@@ -290,18 +311,18 @@ public class CrimeMapper implements EntryPoint {
 	 * Build trend tab
 	 */
 	private Panel buildTrendsTabPanel(){
-		
+
 		trendsVPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		trendsVPanel.setSpacing(SPACING);
 		trendsVPanel.add(buildTableTabPanel());
 		trendsVPanel.add(buildBarChartPanel());
-		
-		
+
+
 		return trendsVPanel;
 	}
-	
+
 	private Panel buildBarChartPanel() {
-		
+
 		barChartPanel = new TrendColumnChart(crimeDataMap);
 		barChartPanel.setSize("90em", "20em");
 		return barChartPanel;
@@ -498,7 +519,7 @@ public class CrimeMapper implements EntryPoint {
 	private void addCrimeDataSet(CrimeDataByYear result) {
 		// TODO Insert Persistent Method for DataStore
 		crimeDataMap.put(result.getYear(), result);
-		
+
 		updateTableView(crimeDataMap);
 	}
 
@@ -538,9 +559,9 @@ public class CrimeMapper implements EntryPoint {
 		return year;
 	}
 
-	private ArrayList<ArrayList<Integer>> getTrends(int index) {
 
-		ArrayList<ArrayList<Integer>> trendsByYear = new ArrayList<>();
+	private ArrayList<ArrayList<Double>> getTrends(int index) {
+		ArrayList<ArrayList<Double>> trendsByYear = new ArrayList<ArrayList<Double>>();
 
 		if (index<START_OF_DATA_ROWS) {return null;}
 
@@ -551,19 +572,17 @@ public class CrimeMapper implements EntryPoint {
 		for (Map.Entry<Integer, CrimeDataByYear> otherYear: crimeDataMap.entrySet()){
 
 			CrimeDataByYear otherYearCrimeData = otherYear.getValue();
-
-			ArrayList<Integer> trendsByType = new ArrayList<>();
+			ArrayList<Double> trendsByType = new ArrayList<>();
 
 			for (int i = 0; i < CrimeTypes.getNumberOfTypes(); i++) {
 
 				String type = CrimeTypes.getType(i);
 
-				int base = baseYearCrimeData.getNumberOfCrimeTypeOccurrences(type);
-
-				int other = otherYearCrimeData.getNumberOfCrimeTypeOccurrences(type);
-
-				int percentChange = (((other-base)/base)*100);
-
+				double base = baseYearCrimeData.getNumberOfCrimeTypeOccurrences(type);
+				double other = otherYearCrimeData.getNumberOfCrimeTypeOccurrences(type);
+				double percentChange = (((other - base) / base) * 100);
+				// Round to two decimal places
+				percentChange = Math.floor(percentChange*100)/100;
 				trendsByType.add(percentChange);
 
 			}
@@ -579,10 +598,45 @@ public class CrimeMapper implements EntryPoint {
 	 * Update table view with trends labels
 	 * @param receiverRowIndex
 	 */
-	private void updateTableTrends(ArrayList<ArrayList<Integer>> trendsByYear) {
 
+	private void updateTableTrends(ArrayList<ArrayList<Double>> trendsByRow) {
+		int row = crimeFlexTable.getRowCount();
+		int r = START_OF_DATA_ROWS;
+		while (r < row){
+			for (int i=START_OF_DATA_COLUMNS; i < COLUMN_COUNT; i++){
+				String cellText = crimeFlexTable.getText(r, i);
+				if (cellText.contains("(")){
+					int cutoff = ((cellText.indexOf("("))-1);
+					String newCellText = cellText.substring(0, cutoff);
+					crimeFlexTable.setText(r, i, newCellText 
+							+ " (" + trendsByRow.get(r-START_OF_DATA_ROWS).get(i-START_OF_DATA_COLUMNS) + "%)");}
+				else {crimeFlexTable.setText(r, i, cellText 
+						+ " (" + trendsByRow.get(r-START_OF_DATA_ROWS).get(i-START_OF_DATA_COLUMNS) + "%)");}
+			}
+			r++;
+		}
 	}
 
+	private void clearTrends(){
+		if (!(selectedRow == NO_TABLE_SELECTION_FLAG)){
+			int row = crimeFlexTable.getRowCount();
+			int r = START_OF_DATA_ROWS;
+			while (r < row){
+				for (int i=START_OF_DATA_COLUMNS; i < COLUMN_COUNT; i++){
+					String cellText = crimeFlexTable.getText(r, i);
+					int cutoff = ((cellText.indexOf("("))-1);
+					String newCellText = cellText.substring(0, cutoff);
+					crimeFlexTable.setText(r, i, newCellText);
+				}
+				r++;
+			}
+		}
+	}
 }
+
+
+
+
+
 
 
