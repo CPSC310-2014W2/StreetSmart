@@ -232,7 +232,7 @@ public class CrimeMapper implements EntryPoint {
 		} else {
 			int row = crimeFlexTable.getRowCount();
 			int i = START_OF_DATA_ROWS;
-			ArrayList<ArrayList<Integer>> trends = getTrends(rowIndex);
+			ArrayList<ArrayList<Double>> trends = getTrends(rowIndex);
 			updateTableTrends(trends);
 			while(i < row){
 				if(i == rowIndex){
@@ -531,19 +531,21 @@ public class CrimeMapper implements EntryPoint {
 		return year;
 	}
 
-	private ArrayList<ArrayList<Integer>> getTrends(int index) {
-		ArrayList<ArrayList<Integer>> trendsByYear = new ArrayList();
+	private ArrayList<ArrayList<Double>> getTrends(int index) {
+		ArrayList<ArrayList<Double>> trendsByYear = new ArrayList<ArrayList<Double>>();
 		if (index<START_OF_DATA_ROWS) {return null;}
 		int baseYear = getYearFromTable(index);
 		CrimeDataByYear baseYearCrimeData = crimeDataMap.get(baseYear);
 		for (Map.Entry<Integer, CrimeDataByYear> otherYear: crimeDataMap.entrySet()){
 			CrimeDataByYear otherYearCrimeData = otherYear.getValue();
-			ArrayList<Integer> trendsByType = new ArrayList<>();
+			ArrayList<Double> trendsByType = new ArrayList<>();
 			for (int i = 0; i < CrimeTypes.getNumberOfTypes(); i++) {
 				String type = CrimeTypes.getType(i);
-				int base = baseYearCrimeData.getNumberOfCrimeTypeOccurrences(type);
-				int other = otherYearCrimeData.getNumberOfCrimeTypeOccurrences(type);
-				int percentChange = (((other - base) / base) * 100);
+				double base = baseYearCrimeData.getNumberOfCrimeTypeOccurrences(type);
+				double other = otherYearCrimeData.getNumberOfCrimeTypeOccurrences(type);
+				double percentChange = (((other - base) / base) * 100);
+				// Round to two decimal places
+				percentChange = Math.floor(percentChange*100)/100;
 				trendsByType.add(percentChange);
 			}
 			trendsByYear.add(trendsByType);
@@ -556,7 +558,7 @@ public class CrimeMapper implements EntryPoint {
 	 * Update table view with trends labels
 	 * @param receiverRowIndex
 	 */
-	private void updateTableTrends(ArrayList<ArrayList<Integer>> trendsByRow) {
+	private void updateTableTrends(ArrayList<ArrayList<Double>> trendsByRow) {
 		int row = crimeFlexTable.getRowCount();
 		int r = START_OF_DATA_ROWS;
 		while (r < row){
