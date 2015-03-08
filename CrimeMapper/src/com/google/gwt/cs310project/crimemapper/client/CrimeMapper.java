@@ -164,6 +164,21 @@ public class CrimeMapper implements EntryPoint {
 			}
 		});
 
+		// Listen for mouse events on Clear Trends btn
+		clearTrendsButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				clearTrends();
+				selectedYearLabel.setText("");
+				selectedRow = NO_TABLE_SELECTION_FLAG;
+				int row = crimeFlexTable.getRowCount();
+				int i = START_OF_DATA_ROWS;
+				while(i < row){
+					crimeFlexTable.getRowFormatter().setStyleName(i, "rowUnselectedShadow");
+					i++;
+				}
+			}
+		});
+
 		// Listen for mouse click on the Rows in table and Highlight row.
 		crimeFlexTable.addClickHandler(new ClickHandler(){
 			public void onClick(ClickEvent event){
@@ -209,14 +224,14 @@ public class CrimeMapper implements EntryPoint {
 		if (rowIndex == selectedRow)
 		{
 			crimeFlexTable.getRowFormatter().setStyleName(rowIndex, "rowUnselectedShadow");
+			clearTrends();
 			selectedYearLabel.setText("");
 			selectedRow = NO_TABLE_SELECTION_FLAG;
-			//TODO clear trends
 		} else {
 			int row = crimeFlexTable.getRowCount();
 			int i = START_OF_DATA_ROWS;
-		//	ArrayList<ArrayList<Integer>> trends = getTrends(rowIndex);
-		//	updateTableTrends(trends);
+			ArrayList<ArrayList<Integer>> trends = getTrends(rowIndex);
+			updateTableTrends(trends);
 			while(i < row){
 				if(i == rowIndex){
 					crimeFlexTable.getRowFormatter().setStyleName(rowIndex, "rowSelectedShadow");
@@ -224,7 +239,6 @@ public class CrimeMapper implements EntryPoint {
 				} else {
 					crimeFlexTable.getRowFormatter().setStyleName(i, "rowUnselectedShadow");
 				}
-				System.out.println(i);
 				i++;
 			}
 
@@ -515,11 +529,10 @@ public class CrimeMapper implements EntryPoint {
 		return year;
 	}
 
-	/*private ArrayList<ArrayList<Integer>> getTrends(int index) {
-		ArrayList<ArrayList<Integer>> trendsByYear = new ArrayList<>();
+	private ArrayList<ArrayList<Integer>> getTrends(int index) {
+		ArrayList<ArrayList<Integer>> trendsByYear = new ArrayList();
 		if (index<START_OF_DATA_ROWS) {return null;}
 		int baseYear = getYearFromTable(index);
-		System.out.println(baseYear);
 		CrimeDataByYear baseYearCrimeData = crimeDataMap.get(baseYear);
 		for (Map.Entry<Integer, CrimeDataByYear> otherYear: crimeDataMap.entrySet()){
 			CrimeDataByYear otherYearCrimeData = otherYear.getValue();
@@ -528,36 +541,52 @@ public class CrimeMapper implements EntryPoint {
 				String type = CrimeTypes.getType(i);
 				int base = baseYearCrimeData.getNumberOfCrimeTypeOccurrences(type);
 				int other = otherYearCrimeData.getNumberOfCrimeTypeOccurrences(type);
-				int percentChange = (((other-base)/base)*100);
-				System.out.println(percentChange);
+				int percentChange = (((other - base) / base) * 100);
 				trendsByType.add(percentChange);
 			}
 			trendsByYear.add(trendsByType);
 		}
 		return trendsByYear;
-	}*/
+	}
 
 
 	/**
 	 * Update table view with trends labels
 	 * @param receiverRowIndex
 	 */
-	/*private void updateTableTrends(ArrayList<ArrayList<Integer>> trendsByRow) {
+	private void updateTableTrends(ArrayList<ArrayList<Integer>> trendsByRow) {
 		int row = crimeFlexTable.getRowCount();
-		int currentRow = START_OF_DATA_ROWS;
-		int i = 1;
-		while (currentRow < row){
-			while(i < COLUMN_COUNT){
-				String cellText = crimeFlexTable.getText(currentRow, i);
-				crimeFlexTable.setText(currentRow, i, cellText 
-						+ " (" + trendsByRow.get(currentRow).get(i) + "%)");
-				System.out.println(i);
-				i++;
+		int r = START_OF_DATA_ROWS;
+		while (r < row){
+			for (int i=1; i < COLUMN_COUNT; i++){
+				String cellText = crimeFlexTable.getText(r, i);
+				if (cellText.contains("(")){
+				int cutoff = ((cellText.indexOf("("))-1);
+				String newCellText = cellText.substring(0, cutoff);
+				crimeFlexTable.setText(r, i, newCellText 
+						+ " (" + trendsByRow.get(r-2).get(i-1) + "%)");}
+				else {crimeFlexTable.setText(r, i, cellText 
+						+ " (" + trendsByRow.get(r-2).get(i-1) + "%)");}
 			}
-			System.out.println(currentRow);
-			currentRow++;
+			r++;
 		}
-	} */
+	}
+
+	private void clearTrends(){
+		if (!(selectedRow == NO_TABLE_SELECTION_FLAG)){
+			int row = crimeFlexTable.getRowCount();
+			int r = START_OF_DATA_ROWS;
+			while (r < row){
+				for (int i=1; i < COLUMN_COUNT; i++){
+					String cellText = crimeFlexTable.getText(r, i);
+					int cutoff = ((cellText.indexOf("("))-1);
+					String newCellText = cellText.substring(0, cutoff);
+					crimeFlexTable.setText(r, i, newCellText);
+				}
+				r++;
+			}
+		}
+	}
 }
 
 
