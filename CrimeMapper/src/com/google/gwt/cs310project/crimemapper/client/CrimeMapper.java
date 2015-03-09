@@ -57,6 +57,7 @@ public class CrimeMapper implements EntryPoint {
 	private VerticalPanel mapsVPanel = new VerticalPanel();
 	private HorizontalPanel clearTrendsButtonPanel = new HorizontalPanel();
 	private VerticalPanel dataVisualizationPanel = new VerticalPanel();
+	private HorizontalPanel accountHPanel = new HorizontalPanel();
 
 	// Dimensions and Spacing
 	private final String width = "100%";
@@ -254,6 +255,7 @@ public class CrimeMapper implements EntryPoint {
 		String tab2Title = "Map";
 		String tab3Title = "FAQ";
 		String tab4Title = "Admin";
+		String tab5Title = "Account";
 
 
 		//Create Custom FlowPanels to add to TabPanel
@@ -272,11 +274,17 @@ public class CrimeMapper implements EntryPoint {
 		flowpanel.add(buildFaqTabPanel());
 		tabPanel.add(flowpanel, tab3Title);
 
+		flowpanel = new FlowPanel();
+		flowpanel.add(buildSettingsTabPanel());
+		tabPanel.add(flowpanel, tab4Title);
+	
+		
 		if(loginInfo.isAdmin()){
 			flowpanel = new FlowPanel();
-			flowpanel.add(buildSettingsTabPanel());
-			tabPanel.add(flowpanel, tab4Title);
+			flowpanel.add(buildAccountTabPanel());
+			tabPanel.add(flowpanel, tab5Title);
 		}
+		
 		// first tab upon load
 		tabPanel.selectTab(0);
 		return tabPanel;
@@ -386,6 +394,12 @@ public class CrimeMapper implements EntryPoint {
 		localBackupPanel.add(localBackupCancelButton);
 
 		return settingsVPanel;
+	}
+	
+	private Panel buildAccountTabPanel(){
+		
+		
+		return accountHPanel;
 	}
 
 	private Panel buildFaqTabPanel(){
