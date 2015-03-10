@@ -15,8 +15,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.google.gwt.cs310project.crimemapper.client.AdminAccount;
-
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerException;
@@ -24,21 +22,10 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.dom.DOMSource; 
 import javax.xml.transform.stream.StreamResult; 
 
+import java.io.FilePermission;
+
 public class AccountManagement {
-	private DocumentBuilderFactory factory = null;
-	private DocumentBuilder builder = null;
-	private Document document = null;
 	
-	public void AccountManagement(){
-		try{
-		factory = DocumentBuilderFactory.newInstance();
-		builder = factory.newDocumentBuilder();
-		document = builder.parse(new File("AdminAccount.xml"));
-		}
-		catch (Exception e) {
-	 		e.printStackTrace();
-	 	}	
-	}
 	
 	public List<String> readXML(String fileName){
 		
@@ -46,8 +33,9 @@ public class AccountManagement {
 		
 		try{
 		
-			if(document==null)
-				return null;
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			Document document = builder.parse(new File(fileName));
 		
 		NodeList nodeList = document.getDocumentElement().getChildNodes();
 		for (int i = 0; i < nodeList.getLength(); i++) {
@@ -67,19 +55,19 @@ public class AccountManagement {
 	 		e.printStackTrace();
 	 	}	
 		
-		
 		return employees; 
 	}
 	
 	public void writeXML(String fileName, String newMember){
 		
 		try{
-		//DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		//DocumentBuilder builder = factory.newDocumentBuilder();
-		//Document document = builder.parse(new File(fileName));
+			
+			//FilePermission p = new FilePermission("AdminAccount.xml", "read,write");
 		
-			if(document==null)
-				return;
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			Document document = builder.parse(new File(fileName));
+			
 		//add in the DOM 
 		Element rootElement = document.getDocumentElement();
 	    Element em = document.createElement("Employee");

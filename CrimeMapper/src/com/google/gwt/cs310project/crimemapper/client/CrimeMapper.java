@@ -32,6 +32,7 @@ import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -51,6 +52,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Anchor;
+
 
 
 /**
@@ -77,12 +79,8 @@ public class CrimeMapper implements EntryPoint {
 	private VerticalPanel settingsVPanel = new VerticalPanel();
 	private VerticalPanel mapsVPanel = new VerticalPanel();
 	private HorizontalPanel clearTrendsButtonPanel = new HorizontalPanel();
-
-	private VerticalPanel dataVisualizationPanel = new VerticalPanel();
-	private HorizontalPanel accountHPanel = new HorizontalPanel();
-
+	private VerticalPanel accountVPanel = new VerticalPanel();
 	private VerticalPanel trendsVPanel = new VerticalPanel();
-	private DockLayoutPanel barChartPanel;
 	private HorizontalPanel trendsHPanel1 = new HorizontalPanel();
 	private HorizontalPanel trendsHPanel2 = new HorizontalPanel();
 	private HorizontalPanel pieChartPanel = new HorizontalPanel();
@@ -139,6 +137,8 @@ public class CrimeMapper implements EntryPoint {
 	private List<String> lst;
 	private boolean isAdmin = false;
 	private TextBox adminTextBox = new TextBox();
+	private Label adminLabel = new Label("Admin Account List");
+	
 
 	// Databases 
 	private TreeMap<Integer, CrimeDataByYear> crimeDataMap = new TreeMap<Integer, CrimeDataByYear>();
@@ -157,6 +157,7 @@ public class CrimeMapper implements EntryPoint {
 			public void onSuccess(LoginInfo result) {
 				loginInfo = result;
 				if(loginInfo.isLoggedIn()) {
+					
 					lst = loginInfo.getAccountList();
 					for (int i = 0; i < lst.size(); i++) {
 						if(loginInfo.getEmailAddress().toLowerCase() == (lst.get(i)).toLowerCase()) {
@@ -164,6 +165,7 @@ public class CrimeMapper implements EntryPoint {
 							break;
 						}					
 					}
+					
 					loadMainPanel();
 				} else {
 					loadLogin();
@@ -275,9 +277,11 @@ public class CrimeMapper implements EntryPoint {
 							
 							lst.add(str);
 							localAccountListBox.addItem(str);
-							loginInfo.setAccountList(lst);
 							
 							
+							//loginInfo.setAccountList(lst);
+							
+						/*	
 						//	if(loginService == null)
 							//	loginService = GWT.create(LoginService.class);
 							
@@ -290,6 +294,7 @@ public class CrimeMapper implements EntryPoint {
 								public void onSuccess(Void result) {
 								}
 							});
+							*/
 
 							
 							
@@ -417,11 +422,7 @@ public class CrimeMapper implements EntryPoint {
 
 	private Panel buildTrendsTabPanel(){
 
-<<<<<<< HEAD
-		trendsVPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		trendsVPanel.setSpacing(SPACING);
-		trendsVPanel.add(buildTableTabPanel());
-=======
+
 		mainTrendsPanel.setWidth(WIDTH);
 		mainTrendsPanel.setHeight(HEIGHT);
 		mainTrendsPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
@@ -432,15 +433,11 @@ public class CrimeMapper implements EntryPoint {
 		trendsHPanel2.add(colChartPanel);
 		mainTrendsPanel.add(trendsHPanel1);
 		mainTrendsPanel.add(trendsHPanel2);
->>>>>>> 850fe5b9a6efb5abc04dd3d16d78508860427e44
-
 
 		return mainTrendsPanel;
 	}
 
-<<<<<<< HEAD
-	
-=======
+
 	private Chart buildYearlyPieChart(int year){
 		// TODO: Needs implementation
 		pieChart.setType(Series.Type.PIE)  
@@ -543,7 +540,6 @@ public class CrimeMapper implements EntryPoint {
 		}
 		return colChart;  
 	}
->>>>>>> 850fe5b9a6efb5abc04dd3d16d78508860427e44
 
 	/**
 	 * Method for constructing Table Tab Panel 
@@ -653,16 +649,17 @@ public class CrimeMapper implements EntryPoint {
 	}
 	
 	private Panel buildAccountTabPanel(){
-		accountHPanel.add(localAccountListBox);
-		accountHPanel.add(localAccountDelButton);
+		accountVPanel.add(adminLabel);
+		accountVPanel.add(localAccountListBox);
+		//accountVPanel.add(localAccountDelButton);
 		
-		accountHPanel.add(adminTextBox);
-		accountHPanel.add(localAccountAddButton);
-		
+		//accountVPanel.add(adminTextBox);
+		//accountVPanel.add(localAccountAddButton);
 			for (int i = 0; i < lst.size(); i++) {
 				localAccountListBox.addItem(lst.get(i));
 			}
-		return accountHPanel;
+			
+		return accountVPanel;
 	}
 
 	private Panel buildFaqTabPanel(){

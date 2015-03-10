@@ -3,7 +3,6 @@ package com.google.gwt.cs310project.crimemapper.server;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
-import com.google.gwt.cs310project.crimemapper.client.AdminAccount;
 import com.google.gwt.cs310project.crimemapper.client.CrimeDataByYear;
 import com.google.gwt.cs310project.crimemapper.client.LoginInfo;
 import com.google.gwt.cs310project.crimemapper.client.LoginService;
@@ -15,14 +14,13 @@ import java.util.List;
 
 import javax.jdo.PersistenceManager;
 
-import com.google.gwt.cs310project.crimemapper.client.AdminAccount;
 
 public class LoginServiceImpl extends RemoteServiceServlet implements
     LoginService {
 	
 	public void addAccount(String account){
 		AccountManagement am = new AccountManagement();
-	    am.writeXML(System.getProperty("user.dir")+"AdminAccount.xml", account);
+	    am.writeXML("AdminAccount.xml", account);
 	  }
 
   public LoginInfo login(String requestUri){
