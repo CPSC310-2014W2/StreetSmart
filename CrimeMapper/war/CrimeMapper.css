@@ -39,13 +39,6 @@ h1 {
 	color: black;
 }
 
-/* crime type header titles row*/
-/*.crimeTypeHeaderTitles {
-	background-color: #a5c0e2;
-	color: white;
-	font-style: normal;
-}*/
-
 /* crime data flex table */
 .crimeData {
 	border: 2px solid silver;
@@ -54,6 +47,7 @@ h1 {
 	text-align: center;
 }
 
+/* crime type header titles*/
 .mischiefUnder {
 	background-color: #385C9B;
 	color: white;
