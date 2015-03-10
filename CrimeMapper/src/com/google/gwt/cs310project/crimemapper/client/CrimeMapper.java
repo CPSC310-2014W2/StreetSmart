@@ -307,6 +307,7 @@ public class CrimeMapper implements EntryPoint {
 			int row = crimeFlexTable.getRowCount();
 			int i = START_OF_DATA_ROWS;
 
+			selectedRow = rowIndex;
 			ArrayList<ArrayList<Double>> trends = getTrends(rowIndex);
 			updateTableTrends(trends);
 
@@ -319,9 +320,6 @@ public class CrimeMapper implements EntryPoint {
 				}
 				i++;
 			}
-			// TODO Trends method
-			updateTableTrends(getTrends(rowIndex));
-			selectedRow = rowIndex;
 		}
 	}
 	/**
@@ -697,37 +695,39 @@ public class CrimeMapper implements EntryPoint {
 	private void updateTableTrends(ArrayList<ArrayList<Double>> trendsByRow) {
 		int row = crimeFlexTable.getRowCount();
 		int r = START_OF_DATA_ROWS;
+		clearTrends();
 		while (r < row){
 			for (int i=START_OF_DATA_COLUMNS; i < COLUMN_COUNT; i++){
 				String cellText = crimeFlexTable.getText(r, i);
-				if (cellText.contains("(")){
-					int cutoff = ((cellText.indexOf("("))-1);
-					String newCellText = cellText.substring(0, cutoff);
-					crimeFlexTable.setText(r, i, newCellText 
-							+ " (" + trendsByRow.get(r-START_OF_DATA_ROWS).get(i-START_OF_DATA_COLUMNS) + "%)");}
-				else {crimeFlexTable.setText(r, i, cellText 
-						+ " (" + trendsByRow.get(r-START_OF_DATA_ROWS).get(i-START_OF_DATA_COLUMNS) + "%)");}
+				double percentage = trendsByRow.get(r-START_OF_DATA_ROWS).get(i-START_OF_DATA_COLUMNS);
+				String trendsText = " (" + percentage + "%)";
+				if (r == selectedRow){
+					crimeFlexTable.setText(r, i, cellText);
+				}
+				else {
+					crimeFlexTable.setText(r, i, cellText + trendsText);
+					}
 			}
 			r++;
 		}
 	}
 
 	private void clearTrends(){
-		if (!(selectedRow == NO_TABLE_SELECTION_FLAG)){
-			int row = crimeFlexTable.getRowCount();
-			int r = START_OF_DATA_ROWS;
-			while (r < row){
-				for (int i=START_OF_DATA_COLUMNS; i < COLUMN_COUNT; i++){
-					String cellText = crimeFlexTable.getText(r, i);
+		int row = crimeFlexTable.getRowCount();
+		int r = START_OF_DATA_ROWS;
+		while (r < row){
+			for (int i=START_OF_DATA_COLUMNS; i < COLUMN_COUNT; i++){
+				String cellText = crimeFlexTable.getText(r, i);
+				if (cellText.contains("(")){
 					int cutoff = ((cellText.indexOf("("))-1);
 					String newCellText = cellText.substring(0, cutoff);
-					crimeFlexTable.setText(r, i, newCellText);
-				}
-				r++;
+					crimeFlexTable.setText(r, i, newCellText);}
 			}
+			r++;
 		}
 	}
 }
+
 
 
 
