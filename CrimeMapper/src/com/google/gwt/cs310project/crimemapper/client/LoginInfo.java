@@ -1,6 +1,7 @@
 package com.google.gwt.cs310project.crimemapper.client;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class LoginInfo implements Serializable {
 
@@ -10,6 +11,7 @@ public class LoginInfo implements Serializable {
 	private String emailAddress;
 	private String nickname;
 	private boolean bAdmin=false;
+	private List<String> lst;
 
 	public boolean isLoggedIn() {
 		return loggedIn;
@@ -57,6 +59,14 @@ public class LoginInfo implements Serializable {
 	
 	public boolean isAdmin(){
 		return bAdmin;
+	}
+	
+	public List<String> getAccountList(){
+		return lst;
+	}
+	
+	public void setAccountList(List<String> list){
+		this.lst = list;
 	}
 	
 }

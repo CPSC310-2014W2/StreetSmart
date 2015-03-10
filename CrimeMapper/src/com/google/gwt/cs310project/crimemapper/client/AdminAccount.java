@@ -9,6 +9,14 @@ public class AdminAccount {
     public AdminAccount(String Address) {
     	this.Address = Address;
     }
+    
+    public void setAddress(String ad){
+    	this.Address = ad;
+    }
+    
+    public String getAddress(){
+    	return this.Address;
+    }
 
 	@Override
     public String toString() {

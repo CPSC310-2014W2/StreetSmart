@@ -1,4 +1,4 @@
-package com.google.gwt.cs310project.crimemapper.client;
+package com.google.gwt.cs310project.crimemapper.server;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,6 +15,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.google.gwt.cs310project.crimemapper.client.AdminAccount;
+
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerException;
@@ -23,16 +25,30 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult; 
 
 public class AccountManagement {
+	private DocumentBuilderFactory factory = null;
+	private DocumentBuilder builder = null;
+	private Document document = null;
 	
-	public void readXML(String fileName) throws ParserConfigurationException,
-	SAXException, IOException {
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder = factory.newDocumentBuilder();
-
-		Document document = builder.parse(new File(fileName));
+	public void AccountManagement(){
+		try{
+		factory = DocumentBuilderFactory.newInstance();
+		builder = factory.newDocumentBuilder();
+		document = builder.parse(new File("AdminAccount.xml"));
+		}
+		catch (Exception e) {
+	 		e.printStackTrace();
+	 	}	
+	}
+	
+	public List<String> readXML(String fileName){
 		
-		List<AdminAccount> employees = new ArrayList<AdminAccount>();
-
+		List<String> employees = new ArrayList<String>();
+		
+		try{
+		
+			if(document==null)
+				return null;
+		
 		NodeList nodeList = document.getDocumentElement().getChildNodes();
 		for (int i = 0; i < nodeList.getLength(); i++) {
 
@@ -44,18 +60,26 @@ public class AccountManagement {
 				// Get the value of all sub-elements.
 				String address = elem.getElementsByTagName("Address")
 						.item(0).getChildNodes().item(0).getNodeValue();
-				employees.add(new AdminAccount(address));
+				employees.add(address);
 			}
 		}
+		} catch (Exception e) {
+	 		e.printStackTrace();
+	 	}	
+		
+		
+		return employees; 
 	}
 	
-	public void writeXML(String fileName, String newMember) throws ParserConfigurationException,
-	SAXException, IOException {
+	public void writeXML(String fileName, String newMember){
 		
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder = factory.newDocumentBuilder();
-		Document document = builder.parse(new File(fileName));
+		try{
+		//DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		//DocumentBuilder builder = factory.newDocumentBuilder();
+		//Document document = builder.parse(new File(fileName));
 		
+			if(document==null)
+				return;
 		//add in the DOM 
 		Element rootElement = document.getDocumentElement();
 	    Element em = document.createElement("Employee");
@@ -65,11 +89,10 @@ public class AccountManagement {
 	    em.appendChild(name);
 	    
 	    // Use a Transformer for output
-	 	try{
 	 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 	 		Transformer transformer = transformerFactory.newTransformer();
 	 		DOMSource source = new DOMSource(document);
-	 		StreamResult streamResult =  new StreamResult(new File("Employees.xml"));
+	 		StreamResult streamResult =  new StreamResult(new File(fileName));
 	 		transformer.transform(source, streamResult);
 	 	}
 	 	catch (Exception e) {

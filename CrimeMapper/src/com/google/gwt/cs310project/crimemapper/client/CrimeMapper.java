@@ -1,19 +1,28 @@
 package com.google.gwt.cs310project.crimemapper.client;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
+
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -27,11 +36,13 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.StackPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -42,6 +53,7 @@ public class CrimeMapper implements EntryPoint {
 	private static final int YEAR_COLUMN = 0;
 	private static final int COLUMN_COUNT = 8;
 	private static final int START_OF_DATA_ROWS = 2;
+	private static final int START_OF_DATA_COLUMNS = 1;
 	private static final int NO_TABLE_SELECTION_FLAG = -1;
 	private static final int BASE_YEAR = 2003;
 	private static final int NUM_YEARS = 12;
@@ -56,13 +68,19 @@ public class CrimeMapper implements EntryPoint {
 	private VerticalPanel settingsVPanel = new VerticalPanel();
 	private VerticalPanel mapsVPanel = new VerticalPanel();
 	private HorizontalPanel clearTrendsButtonPanel = new HorizontalPanel();
+
 	private VerticalPanel dataVisualizationPanel = new VerticalPanel();
 	private HorizontalPanel accountHPanel = new HorizontalPanel();
 
+	private VerticalPanel trendsVPanel = new VerticalPanel();
+	private DockLayoutPanel barChartPanel;
+
+
 	// Dimensions and Spacing
-	private final String width = "100%";
-	private final String height = "100%";
-	private final int spacing = 20;
+	private final String WIDTH = "100%";
+	private final String HEIGHT = "100%";
+	private final int SPACING = 5;
+	private final int PADDING = 5;
 
 	// Table Tab elements
 	private FlexTable crimeFlexTable = new FlexTable();
@@ -95,6 +113,15 @@ public class CrimeMapper implements EntryPoint {
 			"Please sign in to your Account to access the CrimeMapper.");
 	private Anchor signInLink = new Anchor("Sign In");
 	private Anchor signOutLink = new Anchor("Sign Out");
+	LoginServiceAsync loginService = null;
+	
+	//Admin Account
+	private ListBox localAccountListBox = new ListBox();
+	private Button localAccountAddButton = new Button("Add");
+	private Button localAccountDelButton = new Button("Delete");
+	private List<String> lst;
+	private boolean isAdmin = false;
+	private TextBox adminTextBox = new TextBox();
 
 	// Databases 
 	private TreeMap<Integer, CrimeDataByYear> crimeDataMap = new TreeMap<Integer, CrimeDataByYear>();
@@ -105,7 +132,7 @@ public class CrimeMapper implements EntryPoint {
 	public void onModuleLoad() {
 
 		// Check login status using login service.
-		LoginServiceAsync loginService = GWT.create(LoginService.class);
+		loginService = GWT.create(LoginService.class);
 		loginService.login(GWT.getHostPageBaseURL(), new AsyncCallback<LoginInfo>() {
 			public void onFailure(Throwable error) {
 			}
@@ -113,6 +140,13 @@ public class CrimeMapper implements EntryPoint {
 			public void onSuccess(LoginInfo result) {
 				loginInfo = result;
 				if(loginInfo.isLoggedIn()) {
+					lst = loginInfo.getAccountList();
+					for (int i = 0; i < lst.size(); i++) {
+						if(loginInfo.getEmailAddress().toLowerCase() == (lst.get(i)).toLowerCase()) {
+							isAdmin = true;
+							break;
+						}					
+					}
 					loadMainPanel();
 				} else {
 					loadLogin();
@@ -166,6 +200,21 @@ public class CrimeMapper implements EntryPoint {
 			}
 		});
 
+		// Listen for mouse events on Clear Trends btn
+		clearTrendsButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				clearTrends();
+				selectedYearLabel.setText("");
+				selectedRow = NO_TABLE_SELECTION_FLAG;
+				int row = crimeFlexTable.getRowCount();
+				int i = START_OF_DATA_ROWS;
+				while(i < row){
+					crimeFlexTable.getRowFormatter().setStyleName(i, "rowUnselectedShadow");
+					i++;
+				}
+			}
+		});
+
 		// Listen for mouse click on the Rows in table and Highlight row.
 		crimeFlexTable.addClickHandler(new ClickHandler(){
 			public void onClick(ClickEvent event){
@@ -191,6 +240,46 @@ public class CrimeMapper implements EntryPoint {
 				settingsLabel.setText("");
 			}
 		});
+		
+		// Listen for mouse events on local Account Add button
+				localAccountAddButton.addClickHandler(new ClickHandler() {
+					public void onClick(ClickEvent event) {
+						if(adminTextBox.getText() == "")
+							Window.alert("Please input new account!!!");
+						else{
+							//add new account
+							String str = adminTextBox.getText();
+							for(int i=0; i<lst.size(); i++){
+								if(str.toLowerCase() == lst.get(i).toLowerCase()){
+									Window.alert("This account already exists!!!");
+									return;
+								}
+							}
+							
+							lst.add(str);
+							localAccountListBox.addItem(str);
+							loginInfo.setAccountList(lst);
+							
+							
+						//	if(loginService == null)
+							//	loginService = GWT.create(LoginService.class);
+							
+							loginService.addAccount(str, new AsyncCallback<Void>() {
+								public void onFailure(Throwable error) {
+									
+									Window.alert(error.toString());
+								}
+
+								public void onSuccess(Void result) {
+								}
+							});
+
+							
+							
+							
+						}
+					}
+				});
 
 	}
 
@@ -211,11 +300,16 @@ public class CrimeMapper implements EntryPoint {
 		if (rowIndex == selectedRow)
 		{
 			crimeFlexTable.getRowFormatter().setStyleName(rowIndex, "rowUnselectedShadow");
+			clearTrends();
 			selectedYearLabel.setText("");
 			selectedRow = NO_TABLE_SELECTION_FLAG;
 		} else {
 			int row = crimeFlexTable.getRowCount();
 			int i = START_OF_DATA_ROWS;
+
+			ArrayList<ArrayList<Double>> trends = getTrends(rowIndex);
+			updateTableTrends(trends);
+
 			while(i < row){
 				if(i == rowIndex){
 					crimeFlexTable.getRowFormatter().setStyleName(rowIndex, "rowSelectedShadow");
@@ -232,11 +326,14 @@ public class CrimeMapper implements EntryPoint {
 	}
 	/**
 	 * Method for constructing Main Panel
+	 * @throws Exception 
+	 * @throws IOException 
+	 * @throws SAXException 
 	 */
 	private Panel buildMainPanel(){
 
 		mainPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		mainPanel.setSize(width, height);
+		mainPanel.setSize(WIDTH, HEIGHT);
 		mainPanel.add(buildTabPanel());
 
 		return mainPanel;
@@ -244,11 +341,14 @@ public class CrimeMapper implements EntryPoint {
 
 	/**
 	 * Method for constructing Tab Panel
+	 * @throws Exception 
+	 * @throws IOException 
+	 * @throws SAXException 
 	 */
 	private TabPanel buildTabPanel(){
 
 		tabPanel.setAnimationEnabled(true);
-		tabPanel.setSize(width, height);
+		tabPanel.setSize(WIDTH, HEIGHT);
 
 		//Create titles for tabs
 		String tab1Title = "Trends";
@@ -263,7 +363,7 @@ public class CrimeMapper implements EntryPoint {
 		// Create tab to hold Table, Map and Settings
 		// Assemble mainPanel
 		flowpanel = new FlowPanel();
-		flowpanel.add(buildTableTabPanel());
+		flowpanel.add(buildTrendsTabPanel());
 		tabPanel.add(flowpanel, tab1Title);
 
 		flowpanel = new FlowPanel();
@@ -279,7 +379,7 @@ public class CrimeMapper implements EntryPoint {
 		tabPanel.add(flowpanel, tab4Title);
 	
 		
-		if(loginInfo.isAdmin()){
+		if(isAdmin){
 			flowpanel = new FlowPanel();
 			flowpanel.add(buildAccountTabPanel());
 			tabPanel.add(flowpanel, tab5Title);
@@ -289,6 +389,26 @@ public class CrimeMapper implements EntryPoint {
 		tabPanel.selectTab(0);
 		return tabPanel;
 	}
+	/**
+	 * Build trend tab
+	 */
+	private Panel buildTrendsTabPanel(){
+
+		trendsVPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		trendsVPanel.setSpacing(SPACING);
+		trendsVPanel.add(buildTableTabPanel());
+		trendsVPanel.add(buildBarChartPanel());
+
+
+		return trendsVPanel;
+	}
+
+	private Panel buildBarChartPanel() {
+
+		barChartPanel = new TrendColumnChart(crimeDataMap);
+		barChartPanel.setSize("90em", "20em");
+		return barChartPanel;
+	}
 
 	/**
 	 * Method for constructing Table Tab Panel 
@@ -296,9 +416,9 @@ public class CrimeMapper implements EntryPoint {
 	 */
 	@SuppressWarnings("deprecation")
 	private Panel buildTableTabPanel(){
-		tableVPanel.setSize(width, height);
+		tableVPanel.setSize(WIDTH, HEIGHT);
 		tableVPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		tableVPanel.setSpacing(spacing);
+		tableVPanel.setSpacing(SPACING);
 
 		// Create table and table headers for crime data.
 		crimeFlexTable.setText(1, 0, "Year");
@@ -324,7 +444,7 @@ public class CrimeMapper implements EntryPoint {
 			crimeFlexTable.getCellFormatter().addStyleName(1, i, "crimeTypeHeaderTitles");
 			i++;
 		}
-		crimeFlexTable.setCellPadding(20);
+		crimeFlexTable.setCellPadding(3);
 
 		// Assemble resetPanel.
 		clearTrendsButtonPanel.add(clearTrendsButton);
@@ -349,9 +469,9 @@ public class CrimeMapper implements EntryPoint {
 	 *  Method for Constructing Map tab panel
 	 */
 	private Panel buildMapTabPanel(){
-		mapsVPanel.setSize(width, height);
+		mapsVPanel.setSize(WIDTH, HEIGHT);
 		mapsVPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		mapsVPanel.setSpacing(spacing);
+		mapsVPanel.setSpacing(SPACING);
 		// Assemble elements for Map Panel
 		Label mapLabel = new Label("MAP WILL GO HERE");
 		Image dummyMap = new Image("images/vancouver-dummy-map.jpg");
@@ -368,9 +488,9 @@ public class CrimeMapper implements EntryPoint {
 	 */
 	private Panel buildSettingsTabPanel(){
 
-		settingsVPanel.setSize(width, height);
+		settingsVPanel.setSize(WIDTH, HEIGHT);
 		settingsVPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		settingsVPanel.setSpacing(spacing);
+		settingsVPanel.setSpacing(SPACING);
 		// Assemble elements for Settings Panel
 
 
@@ -397,8 +517,15 @@ public class CrimeMapper implements EntryPoint {
 	}
 	
 	private Panel buildAccountTabPanel(){
+		accountHPanel.add(localAccountListBox);
+		accountHPanel.add(localAccountDelButton);
 		
+		accountHPanel.add(adminTextBox);
+		accountHPanel.add(localAccountAddButton);
 		
+			for (int i = 0; i < lst.size(); i++) {
+				localAccountListBox.addItem(lst.get(i));
+			}
 		return accountHPanel;
 	}
 
@@ -426,7 +553,7 @@ public class CrimeMapper implements EntryPoint {
 		explanations.add("Explanation 6");
 		explanations.add("Explanation 7");
 
-		faqPanel.setSize(width,height);
+		faqPanel.setSize(WIDTH,HEIGHT);
 
 		Label label;
 
@@ -487,6 +614,7 @@ public class CrimeMapper implements EntryPoint {
 	private void addCrimeDataSet(CrimeDataByYear result) {
 		// TODO Insert Persistent Method for DataStore
 		crimeDataMap.put(result.getYear(), result);
+
 		updateTableView(crimeDataMap);
 	}
 
@@ -502,7 +630,7 @@ public class CrimeMapper implements EntryPoint {
 			int i = 1;
 			while(i < COLUMN_COUNT){
 				int crimeOccurences = value.getNumberOfCrimeTypeOccurrences(CrimeTypes.getType(i-1));
-				crimeFlexTable.setText(row, i, ""+crimeOccurences);
+				crimeFlexTable.setText(row, i, ""+crimeOccurences+"");
 				i++;
 			}
 		}
@@ -526,9 +654,9 @@ public class CrimeMapper implements EntryPoint {
 		return year;
 	}
 
-	private ArrayList<ArrayList<Integer>> getTrends(int index) {
 
-		ArrayList<ArrayList<Integer>> trendsByYear = new ArrayList<>();
+	private ArrayList<ArrayList<Double>> getTrends(int index) {
+		ArrayList<ArrayList<Double>> trendsByYear = new ArrayList<ArrayList<Double>>();
 
 		if (index<START_OF_DATA_ROWS) {return null;}
 
@@ -539,19 +667,17 @@ public class CrimeMapper implements EntryPoint {
 		for (Map.Entry<Integer, CrimeDataByYear> otherYear: crimeDataMap.entrySet()){
 
 			CrimeDataByYear otherYearCrimeData = otherYear.getValue();
-
-			ArrayList<Integer> trendsByType = new ArrayList<>();
+			ArrayList<Double> trendsByType = new ArrayList<>();
 
 			for (int i = 0; i < CrimeTypes.getNumberOfTypes(); i++) {
 
 				String type = CrimeTypes.getType(i);
 
-				int base = baseYearCrimeData.getNumberOfCrimeTypeOccurrences(type);
-
-				int other = otherYearCrimeData.getNumberOfCrimeTypeOccurrences(type);
-
-				int percentChange = (((other-base)/base)*100);
-
+				double base = baseYearCrimeData.getNumberOfCrimeTypeOccurrences(type);
+				double other = otherYearCrimeData.getNumberOfCrimeTypeOccurrences(type);
+				double percentChange = (((other - base) / base) * 100);
+				// Round to two decimal places
+				percentChange = Math.floor(percentChange*100)/100;
 				trendsByType.add(percentChange);
 
 			}
@@ -567,10 +693,45 @@ public class CrimeMapper implements EntryPoint {
 	 * Update table view with trends labels
 	 * @param receiverRowIndex
 	 */
-	private void updateTableTrends(ArrayList<ArrayList<Integer>> trendsByYear) {
 
+	private void updateTableTrends(ArrayList<ArrayList<Double>> trendsByRow) {
+		int row = crimeFlexTable.getRowCount();
+		int r = START_OF_DATA_ROWS;
+		while (r < row){
+			for (int i=START_OF_DATA_COLUMNS; i < COLUMN_COUNT; i++){
+				String cellText = crimeFlexTable.getText(r, i);
+				if (cellText.contains("(")){
+					int cutoff = ((cellText.indexOf("("))-1);
+					String newCellText = cellText.substring(0, cutoff);
+					crimeFlexTable.setText(r, i, newCellText 
+							+ " (" + trendsByRow.get(r-START_OF_DATA_ROWS).get(i-START_OF_DATA_COLUMNS) + "%)");}
+				else {crimeFlexTable.setText(r, i, cellText 
+						+ " (" + trendsByRow.get(r-START_OF_DATA_ROWS).get(i-START_OF_DATA_COLUMNS) + "%)");}
+			}
+			r++;
+		}
 	}
 
+	private void clearTrends(){
+		if (!(selectedRow == NO_TABLE_SELECTION_FLAG)){
+			int row = crimeFlexTable.getRowCount();
+			int r = START_OF_DATA_ROWS;
+			while (r < row){
+				for (int i=START_OF_DATA_COLUMNS; i < COLUMN_COUNT; i++){
+					String cellText = crimeFlexTable.getText(r, i);
+					int cutoff = ((cellText.indexOf("("))-1);
+					String newCellText = cellText.substring(0, cutoff);
+					crimeFlexTable.setText(r, i, newCellText);
+				}
+				r++;
+			}
+		}
+	}
 }
+
+
+
+
+
 
 
