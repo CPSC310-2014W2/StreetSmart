@@ -72,7 +72,7 @@ public class CrimeMapper implements EntryPoint {
 	private VerticalPanel mapsVPanel = new VerticalPanel();
 	private HorizontalPanel clearTrendsButtonPanel = new HorizontalPanel();
 	private HorizontalPanel trendsHPanel1 = new HorizontalPanel();
-	private HorizontalPanel trendsHPanel2 = new HorizontalPanel();
+	private VerticalPanel trendsHPanel2 = new VerticalPanel();
 	private HorizontalPanel pieChartPanel = new HorizontalPanel();
 	private VerticalPanel colChartPanel = new VerticalPanel();
 	private VerticalPanel mainTrendsPanel = new VerticalPanel();
@@ -84,7 +84,7 @@ public class CrimeMapper implements EntryPoint {
 	// Dimensions and Spacing
 	private final String WIDTH = "100%";
 	private final String HEIGHT = "100%";
-	private final int SPACING = 10;
+	private final int SPACING = 15;
 
 	// Table Tab elements
 	private FlexTable crimeFlexTable = new FlexTable();
@@ -338,12 +338,15 @@ public class CrimeMapper implements EntryPoint {
 		mainTrendsPanel.setHeight(HEIGHT);
 		mainTrendsPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		trendsHPanel1.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		trendsHPanel2.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		trendsHPanel1.setSpacing(SPACING);
 		trendsHPanel1.add(buildTableVPanel());
 		trendsHPanel1.add(pieChartPanel);
 		trendsHPanel2.add(colChartPanel);
+		trendsHPanel2.add(lastUploadedDateLabel);
 		mainTrendsPanel.add(trendsHPanel1);
 		mainTrendsPanel.add(trendsHPanel2);
+		
 
 		return mainTrendsPanel;
 	}
@@ -483,13 +486,13 @@ public class CrimeMapper implements EntryPoint {
 		crimeFlexTable.getCellFormatter().addStyleName(0, 0, "crimeTypeHeader");
 		crimeFlexTable.getCellFormatter().addStyleName(0, 1, "crimeTypeHeader");
 		crimeFlexTable.getCellFormatter().addStyleName(1, 0, "crimeTypeHeader");
-		int i = 1;
-		while(i < COLUMN_COUNT){
-			// TODO Possibly refactor to get rid of magic number and
-			// use the size of the enum of crime types
-			crimeFlexTable.getCellFormatter().addStyleName(1, i, "crimeTypeHeaderTitles");
-			i++;
-		}
+		crimeFlexTable.getCellFormatter().addStyleName(1, 1, "mischiefUnder");
+		crimeFlexTable.getCellFormatter().addStyleName(1, 2, "mischiefOver");
+		crimeFlexTable.getCellFormatter().addStyleName(1, 3, "fromAutoUnder");
+		crimeFlexTable.getCellFormatter().addStyleName(1, 4, "fromAutoOver");
+		crimeFlexTable.getCellFormatter().addStyleName(1, 5, "ofAutoUnder");
+		crimeFlexTable.getCellFormatter().addStyleName(1, 6, "ofAutoOver");
+		crimeFlexTable.getCellFormatter().addStyleName(1, 7, "commercialBE");
 		crimeFlexTable.setCellPadding(3);
 
 		// Assemble resetPanel.
@@ -694,6 +697,13 @@ public class CrimeMapper implements EntryPoint {
 				crimeFlexTable.setText(row, i, ""+crimeOccurences+"");
 				i++;
 			}
+		}
+		int i = 1;
+		while(i < crimeFlexTable.getRowCount()){
+			// TODO Possibly refactor to get rid of magic number and
+			// use the size of the enum of crime types
+			crimeFlexTable.getCellFormatter().addStyleName(i, 0, "crimeTypeHeader");
+			i++;
 		}
 	}
 	// ===================================================================================== //
