@@ -1,6 +1,6 @@
 package com.google.gwt.cs310project.crimemapper.server;
 
-import java.util.Date;
+import java.util.TreeMap;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.IdentityType;
@@ -8,9 +8,6 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
-import java.util.TreeMap;
-
-import com.google.gwt.cs310project.crimemapper.client.CrimeData;
 import com.google.gwt.cs310project.crimemapper.client.CrimeDataByYear;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)

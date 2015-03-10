@@ -1,9 +1,6 @@
 package com.google.gwt.cs310project.crimemapper.server;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
@@ -17,9 +14,9 @@ import com.google.gwt.cs310project.crimemapper.client.NotLoggedInException;
 import com.google.gwt.cs310project.crimemapper.client.UserSettingsService;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
+@SuppressWarnings("serial")
 public class UserSettingsServiceImpl extends RemoteServiceServlet implements UserSettingsService{
 
-	private static final Logger LOG = Logger.getLogger(UserSettingsServiceImpl.class.getName());
 	private static final PersistenceManagerFactory PMF =
 			JDOHelper.getPersistenceManagerFactory("transactions-optional");
 
@@ -36,6 +33,7 @@ public class UserSettingsServiceImpl extends RemoteServiceServlet implements Use
 		return selectedRow;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private UserSettings getUserSettings() {
 		PersistenceManager pm = getPersistenceManager();
 		List<UserSettings> userSettings = null;

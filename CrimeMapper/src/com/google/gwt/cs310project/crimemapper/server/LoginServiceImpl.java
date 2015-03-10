@@ -1,20 +1,16 @@
 package com.google.gwt.cs310project.crimemapper.server;
 
+import java.util.List;
+
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
-import com.google.gwt.cs310project.crimemapper.client.CrimeDataByYear;
 import com.google.gwt.cs310project.crimemapper.client.LoginInfo;
 import com.google.gwt.cs310project.crimemapper.client.LoginService;
-import com.google.gwt.cs310project.crimemapper.client.NotLoggedInException;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-import java.util.List;
 
-import javax.jdo.PersistenceManager;
-
-
+@SuppressWarnings("serial")
 public class LoginServiceImpl extends RemoteServiceServlet implements
     LoginService {
 	

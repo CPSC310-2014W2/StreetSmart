@@ -1,14 +1,13 @@
 package com.google.gwt.cs310project.crimemapper.server;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.TreeMap;
-import java.net.*;
-import java.io.*;
-import java.util.List;
-import java.util.logging.Logger;
 
-import javax.jdo.JDOException;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
@@ -17,19 +16,17 @@ import javax.jdo.Query;
 import com.google.gwt.cs310project.crimemapper.client.CrimeData;
 import com.google.gwt.cs310project.crimemapper.client.CrimeDataByYear;
 import com.google.gwt.cs310project.crimemapper.client.CrimeDataService;
-import com.google.gwt.cs310project.crimemapper.client.CrimeMapper;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 @SuppressWarnings("serial")
 public class CrimeDataServiceImpl extends RemoteServiceServlet implements CrimeDataService {
 
 	// Data persistence fields
-	private static final Logger LOG = Logger.getLogger(CrimeMapper.class.getName());
+	//private static final Logger LOG = Logger.getLogger(CrimeMapper.class.getName());
 	private static final PersistenceManagerFactory PMF =
 			JDOHelper.getPersistenceManagerFactory("transactions-optional");
 
 	public CrimeDataByYear getCrimeDataByYear(String url) {
-		// TODO: Shouldn't we make this method static?
 
 		ArrayList<CrimeData> crimeDataList = new ArrayList<CrimeData>();
 		crimeDataList = parseCrimeData(url);
@@ -88,6 +85,7 @@ public class CrimeDataServiceImpl extends RemoteServiceServlet implements CrimeD
 		return new CrimeData(type, year, month, location);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public TreeMap<Integer, CrimeDataByYear> getCrimeDataMap() {
 		TreeMap<Integer, CrimeDataByYear> crimeDataMap = null;
@@ -121,6 +119,7 @@ public class CrimeDataServiceImpl extends RemoteServiceServlet implements CrimeD
 		globalPersistentData.setCrimeDataMap(crimeDataMap);
 	}
 
+	@SuppressWarnings("unchecked")
 	private GlobalPersistentData getGlobalPersistentData() {
 		GlobalPersistentData globalPersistentData = null;
 		PersistenceManager pm = getPersistenceManager();
