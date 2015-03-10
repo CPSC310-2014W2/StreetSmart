@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Logger;
 
 import org.moxieapps.gwt.highcharts.client.Chart;
 import org.moxieapps.gwt.highcharts.client.Legend;
@@ -19,6 +20,8 @@ import org.moxieapps.gwt.highcharts.client.plotOptions.PlotOptions;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.cs310project.crimemapper.server.UserSettingsServiceImpl;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -110,16 +113,23 @@ public class CrimeMapper implements EntryPoint {
 	// CrimeData RPC fields
 	private CrimeDataServiceAsync crimeDataSvc = GWT.create(CrimeDataService.class);
 
+	// UserSettings RPC fields
+	private UserSettingsServiceAsync userSettingsSvc = GWT.create(UserSettingsService.class);
+
 	// Login Fields
 	private LoginInfo loginInfo = null;
 	private VerticalPanel loginPanel = new VerticalPanel();
 	private Label loginLabel = new Label(
 			"Please sign in to your Account to access the CrimeMapper.");
+	private Label failedToRetrieveDataLabel = new Label(
+			"Failed to retrieve data from the server. Please try logging in again later.");
 	private Anchor signInLink = new Anchor("Sign In");
 	private Anchor signOutLink = new Anchor("Sign Out");
 
 	// Databases 
-	private TreeMap<Integer, CrimeDataByYear> crimeDataMap = new TreeMap<Integer, CrimeDataByYear>();
+	private TreeMap<Integer, CrimeDataByYear> crimeDataMap;
+	
+	private static final Logger LOG = Logger.getLogger(CrimeMapper.class.getName());
 
 	/**
 	 * Entry point method.
@@ -142,6 +152,46 @@ public class CrimeMapper implements EntryPoint {
 			}
 		});
 	}
+
+	private void loadCrimeDataMap() {
+		//Initialize the service proxy.
+		if (crimeDataSvc == null) {
+			crimeDataSvc = GWT.create(CrimeDataService.class);
+		}
+		// Set up the callback object.
+		AsyncCallback<TreeMap<Integer, CrimeDataByYear>> callback = new AsyncCallback<TreeMap<Integer, CrimeDataByYear>>(){
+			public void onFailure(Throwable caught){
+				throw new FailedToRetrieveDataException();
+			}
+
+			public void onSuccess(TreeMap<Integer, CrimeDataByYear> result) {
+				crimeDataMap = result;
+				updateTableView(crimeDataMap);
+			}
+		}; 
+
+		// Make the call to the crime data service.
+		crimeDataSvc.getCrimeDataMap(callback);
+	}
+	
+	private void updateCrimeDataMap() {
+		//Initialize the service proxy.
+		if (crimeDataSvc == null) {
+			crimeDataSvc = GWT.create(CrimeDataService.class);
+		}
+		// Set up the callback object.
+		AsyncCallback<Void> callback = new AsyncCallback<Void>(){
+			public void onFailure(Throwable caught){
+				throw new FailedToRetrieveDataException();
+			}
+
+			public void onSuccess(Void result) {}
+		}; 
+
+		// Make the call to the crime data service.
+		crimeDataSvc.setCrimeDataMap(crimeDataMap, callback);
+	}
+
 	// ===================================================================================== //
 	private void loadMainPanel(){
 
@@ -274,6 +324,9 @@ public class CrimeMapper implements EntryPoint {
 				}
 				i++;
 			}
+
+			updateTableTrends(getTrends(rowIndex));
+			selectedRow = rowIndex;
 		}
 	}
 
@@ -488,6 +541,17 @@ public class CrimeMapper implements EntryPoint {
 		crimeFlexTable.getCellFormatter().addStyleName(0, 0, "crimeTypeHeader");
 		crimeFlexTable.getCellFormatter().addStyleName(0, 1, "crimeTypeHeader");
 		crimeFlexTable.getCellFormatter().addStyleName(1, 0, "crimeTypeHeader");
+		int i = 1;
+		while(i < COLUMN_COUNT){
+			crimeFlexTable.getCellFormatter().addStyleName(1, i, "crimeTypeHeaderTitles");
+			i++;
+		}
+		crimeFlexTable.setCellPadding(3);
+		try {
+			loadCrimeDataMap();
+		} catch (FailedToRetrieveDataException e) {
+			// TODO Add the reload data panel
+		}
 		crimeFlexTable.getCellFormatter().addStyleName(1, 1, "mischiefUnder");
 		crimeFlexTable.getCellFormatter().addStyleName(1, 2, "mischiefOver");
 		crimeFlexTable.getCellFormatter().addStyleName(1, 3, "fromAutoUnder");
@@ -650,8 +714,13 @@ public class CrimeMapper implements EntryPoint {
 	}
 	// ===================================================================================== //
 	private void addCrimeDataSet(CrimeDataByYear result) {
-		// TODO Insert Persistent Method for DataStore
 		crimeDataMap.put(result.getYear(), result);
+		try {
+			updateCrimeDataMap();
+		} catch (FailedToRetrieveDataException e) {
+			// TODO Add the reload data panel
+			e.printStackTrace();
+		}
 		updateTableView(crimeDataMap);
 		updateColChartView(result.getYear());
 	}
@@ -752,6 +821,7 @@ public class CrimeMapper implements EntryPoint {
 	 * @param receiverRowIndex
 	 */
 	private void updateTableTrends(ArrayList<ArrayList<Double>> trendsByRow) {
+		updateTableView(crimeDataMap);
 		int row = crimeFlexTable.getRowCount();
 		int r = START_OF_DATA_ROWS;
 		clearTrends();
@@ -784,13 +854,6 @@ public class CrimeMapper implements EntryPoint {
 			r++;
 		}
 	}
-	// ===================================================================================== //
 }
-
-
-
-
-
-
-
+// ===================================================================================== //
 

@@ -24,7 +24,7 @@
   
   <servlet>
     <servlet-name>crimeService</servlet-name>
-    <servlet-class>com.google.gwt.cs310project.crimemapper.server.CrimeServiceImpl</servlet-class>
+    <servlet-class>com.google.gwt.cs310project.crimemapper.server.UserSettingsServiceImpl</servlet-class>
   </servlet>
   
   <servlet-mapping>
