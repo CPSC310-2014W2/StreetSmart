@@ -6,7 +6,6 @@
 <module rename-to='crimemapper'>
 	<!-- Inherit the core Web Toolkit stuff. -->
 	<inherits name='com.google.gwt.user.User' />
-	<inherits name='com.googlecode.gwt.charts.Charts' />
 	<inherits name="org.moxieapps.gwt.highcharts.Highcharts" />
 
 	<!-- Inherit the default GWT style sheet. You can change -->
