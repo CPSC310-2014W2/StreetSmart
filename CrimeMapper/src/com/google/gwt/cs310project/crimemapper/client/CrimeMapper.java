@@ -1,11 +1,16 @@
 package com.google.gwt.cs310project.crimemapper.client;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
 import org.moxieapps.gwt.highcharts.client.Chart;
 import org.moxieapps.gwt.highcharts.client.Legend;
 import org.moxieapps.gwt.highcharts.client.Point;
@@ -28,7 +33,9 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -42,11 +49,13 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.StackPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Anchor;
+
 
 
 /**
@@ -74,6 +83,8 @@ public class CrimeMapper implements EntryPoint {
 	private VerticalPanel settingsVPanel = new VerticalPanel();
 	private VerticalPanel mapsVPanel = new VerticalPanel();
 	private HorizontalPanel clearTrendsButtonPanel = new HorizontalPanel();
+	private VerticalPanel accountVPanel = new VerticalPanel();
+	private VerticalPanel trendsVPanel = new VerticalPanel();
 	private HorizontalPanel trendsHPanel1 = new HorizontalPanel();
 	private VerticalPanel trendsHPanel2 = new VerticalPanel();
 	private HorizontalPanel pieChartPanel = new HorizontalPanel();
@@ -83,6 +94,7 @@ public class CrimeMapper implements EntryPoint {
 	// Data Visualization
 	private Chart pieChart = new Chart();
 	
+
 
 	// Dimensions and Spacing
 	private final String WIDTH = "100%";
@@ -125,6 +137,17 @@ public class CrimeMapper implements EntryPoint {
 			"Failed to retrieve data from the server. Please try logging in again later.");
 	private Anchor signInLink = new Anchor("Sign In");
 	private Anchor signOutLink = new Anchor("Sign Out");
+	LoginServiceAsync loginService = null;
+	
+	//Admin Account
+	private ListBox localAccountListBox = new ListBox();
+	private Button localAccountAddButton = new Button("Add");
+	private Button localAccountDelButton = new Button("Delete");
+	private List<String> lst;
+	private boolean isAdmin = false;
+	private TextBox adminTextBox = new TextBox();
+	private Label adminLabel = new Label("Admin Account List");
+	
 
 	// Databases 
 	private TreeMap<Integer, CrimeDataByYear> crimeDataMap;
@@ -137,7 +160,7 @@ public class CrimeMapper implements EntryPoint {
 	public void onModuleLoad() {
 
 		// Check login status using login service.
-		LoginServiceAsync loginService = GWT.create(LoginService.class);
+		loginService = GWT.create(LoginService.class);
 		loginService.login(GWT.getHostPageBaseURL(), new AsyncCallback<LoginInfo>() {
 			public void onFailure(Throwable error) {
 			}
@@ -145,6 +168,15 @@ public class CrimeMapper implements EntryPoint {
 			public void onSuccess(LoginInfo result) {
 				loginInfo = result;
 				if(loginInfo.isLoggedIn()) {
+					
+					lst = loginInfo.getAccountList();
+					for (int i = 0; i < lst.size(); i++) {
+						if(loginInfo.getEmailAddress().toLowerCase() == (lst.get(i)).toLowerCase()) {
+							isAdmin = true;
+							break;
+						}					
+					}
+					
 					loadMainPanel();
 				} else {
 					loadLogin();
@@ -279,6 +311,49 @@ public class CrimeMapper implements EntryPoint {
 				settingsLabel.setText("");
 			}
 		});
+		
+		// Listen for mouse events on local Account Add button
+				localAccountAddButton.addClickHandler(new ClickHandler() {
+					public void onClick(ClickEvent event) {
+						if(adminTextBox.getText() == "")
+							Window.alert("Please input new account!!!");
+						else{
+							//add new account
+							String str = adminTextBox.getText();
+							for(int i=0; i<lst.size(); i++){
+								if(str.toLowerCase() == lst.get(i).toLowerCase()){
+									Window.alert("This account already exists!!!");
+									return;
+								}
+							}
+							
+							lst.add(str);
+							localAccountListBox.addItem(str);
+							
+							
+							//loginInfo.setAccountList(lst);
+							
+						/*	
+						//	if(loginService == null)
+							//	loginService = GWT.create(LoginService.class);
+							
+							loginService.addAccount(str, new AsyncCallback<Void>() {
+								public void onFailure(Throwable error) {
+									
+									Window.alert(error.toString());
+								}
+
+								public void onSuccess(Void result) {
+								}
+							});
+							*/
+
+							
+							
+							
+						}
+					}
+				});
 
 	}
 
@@ -333,6 +408,9 @@ public class CrimeMapper implements EntryPoint {
 	// ===================================================================================== //
 	/**
 	 * Method for constructing Main Panel
+	 * @throws Exception 
+	 * @throws IOException 
+	 * @throws SAXException 
 	 */
 	private Panel buildMainPanel(){
 
@@ -345,6 +423,9 @@ public class CrimeMapper implements EntryPoint {
 
 	/**
 	 * Method for constructing Tab Panel
+	 * @throws Exception 
+	 * @throws IOException 
+	 * @throws SAXException 
 	 */
 	private TabPanel buildTabPanel(){
 
@@ -356,6 +437,7 @@ public class CrimeMapper implements EntryPoint {
 		String tab2Title = "Map";
 		String tab3Title = "FAQ";
 		String tab4Title = "Admin";
+		String tab5Title = "Account";
 
 
 		//Create Custom FlowPanels to add to TabPanel
@@ -374,11 +456,17 @@ public class CrimeMapper implements EntryPoint {
 		flowpanel.add(buildFaqTabPanel());
 		tabPanel.add(flowpanel, tab3Title);
 
-		if(loginInfo.isAdmin()){
+		flowpanel = new FlowPanel();
+		flowpanel.add(buildSettingsTabPanel());
+		tabPanel.add(flowpanel, tab4Title);
+	
+		
+		if(isAdmin){
 			flowpanel = new FlowPanel();
-			flowpanel.add(buildSettingsTabPanel());
-			tabPanel.add(flowpanel, tab4Title);
+			flowpanel.add(buildAccountTabPanel());
+			tabPanel.add(flowpanel, tab5Title);
 		}
+		
 		// first tab upon load
 		tabPanel.selectTab(0);
 		return tabPanel;
@@ -388,6 +476,7 @@ public class CrimeMapper implements EntryPoint {
 	 */
 
 	private Panel buildTrendsTabPanel(){
+
 
 		mainTrendsPanel.setWidth(WIDTH);
 		mainTrendsPanel.setHeight(HEIGHT);
@@ -405,6 +494,7 @@ public class CrimeMapper implements EntryPoint {
 
 		return mainTrendsPanel;
 	}
+
 
 	private Chart buildYearlyPieChart(int year){
 		// TODO: Needs implementation
@@ -631,6 +721,20 @@ public class CrimeMapper implements EntryPoint {
 		localBackupPanel.add(localBackupCancelButton);
 
 		return settingsVPanel;
+	}
+	
+	private Panel buildAccountTabPanel(){
+		accountVPanel.add(adminLabel);
+		accountVPanel.add(localAccountListBox);
+		//accountVPanel.add(localAccountDelButton);
+		
+		//accountVPanel.add(adminTextBox);
+		//accountVPanel.add(localAccountAddButton);
+			for (int i = 0; i < lst.size(); i++) {
+				localAccountListBox.addItem(lst.get(i));
+			}
+			
+		return accountVPanel;
 	}
 
 	private Panel buildFaqTabPanel(){

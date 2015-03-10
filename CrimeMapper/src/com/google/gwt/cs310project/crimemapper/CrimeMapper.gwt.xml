@@ -20,6 +20,7 @@
 
 	<!-- Other module inherits -->
 
+
 	<!-- Specify the app entry point class. -->
 	<entry-point
 		class='com.google.gwt.cs310project.crimemapper.client.CrimeMapper' />
