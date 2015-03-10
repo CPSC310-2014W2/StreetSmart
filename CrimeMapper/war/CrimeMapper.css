@@ -1,20 +1,27 @@
 /** Add css rules here for your application. */
-
-
-body {
-	padding: 2px;
-}
+/*body.crimeApp {
+	margin: 0px;
+	padding: 0px;
+}*/
 
 h1 {
-	text-align: center;
+	text-align: left;
 	color: #2062B8;
+	padding-left: 10px;
+	padding-top: 10px;
+	font-family: arial, sans-serif;
+	font-style: normal;
+}	
+
+#menuBar {
+	padding-top: 0px;
+	background-color: #CCCCCC;
+	width: 100%;
+	height: 60px;
 }
 
-#crimeScene{
-	background-color: blue;
-}
 /* crime type header row*/
-.crimeTypeHeader{
+.crimeTypeHeader {
 	background-color: #2062B8;
 	color: white;
 	font-style: normal;
@@ -22,7 +29,7 @@ h1 {
 }
 
 /* row selected color change*/
-.rowSelectedShadow{
+.rowSelectedShadow {
 	background-color: #EEEEEE;
 	color: black;
 }
@@ -33,7 +40,7 @@ h1 {
 }
 
 /* crime type header titles row*/
-.crimeTypeHeaderTitles{
+.crimeTypeHeaderTitles {
 	background-color: #a5c0e2;
 	color: white;
 	font-style: normal;
@@ -42,6 +49,6 @@ h1 {
 /* crime data flex table */
 .crimeData {
 	border: 2px solid silver;
-	padding: 1px;
-	margin-bottom:10px;
+	padding: 2px;
+	margin-bottom: 10px;
 }

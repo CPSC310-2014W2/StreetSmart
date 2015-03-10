@@ -13,47 +13,46 @@ import com.google.appengine.api.users.User;
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class UserSettings {
 	@PrimaryKey
-	  @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	  private Long id;
-	  @Persistent
-	  private User user;
-	  @Persistent
-	  private Date createDate;
-	  @Persistent
-	  private int selectedRow;
+	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+	private Long id;
+	@Persistent
+	private User user;
+	@Persistent
+	private Date createDate;
+	@Persistent
+	private int selectedRow;
 
-	  public UserSettings() {
-	    this.createDate = new Date();
-	  }
-
-	  public UserSettings(User user, int selectedRow) {
-	    this();
-	    this.user = user;
-	    this.selectedRow = selectedRow;
-	  }
-
-	  public Long getId() {
-	    return this.id;
-	  }
-
-	  public User getUser() {
-	    return this.user;
-	  }
-
-	  public Date getCreateDate() {
-	    return this.createDate;
-	  }
-	  
-	  public int getSelectedRow() {
-		  return this.selectedRow;
-	  }
-
-	  public void setUser(User user) {
-	    this.user = user;
-	  }
-	  
-	  public void setSelectedRow(int selectedRow) {
-		  this.selectedRow = selectedRow;
-	  }
+	public UserSettings() {
+		this.createDate = new Date();
 	}
-	
+
+	public UserSettings(User user, int selectedRow) {
+		this();
+		this.user = user;
+		this.selectedRow = selectedRow;
+	}
+
+	public Long getId() {
+		return this.id;
+	}
+
+	public User getUser() {
+		return this.user;
+	}
+
+	public Date getCreateDate() {
+		return this.createDate;
+	}
+
+	public int getSelectedRow() {
+		return this.selectedRow;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public void setSelectedRow(int selectedRow) {
+		this.selectedRow = selectedRow;
+	}
+}
