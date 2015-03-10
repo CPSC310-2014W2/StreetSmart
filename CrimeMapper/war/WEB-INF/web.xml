@@ -23,13 +23,13 @@
   </servlet-mapping>
   
   <servlet>
-    <servlet-name>crimeService</servlet-name>
+    <servlet-name>userSettingsServiceImpl</servlet-name>
     <servlet-class>com.google.gwt.cs310project.crimemapper.server.UserSettingsServiceImpl</servlet-class>
   </servlet>
   
   <servlet-mapping>
-    <servlet-name>crimeService</servlet-name>
-    <url-pattern>/crimemapper/crime</url-pattern>
+    <servlet-name>userSettingsServiceImpl</servlet-name>
+    <url-pattern>/crimemapper/userSettings</url-pattern>
   </servlet-mapping>
   
   <servlet>

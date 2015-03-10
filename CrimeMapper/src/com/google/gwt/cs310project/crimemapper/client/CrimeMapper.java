@@ -128,8 +128,6 @@ public class CrimeMapper implements EntryPoint {
 
 	// Databases 
 	private TreeMap<Integer, CrimeDataByYear> crimeDataMap;
-	
-	private static final Logger LOG = Logger.getLogger(CrimeMapper.class.getName());
 
 	/**
 	 * Entry point method.

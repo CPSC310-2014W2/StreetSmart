@@ -93,17 +93,7 @@ public class CrimeDataServiceImpl extends RemoteServiceServlet implements CrimeD
 		TreeMap<Integer, CrimeDataByYear> crimeDataMap = null;
 		PersistenceManager pm = getPersistenceManager();
 		try {
-			/*
-			 * TODO: If crimeDataMap isn't the only TreeMap we have
-			 * among all our persistent data, we might need to
-			 * change this.
-			 */
-			Query q = pm.newQuery(GlobalPersistentData.class);
-			List<GlobalPersistentData> globalPersistentDataList =
-					(List<GlobalPersistentData>) q.execute();
-			int size = globalPersistentDataList.size();
-			assert size == 1 || size == 0;
-			GlobalPersistentData globalPersistentData = getGlobalPersistentData();
+			GlobalPersistentData globalPersistentData = getGlobalPersistentData(pm);
 			crimeDataMap = globalPersistentData.getCrimeDataMap();
 			if (crimeDataMap == null) {
 				crimeDataMap = new TreeMap<Integer, CrimeDataByYear>();
@@ -117,33 +107,28 @@ public class CrimeDataServiceImpl extends RemoteServiceServlet implements CrimeD
 	
 	@Override
 	public void setCrimeDataMap(TreeMap<Integer, CrimeDataByYear> crimeDataMap) {
-		GlobalPersistentData globalPersistentData = getGlobalPersistentData();
-		globalPersistentData.setCrimeDataMap(crimeDataMap);
-	}
-
-	private GlobalPersistentData getGlobalPersistentData() {
-		GlobalPersistentData globalPersistentData = null;
 		PersistenceManager pm = getPersistenceManager();
 		try {
-			/*
-			 * TODO: If crimeDataMap isn't the only TreeMap we have
-			 * among all our persistent data, we might need to
-			 * change this.
-			 */
-			Query q = pm.newQuery(GlobalPersistentData.class);
-			List<GlobalPersistentData> globalPersistentDataList =
-					(List<GlobalPersistentData>) q.execute();
-			int size = globalPersistentDataList.size();
-			assert size == 1 || size == 0;
-			if (size == 0) {
-				globalPersistentData = new GlobalPersistentData();
-				globalPersistentData.setCrimeDataMap(new TreeMap<Integer, CrimeDataByYear>());
-				pm.makePersistent(globalPersistentData);
-			} else {
-				globalPersistentData = globalPersistentDataList.get(0);
-			}
+			GlobalPersistentData globalPersistentData = getGlobalPersistentData(pm);
+			getGlobalPersistentData(pm).setCrimeDataMap(crimeDataMap);
 		} finally {
 			pm.close();
+		}
+	}
+
+	private GlobalPersistentData getGlobalPersistentData(PersistenceManager pm) {
+		GlobalPersistentData globalPersistentData = null;
+		Query q = pm.newQuery(GlobalPersistentData.class);
+		List<GlobalPersistentData> globalPersistentDataList =
+				(List<GlobalPersistentData>) q.execute();
+		int size = globalPersistentDataList.size();
+		assert size == 1 || size == 0;
+		if (size == 0) {
+			globalPersistentData = new GlobalPersistentData();
+			globalPersistentData.setCrimeDataMap(new TreeMap<Integer, CrimeDataByYear>());
+			pm.makePersistent(globalPersistentData);
+		} else {
+			globalPersistentData = globalPersistentDataList.get(0);
 		}
 		return globalPersistentData;
 	}
