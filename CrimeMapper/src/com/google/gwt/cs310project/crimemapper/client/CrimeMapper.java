@@ -4,9 +4,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.List;
+import java.util.logging.Logger;
+
+import javax.jdo.JDOException;
+import javax.jdo.JDOHelper;
+import javax.jdo.PersistenceManager;
+import javax.jdo.PersistenceManagerFactory;
+import javax.jdo.Query;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.cs310project.crimemapper.server.UserSettingsServiceImpl;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -93,16 +102,26 @@ public class CrimeMapper implements EntryPoint {
 	// CrimeData RPC fields
 	private CrimeDataServiceAsync crimeDataSvc = GWT.create(CrimeDataService.class);
 
+	// UserSettings RPC fields
+	private UserSettingsServiceAsync userSettingsSvc = GWT.create(UserSettingsService.class);
+
 	// Login Fields
 	private LoginInfo loginInfo = null;
 	private VerticalPanel loginPanel = new VerticalPanel();
 	private Label loginLabel = new Label(
 			"Please sign in to your Account to access the CrimeMapper.");
+	private Label failedToRetrieveDataLabel = new Label(
+			"Failed to retrieve data from the server. Please try logging in again later.");
 	private Anchor signInLink = new Anchor("Sign In");
 	private Anchor signOutLink = new Anchor("Sign Out");
 
 	// Databases 
 	private TreeMap<Integer, CrimeDataByYear> crimeDataMap = new TreeMap<Integer, CrimeDataByYear>();
+
+	// Data persistence fields
+	private static final Logger LOG = Logger.getLogger(UserSettingsServiceImpl.class.getName());
+	private static final PersistenceManagerFactory PMF =
+			JDOHelper.getPersistenceManagerFactory("transactions-optional");
 
 	/**
 	 * Entry point method.
@@ -118,12 +137,41 @@ public class CrimeMapper implements EntryPoint {
 			public void onSuccess(LoginInfo result) {
 				loginInfo = result;
 				if(loginInfo.isLoggedIn()) {
+					try {
+						loadCrimeDataMap();
+					} catch (JDOException e) {
+						// TODO Add the reload data panel
+					}
 					loadMainPanel();
 				} else {
 					loadLogin();
 				}
 			}
 		});
+	}
+
+	private void loadCrimeDataMap() {
+		PersistenceManager pm = getPersistenceManager();
+		try {
+			/*
+			 * TODO: If crimeDataMap isn't the only TreeMap we have
+			 * among all our persistent data, we might need to
+			 * change this.
+			 */
+			Query q = pm.newQuery(TreeMap.class);
+			List<TreeMap<Integer, CrimeDataByYear>> crimeDataMapList =
+					(List<TreeMap<Integer, CrimeDataByYear>>) q.execute();
+			int size = crimeDataMapList.size();
+			assert size == 1 || size == 0;
+			if (size == 0) {
+				this.crimeDataMap = new TreeMap<Integer, CrimeDataByYear>();
+				pm.makePersistent(this.crimeDataMap);
+			} else {
+				this.crimeDataMap = crimeDataMapList.get(0);
+			}
+		} finally {
+			pm.close();
+		}
 	}
 
 	private void loadMainPanel(){
@@ -250,7 +298,6 @@ public class CrimeMapper implements EntryPoint {
 				}
 				i++;
 			}
-			// TODO Trends method
 			updateTableTrends(getTrends(rowIndex));
 			selectedRow = rowIndex;
 		}
@@ -357,8 +404,6 @@ public class CrimeMapper implements EntryPoint {
 		crimeFlexTable.getCellFormatter().addStyleName(1, 0, "crimeTypeHeader");
 		int i = 1;
 		while(i < COLUMN_COUNT){
-			// TODO Possibly refactor to get rid of magic number and
-			// use the size of the enum of crime types
 			crimeFlexTable.getCellFormatter().addStyleName(1, i, "crimeTypeHeaderTitles");
 			i++;
 		}
@@ -517,7 +562,6 @@ public class CrimeMapper implements EntryPoint {
 	}
 
 	private void addCrimeDataSet(CrimeDataByYear result) {
-		// TODO Insert Persistent Method for DataStore
 		crimeDataMap.put(result.getYear(), result);
 
 		updateTableView(crimeDataMap);
@@ -632,11 +676,8 @@ public class CrimeMapper implements EntryPoint {
 			}
 		}
 	}
+
+	private PersistenceManager getPersistenceManager() {
+		return PMF.getPersistenceManager();
+	}
 }
-
-
-
-
-
-
-

@@ -4,7 +4,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("crime")
-public interface CrimeService extends RemoteService {
-	  public void addCrime(CrimeDataByYear crimeDBYear) throws NotLoggedInException;
-	  public CrimeDataByYear[] getCrimes() throws NotLoggedInException;
+public interface UserSettingsService extends RemoteService {
+	  public void setSelectedRow(int selectedRow) throws NotLoggedInException;
+	  public int getSelectedRow() throws NotLoggedInException;
 	}
