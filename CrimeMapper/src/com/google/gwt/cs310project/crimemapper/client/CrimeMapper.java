@@ -581,14 +581,10 @@ public class CrimeMapper implements EntryPoint {
 		String appFact3 = "Fact 3";
 
 		// Crime Types
-		ArrayList<String> explanations = new ArrayList<String>();
-		explanations.add("Explanation 1");
-		explanations.add("Explanation 2");
-		explanations.add("Explanation 3");
-		explanations.add("Explanation 4");
-		explanations.add("Explanation 5");
-		explanations.add("Explanation 6");
-		explanations.add("Explanation 7");
+		String mischiefDiscription = "md";
+		String theftFromAutoDiscription = "tfad";
+		String theftOfAutoDiscription = "toad";
+		String commercialBEDiscription = "cbed";
 
 		faqPanel.setSize(WIDTH,HEIGHT);
 
@@ -603,14 +599,19 @@ public class CrimeMapper implements EntryPoint {
 
 		label = new Label(appFact3);
 		faqPanel.add(label, "App Fact3", false);
+		
+		label = new Label(mischiefDiscription);
+		faqPanel.add(label, "What is Mischief?", false);
+		
+		label = new Label(theftFromAutoDiscription);
+		faqPanel.add(label, "What is Theft From Auto?", false);
+		
+		label = new Label(theftOfAutoDiscription);
+		faqPanel.add(label, "What is Theft Of Auto?", false);
+		
+		label = new Label(commercialBEDiscription);
+		faqPanel.add(label, "What is Commercial Break and Enter?", false);
 
-		String whatIs = "What is ";
-
-		// Crime facts
-		for (int i = 0; i < CrimeTypes.getNumberOfTypes(); i++) {
-			label = new Label(explanations.get(i));
-			faqPanel.add(label, whatIs + CrimeTypes.getType(i), false);
-		}
 		return faqPanel;
 	}
 	// ===================================================================================== //
