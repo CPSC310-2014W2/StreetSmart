@@ -395,18 +395,12 @@ public class CrimeMapper implements EntryPoint {
 		trendsVPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		trendsVPanel.setSpacing(SPACING);
 		trendsVPanel.add(buildTableTabPanel());
-		trendsVPanel.add(buildBarChartPanel());
 
 
 		return trendsVPanel;
 	}
 
-	private Panel buildBarChartPanel() {
-
-		barChartPanel = new TrendColumnChart(crimeDataMap);
-		barChartPanel.setSize("90em", "20em");
-		return barChartPanel;
-	}
+	
 
 	/**
 	 * Method for constructing Table Tab Panel 
