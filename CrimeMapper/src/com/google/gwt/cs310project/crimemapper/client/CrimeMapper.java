@@ -12,7 +12,6 @@ import org.moxieapps.gwt.highcharts.client.Series;
 import org.moxieapps.gwt.highcharts.client.ToolTip;
 import org.moxieapps.gwt.highcharts.client.ToolTipData;
 import org.moxieapps.gwt.highcharts.client.ToolTipFormatter;
-import org.moxieapps.gwt.highcharts.client.XAxis;
 import org.moxieapps.gwt.highcharts.client.labels.PieDataLabels;
 import org.moxieapps.gwt.highcharts.client.plotOptions.ColumnPlotOptions;
 import org.moxieapps.gwt.highcharts.client.plotOptions.PiePlotOptions;
@@ -60,6 +59,7 @@ public class CrimeMapper implements EntryPoint {
 	private static final int NO_TABLE_SELECTION_FLAG = -1;
 	private static final int BASE_YEAR = 2003;
 	private static final int NUM_YEARS = 12;
+	private static final int PADDING = 5;
 
 	// Dynamic Panels
 	private TabPanel tabPanel = new TabPanel();
@@ -193,6 +193,7 @@ public class CrimeMapper implements EntryPoint {
 			public void onClick(ClickEvent event) {
 				clearTrends();
 				selectedYearLabel.setText("");
+				selectedYearLabel.setStyleName("UnSelectedYearLabelStyle");
 				selectedRow = NO_TABLE_SELECTION_FLAG;
 				int row = crimeFlexTable.getRowCount();
 				int i = START_OF_DATA_ROWS;
@@ -251,6 +252,7 @@ public class CrimeMapper implements EntryPoint {
 			crimeFlexTable.getRowFormatter().setStyleName(rowIndex, "rowUnselectedShadow");
 			clearTrends();
 			selectedYearLabel.setText("");
+			selectedYearLabel.setStyleName("UnSelectedYearLabelStyle");
 			selectedRow = NO_TABLE_SELECTION_FLAG;
 		} else {
 			int row = crimeFlexTable.getRowCount();
@@ -264,8 +266,8 @@ public class CrimeMapper implements EntryPoint {
 			while(i < row){
 				if(i == rowIndex){
 					crimeFlexTable.getRowFormatter().setStyleName(rowIndex, "rowSelectedShadow");
-					selectedYearLabel.setText(""+getYearFromTable(rowIndex));
-
+					selectedYearLabel.setText("Base Year: "+getYearFromTable(rowIndex));
+					selectedYearLabel.setStyleName("selectedYearLabelStyle");
 
 				} else {
 					crimeFlexTable.getRowFormatter().setStyleName(i, "rowUnselectedShadow");
@@ -438,11 +440,11 @@ public class CrimeMapper implements EntryPoint {
 		for (int i = 0; i < years.length; i++){
 			yearsA.add(cdby[i].yearToString());
 		}
-		// selectedYearLabel.setText(crimeDataMap.keySet().toArray(new String[0]).toString());
 		
+		// selectedYearLabel.setText(yearsA.toString());
 		colChart.getXAxis()
 		.setCategories(false,yearsA.toArray(new String[0]));
-		selectedYearLabel.setText(yearsA.toString());
+		
 		colChart.getYAxis().setAxisTitleText("Number of Occurrences").setMin(0).setMax(18500);
 
 		Number[] crimes = new Number[years.length];
@@ -493,18 +495,19 @@ public class CrimeMapper implements EntryPoint {
 		crimeFlexTable.getCellFormatter().addStyleName(1, 5, "ofAutoUnder");
 		crimeFlexTable.getCellFormatter().addStyleName(1, 6, "ofAutoOver");
 		crimeFlexTable.getCellFormatter().addStyleName(1, 7, "commercialBE");
-		crimeFlexTable.setCellPadding(3);
+		crimeFlexTable.setCellPadding(PADDING);
 
 		// Assemble resetPanel.
+		clearTrendsButtonPanel.setSpacing(SPACING);
+		clearTrendsButton.setStyleName("clearButtonStyle");
 		clearTrendsButtonPanel.add(clearTrendsButton);
-
-
+		clearTrendsButtonPanel.add(selectedYearLabel);
 		// Date label
 		lastUploadedDateLabel.setText("Last update : "
 				+ DateTimeFormat.getMediumDateTimeFormat().format(new Date()));
 
 		// Assemble Table Panel to insert in Tab1 of Tab Panel
-		tableVPanel.add(selectedYearLabel);
+		//tableVPanel.add(selectedYearLabel);
 		tableVPanel.add(crimeFlexTable);
 		tableVPanel.add(clearTrendsButtonPanel);
 		tableVPanel.add(signOutLink);
