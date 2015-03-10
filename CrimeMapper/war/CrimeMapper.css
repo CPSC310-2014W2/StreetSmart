@@ -5,7 +5,7 @@
 }*/
 
 h1 {
-	text-align: left;
+	text-align: center;
 	color: #2062B8;
 	padding-left: 10px;
 	padding-top: 10px;
@@ -22,7 +22,7 @@ h1 {
 
 /* crime type header row*/
 .crimeTypeHeader {
-	background-color: #2062B8;
+	background-color: #7B7B7B;
 	color: white;
 	font-style: normal;
 	text-align: center;
@@ -40,15 +40,65 @@ h1 {
 }
 
 /* crime type header titles row*/
-.crimeTypeHeaderTitles {
+/*.crimeTypeHeaderTitles {
 	background-color: #a5c0e2;
 	color: white;
 	font-style: normal;
-}
+}*/
 
 /* crime data flex table */
 .crimeData {
 	border: 2px solid silver;
 	padding: 2px;
 	margin-bottom: 10px;
+	text-align: center;
+}
+
+.mischiefUnder {
+	background-color: #385C9B;
+	color: white;
+	font-style: normal;
+	text-align: center;
+}
+
+.mischiefOver {
+	background-color: #943432;
+	color: white;
+	font-style: normal;
+	text-align: center;
+}
+
+.fromAutoUnder {
+	background-color: #7A9830;
+	color: white;
+	font-style: normal;
+	text-align: center;
+}
+
+.fromAutoOver {
+	background-color: #6A538D;
+	color: white;
+	font-style: normal;
+	text-align: center;
+}
+
+.ofAutoUnder {
+	background-color: #3883A1;
+	color: white;
+	font-style: normal;
+	text-align: center;
+}
+
+.ofAutoOver {
+	background-color: #CD7222;
+	color: white;
+	font-style: normal;
+	text-align: center;
+}
+
+.commercialBE {
+	background-color: #8196C6;
+	color: white;
+	font-style: normal;
+	text-align: center;
 }
