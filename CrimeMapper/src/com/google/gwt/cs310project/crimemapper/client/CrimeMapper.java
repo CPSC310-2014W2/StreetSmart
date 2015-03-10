@@ -1,7 +1,6 @@
 package com.google.gwt.cs310project.crimemapper.client;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
@@ -13,6 +12,7 @@ import org.moxieapps.gwt.highcharts.client.Series;
 import org.moxieapps.gwt.highcharts.client.ToolTip;
 import org.moxieapps.gwt.highcharts.client.ToolTipData;
 import org.moxieapps.gwt.highcharts.client.ToolTipFormatter;
+import org.moxieapps.gwt.highcharts.client.XAxis;
 import org.moxieapps.gwt.highcharts.client.labels.PieDataLabels;
 import org.moxieapps.gwt.highcharts.client.plotOptions.ColumnPlotOptions;
 import org.moxieapps.gwt.highcharts.client.plotOptions.PiePlotOptions;
@@ -74,12 +74,12 @@ public class CrimeMapper implements EntryPoint {
 	private HorizontalPanel trendsHPanel1 = new HorizontalPanel();
 	private VerticalPanel trendsHPanel2 = new VerticalPanel();
 	private HorizontalPanel pieChartPanel = new HorizontalPanel();
-	private HorizontalPanel colChartPanel = new HorizontalPanel();
+	private VerticalPanel colChartPanel = new VerticalPanel();
 	private VerticalPanel mainTrendsPanel = new VerticalPanel();
 
 	// Data Visualization
 	private Chart pieChart = new Chart();
-	private Chart colChart = new Chart();
+	
 
 	// Dimensions and Spacing
 	private final String WIDTH = "100%";
@@ -295,7 +295,6 @@ public class CrimeMapper implements EntryPoint {
 
 		tabPanel.setAnimationEnabled(true);
 		tabPanel.setSize(WIDTH, HEIGHT);
-		tabPanel.setStyleName("tabPanelStyle");
 
 		//Create titles for tabs
 		String tab1Title = "Trends";
@@ -348,7 +347,6 @@ public class CrimeMapper implements EntryPoint {
 		mainTrendsPanel.add(trendsHPanel1);
 		mainTrendsPanel.add(trendsHPanel2);
 		
-
 
 		return mainTrendsPanel;
 	}
@@ -408,6 +406,7 @@ public class CrimeMapper implements EntryPoint {
 	}
 
 	private Chart buildYearlyColChart(){
+		Chart colChart = new Chart();
 		colChart.setType(Series.Type.COLUMN)  
 		.setChartTitleText("Yearly Comparison of Crime Types")    
 		.setColumnPlotOptions(new ColumnPlotOptions()  
@@ -433,14 +432,17 @@ public class CrimeMapper implements EntryPoint {
 						})  
 								);  
 
-		CrimeDataByYear[] cdby = crimeDataMap.values().toArray(new CrimeDataByYear[0]);
+		CrimeDataByYear[] cdby = crimeDataMap.values().toArray(new CrimeDataByYear[crimeDataMap.size()]);
 		String[] years = new String[cdby.length];
+		ArrayList<String> yearsA = new ArrayList<String>();
 		for (int i = 0; i < years.length; i++){
-			years[i] = cdby[i].yearToString();
+			yearsA.add(cdby[i].yearToString());
 		}
-
+		// selectedYearLabel.setText(crimeDataMap.keySet().toArray(new String[0]).toString());
+		
 		colChart.getXAxis()
-		.setCategories(years);
+		.setCategories(false,yearsA.toArray(new String[0]));
+		selectedYearLabel.setText(yearsA.toString());
 		colChart.getYAxis().setAxisTitleText("Number of Occurrences").setMin(0).setMax(18500);
 
 		Number[] crimes = new Number[years.length];
@@ -453,6 +455,7 @@ public class CrimeMapper implements EntryPoint {
 					.setPoints(crimes)
 					);   
 		}
+		colChart.setWidth("100%");
 		return colChart;  
 	}
 
@@ -647,24 +650,37 @@ public class CrimeMapper implements EntryPoint {
 		// TODO Insert Persistent Method for DataStore
 		crimeDataMap.put(result.getYear(), result);
 		updateTableView(crimeDataMap);
-		updateChartView(result.getYear());
+		updateColChartView(result.getYear());
 	}
-	private void updateChartView(int year){
 
-		/*if (pieChart.getSeries().length > 0){
+	private void updatePieChartView(int year){
+
+		if (pieChart.getSeries().length > 0){
 			pieChart.removeAllSeries();
 			pieChart.redraw();
 		}
 		pieChart.setWidth("100%");
-		pieChartPanel.add(buildYearlyPieChart(getYearFromTable(year)));*/
+		pieChartPanel.add(buildYearlyPieChart(getYearFromTable(year)));
+	}
 
-		if(colChart.getSeries().length > 0){
+	private void updateColChartView(int year){
+
+		/*if(colChart.getSeries().length > 0){
 			colChart.removeAllSeries();
 			colChart.redraw();
 		}
-		colChart.setWidth("100%");
+		colChart.setWidth("100%");*/
 		colChartPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		colChartPanel.add(buildYearlyColChart());
+		// Removing previous elements from panel
+		int i = colChartPanel.getWidgetCount();
+		int n = 0;
+		if(i != 1){
+			while (n < i-1){
+				colChartPanel.remove(n);
+				n++;
+			}
+		}
 	}
 	private void updateTableView(TreeMap<Integer, CrimeDataByYear> crimeDataMap2) {
 
@@ -746,7 +762,7 @@ public class CrimeMapper implements EntryPoint {
 				}
 				else {
 					crimeFlexTable.setText(r, i, cellText + trendsText);
-					}
+				}
 			}
 			r++;
 		}
