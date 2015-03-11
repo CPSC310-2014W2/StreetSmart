@@ -12,5 +12,20 @@ user.agent ie10
 
 89428F4626EBA817165CDE3B231625B6.cache.js
 user.agent ie8
+2342B21ECDCF6384F77D996F0EB195C7.cache.js
+user.agent ie8
+
+3DC7B5F12BDF2CC5BD955D27F804CF01.cache.js
+user.agent ie10
+
+62836F745415C75F45D51D1CAC6EBA39.cache.js
+user.agent ie9
+
+EC55C5721B9E796A67C8F80BE028200B.cache.js
+user.agent gecko1_8
+
+F4D78C624E555814F48E5C929774EAF7.cache.js
+user.agent safari
+>>>>>>> 13b63050e4166e5b1d353cfbc308947c87090114
 
 Devmode:devmode.js

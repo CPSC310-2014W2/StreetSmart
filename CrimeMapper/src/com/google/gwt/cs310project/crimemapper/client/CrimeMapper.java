@@ -64,7 +64,7 @@ public class CrimeMapper implements EntryPoint {
 	private static final int START_OF_DATA_COLUMNS = 1;
 	private static final int NO_TABLE_SELECTION_FLAG = -1;
 	private static final int BASE_YEAR = 2009;
-	private static final int NUM_YEARS = 5;
+	private static final int NUM_YEARS = 6;
 	private static final int PADDING = 7;
 
 	// Dynamic Panels
@@ -99,6 +99,7 @@ public class CrimeMapper implements EntryPoint {
 	private Label lastUploadedDateLabel = new Label();
 	private Label selectedYearLabel = new Label();
 	private int selectedRow;
+	private int userSelectedRow = NO_TABLE_SELECTION_FLAG;
 
 
 	// Settings Tab elements
@@ -222,6 +223,49 @@ public class CrimeMapper implements EntryPoint {
 		crimeDataSvc.setCrimeDataMap(crimeDataMap, callback);
 	}
 
+	private void loadUserSelectedRow() {
+		//Initialize the service proxy.
+		if (userSettingsSvc == null) {
+			userSettingsSvc = GWT.create(UserSettingsService.class);
+		}
+		// Set up the callback object.
+		AsyncCallback<Integer> callback = new AsyncCallback<Integer>(){
+			public void onFailure(Throwable caught){
+				throw new FailedToRetrieveDataException();
+			}
+
+			public void onSuccess(Integer result) {
+				userSelectedRow = result;
+				if (userSelectedRow != NO_TABLE_SELECTION_FLAG) {
+					selectRow(userSelectedRow);
+				}
+			}
+		}; 
+
+		// Make the call to the user settings service.
+		userSettingsSvc.getSelectedRow(callback);
+	}
+
+	private void updateUserSelectedRow() {
+		//Initialize the service proxy.
+		if (userSettingsSvc == null) {
+			userSettingsSvc = GWT.create(UserSettingsService.class);
+		}
+		// Set up the callback object.
+		AsyncCallback<Void> callback = new AsyncCallback<Void>(){
+			public void onFailure(Throwable caught){
+				throw new FailedToRetrieveDataException();
+			}
+
+			public void onSuccess(Void result) {
+				userSelectedRow = selectedRow;
+			}
+		}; 
+
+		// Make the call to the user settings service.
+		userSettingsSvc.setSelectedRow(selectedRow, callback);
+	}
+
 	// ===================================================================================== //
 	private void loadMainPanel(){
 
@@ -297,7 +341,11 @@ public class CrimeMapper implements EntryPoint {
 		localBackupAddButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				int year = BASE_YEAR + localBackupListBox.getSelectedIndex();
+<<<<<<< HEAD
 				String filePath = "http://1-dot-ddwaychen.appspot.com/data/crime_" + year + ".csv";
+=======
+				String filePath = "http://1-dot-crimemapper310.appspot.com/data/crime_" + year + ".csv";
+>>>>>>> 13b63050e4166e5b1d353cfbc308947c87090114
 				refreshCrimeList(filePath);
 			}
 		});
@@ -372,19 +420,30 @@ public class CrimeMapper implements EntryPoint {
 	}
 
 	private void selectRow(int rowIndex){
-		if (rowIndex == selectedRow)
-		{
-
+		if (rowIndex == selectedRow) {
 			crimeFlexTable.getRowFormatter().setStyleName(rowIndex, "rowUnselectedShadow");
 			clearTrends();
 			selectedYearLabel.setText("");
 			selectedYearLabel.setStyleName("UnSelectedYearLabelStyle");
 			selectedRow = NO_TABLE_SELECTION_FLAG;
+			try {
+				updateUserSelectedRow();
+			} catch (FailedToRetrieveDataException e) {
+				// TODO Add the reload data panel
+			}
 		} else {
 			int row = crimeFlexTable.getRowCount();
 			int i = START_OF_DATA_ROWS;
 
 			selectedRow = rowIndex;
+			if (rowIndex != userSelectedRow) {
+				try {
+					updateUserSelectedRow();
+				} catch (FailedToRetrieveDataException e) {
+					// TODO Add the reload data panel
+				}
+			}
+			
 			ArrayList<ArrayList<Double>> trends = getTrends(rowIndex);
 
 			updateTableTrends(trends);
@@ -497,7 +556,7 @@ public class CrimeMapper implements EntryPoint {
 
 
 	private Chart buildYearlyPieChart(int year){
-		// TODO: Needs implementation
+		// TODO: Finish for Sprint 2
 		pieChart.setType(Series.Type.PIE)  
 		.setChartTitleText("Year Added: "+ year)
 		.setPlotBackgroundColor((String) null)  
@@ -640,6 +699,7 @@ public class CrimeMapper implements EntryPoint {
 		crimeFlexTable.setCellPadding(PADDING);
 		try {
 			loadCrimeDataMap();
+			loadUserSelectedRow();
 		} catch (FailedToRetrieveDataException e) {
 			// TODO Add the reload data panel
 		}
