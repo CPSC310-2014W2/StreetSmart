@@ -1,9 +1,6 @@
 package com.google.gwt.cs310project.crimemapper.server;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
@@ -17,37 +14,51 @@ import com.google.gwt.cs310project.crimemapper.client.NotLoggedInException;
 import com.google.gwt.cs310project.crimemapper.client.UserSettingsService;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
+@SuppressWarnings("serial")
 public class UserSettingsServiceImpl extends RemoteServiceServlet implements UserSettingsService{
 
-	private static final Logger LOG = Logger.getLogger(UserSettingsServiceImpl.class.getName());
 	private static final PersistenceManagerFactory PMF =
 			JDOHelper.getPersistenceManagerFactory("transactions-optional");
 
 	public void setSelectedRow(int selectedRow) throws NotLoggedInException {
 		checkLoggedIn();
-		getUserSettings().setSelectedRow(selectedRow);
+		PersistenceManager pm = getPersistenceManager();
+		try {
+			getUserSettings(pm).setSelectedRow(selectedRow);
+		} finally {
+			pm.close();
+		}
 	}
 
 
 	public int getSelectedRow() throws NotLoggedInException {
 		checkLoggedIn();
 		int selectedRow = 0;
-		selectedRow = getUserSettings().getSelectedRow();
-		return selectedRow;
-	}
-	
-	private UserSettings getUserSettings() {
 		PersistenceManager pm = getPersistenceManager();
-		List<UserSettings> userSettings = null;
 		try {
-			Query q = pm.newQuery(UserSettings.class, "user == u");
-			q.declareParameters("com.google.appengine.api.users.User u");
-			userSettings = (List<UserSettings>) q.execute(getUser());
-			assert userSettings.size() == 1;
+			selectedRow = getUserSettings(pm).getSelectedRow();
 		} finally {
 			pm.close();
 		}
-		return userSettings.get(0);
+		return selectedRow;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private UserSettings getUserSettings(PersistenceManager pm) {
+		List<UserSettings> userSettingsList = null;
+		Query q = pm.newQuery(UserSettings.class, "user == u");
+		q.declareParameters("com.google.appengine.api.users.User u");
+		userSettingsList = (List<UserSettings>) q.execute(getUser());
+		int size = userSettingsList.size();
+		UserSettings userSettings = null;
+		assert size == 1 || size == 0;
+		if (size == 0) {
+			userSettings = new UserSettings(getUser());
+			pm.makePersistent(userSettings);
+		} else {
+			userSettings = userSettingsList.get(0);
+		}
+		return userSettings;
 	}
 
 	private void checkLoggedIn() throws NotLoggedInException {

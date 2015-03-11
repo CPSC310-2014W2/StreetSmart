@@ -3,6 +3,7 @@ package com.google.gwt.cs310project.crimemapper.client;
 import java.io.Serializable;
 import java.util.List;
 
+@SuppressWarnings("serial")
 public class LoginInfo implements Serializable {
 
 	private boolean loggedIn = false;

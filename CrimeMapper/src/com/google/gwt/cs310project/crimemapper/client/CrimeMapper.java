@@ -6,11 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.logging.Logger;
 
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.xml.sax.SAXException;
 import org.moxieapps.gwt.highcharts.client.Chart;
 import org.moxieapps.gwt.highcharts.client.Legend;
 import org.moxieapps.gwt.highcharts.client.Point;
@@ -22,11 +18,10 @@ import org.moxieapps.gwt.highcharts.client.labels.PieDataLabels;
 import org.moxieapps.gwt.highcharts.client.plotOptions.ColumnPlotOptions;
 import org.moxieapps.gwt.highcharts.client.plotOptions.PiePlotOptions;
 import org.moxieapps.gwt.highcharts.client.plotOptions.PlotOptions;
+import org.xml.sax.SAXException;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.cs310project.crimemapper.server.UserSettingsServiceImpl;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -35,26 +30,25 @@ import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.StackPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.Anchor;
 
 
 
@@ -69,13 +63,12 @@ public class CrimeMapper implements EntryPoint {
 	private static final int START_OF_DATA_ROWS = 2;
 	private static final int START_OF_DATA_COLUMNS = 1;
 	private static final int NO_TABLE_SELECTION_FLAG = -1;
-	private static final int BASE_YEAR = 2003;
-	private static final int NUM_YEARS = 12;
-	private static final int PADDING = 5;
+	private static final int BASE_YEAR = 2009;
+	private static final int NUM_YEARS = 5;
+	private static final int PADDING = 7;
 
 	// Dynamic Panels
 	private TabPanel tabPanel = new TabPanel();
-	private StackPanel faqPanel = new StackPanel();
 
 	// Static Panels
 	private VerticalPanel mainPanel = new VerticalPanel();
@@ -84,7 +77,6 @@ public class CrimeMapper implements EntryPoint {
 	private VerticalPanel mapsVPanel = new VerticalPanel();
 	private HorizontalPanel clearTrendsButtonPanel = new HorizontalPanel();
 	private VerticalPanel accountVPanel = new VerticalPanel();
-	private VerticalPanel trendsVPanel = new VerticalPanel();
 	private HorizontalPanel trendsHPanel1 = new HorizontalPanel();
 	private VerticalPanel trendsHPanel2 = new VerticalPanel();
 	private HorizontalPanel pieChartPanel = new HorizontalPanel();
@@ -93,7 +85,7 @@ public class CrimeMapper implements EntryPoint {
 
 	// Data Visualization
 	private Chart pieChart = new Chart();
-	
+
 
 
 	// Dimensions and Spacing
@@ -120,6 +112,7 @@ public class CrimeMapper implements EntryPoint {
 	private ListBox localBackupListBox = new ListBox();
 	private Label localBackupLabel = new Label("Please choose a file to load from local backup:");
 	private Button localBackupAddButton = new Button("Add");
+	private Button localBackupRemoveButton = new Button("Remove");
 	private Button localBackupCancelButton = new Button("Cancel");
 
 	// CrimeData RPC fields
@@ -138,7 +131,7 @@ public class CrimeMapper implements EntryPoint {
 	private Anchor signInLink = new Anchor("Sign In");
 	private Anchor signOutLink = new Anchor("Sign Out");
 	LoginServiceAsync loginService = null;
-	
+
 	//Admin Account
 	private ListBox localAccountListBox = new ListBox();
 	private Button localAccountAddButton = new Button("Add");
@@ -147,13 +140,10 @@ public class CrimeMapper implements EntryPoint {
 	private boolean isAdmin = false;
 	private TextBox adminTextBox = new TextBox();
 	private Label adminLabel = new Label("Admin Account List");
-	
+
 
 	// Databases 
 	private TreeMap<Integer, CrimeDataByYear> crimeDataMap;
-	
-	private static final Logger LOG = Logger.getLogger(CrimeMapper.class.getName());
-
 	/**
 	 * Entry point method.
 	 */
@@ -168,7 +158,7 @@ public class CrimeMapper implements EntryPoint {
 			public void onSuccess(LoginInfo result) {
 				loginInfo = result;
 				if(loginInfo.isLoggedIn()) {
-					
+
 					lst = loginInfo.getAccountList();
 					for (int i = 0; i < lst.size(); i++) {
 						if(loginInfo.getEmailAddress().toLowerCase() == (lst.get(i)).toLowerCase()) {
@@ -176,7 +166,7 @@ public class CrimeMapper implements EntryPoint {
 							break;
 						}					
 					}
-					
+
 					loadMainPanel();
 				} else {
 					loadLogin();
@@ -199,13 +189,21 @@ public class CrimeMapper implements EntryPoint {
 			public void onSuccess(TreeMap<Integer, CrimeDataByYear> result) {
 				crimeDataMap = result;
 				updateTableView(crimeDataMap);
+				updateChartViewDStore();
 			}
 		}; 
 
 		// Make the call to the crime data service.
 		crimeDataSvc.getCrimeDataMap(callback);
 	}
-	
+
+	private void updateChartViewDStore() {
+
+		Chart colChart = buildYearlyColChart(crimeDataMap);
+		colChartPanel.setPixelSize(1600, 400);
+		colChartPanel.add(colChart);	
+	}
+
 	private void updateCrimeDataMap() {
 		//Initialize the service proxy.
 		if (crimeDataSvc == null) {
@@ -304,6 +302,14 @@ public class CrimeMapper implements EntryPoint {
 			}
 		});
 
+		// Listen for mouse events on local backup Add button
+		localBackupRemoveButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				int year = BASE_YEAR + localBackupListBox.getSelectedIndex();
+				removeFromCrimeList(year);
+			}
+		});
+
 		// Listen for mouse events on local backup Cancel button
 		localBackupCancelButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
@@ -311,49 +317,44 @@ public class CrimeMapper implements EntryPoint {
 				settingsLabel.setText("");
 			}
 		});
-		
+
 		// Listen for mouse events on local Account Add button
-				localAccountAddButton.addClickHandler(new ClickHandler() {
-					public void onClick(ClickEvent event) {
-						if(adminTextBox.getText() == "")
-							Window.alert("Please input new account!!!");
-						else{
-							//add new account
-							String str = adminTextBox.getText();
-							for(int i=0; i<lst.size(); i++){
-								if(str.toLowerCase() == lst.get(i).toLowerCase()){
-									Window.alert("This account already exists!!!");
-									return;
-								}
-							}
-							
-							lst.add(str);
-							localAccountListBox.addItem(str);
-							
-							
-							//loginInfo.setAccountList(lst);
-							
-						/*	
-						//	if(loginService == null)
-							//	loginService = GWT.create(LoginService.class);
-							
+		localAccountAddButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				if(adminTextBox.getText() == "")
+					Window.alert("Please input new account!!!");
+				else{
+					//add new account
+					String str = adminTextBox.getText();
+					for(int i=0; i<lst.size(); i++){
+						if(str.toLowerCase() == lst.get(i).toLowerCase()){
+							Window.alert("This account already exists!!!");
+							return;
+						}
+					}
+
+					lst.add(str);
+					localAccountListBox.addItem(str);
+
+
+					/*loginInfo.setAccountList(lst);
+
+
+							if(loginService == null)
+								loginService = GWT.create(LoginService.class);
+
 							loginService.addAccount(str, new AsyncCallback<Void>() {
 								public void onFailure(Throwable error) {
-									
+
 									Window.alert(error.toString());
 								}
 
 								public void onSuccess(Void result) {
 								}
-							});
-							*/
-
-							
-							
-							
-						}
-					}
-				});
+							});*/
+				}
+			}
+		});
 
 	}
 
@@ -399,9 +400,6 @@ public class CrimeMapper implements EntryPoint {
 				}
 				i++;
 			}
-
-			updateTableTrends(getTrends(rowIndex));
-			selectedRow = rowIndex;
 		}
 	}
 
@@ -453,20 +451,20 @@ public class CrimeMapper implements EntryPoint {
 		tabPanel.add(flowpanel, tab2Title);
 
 		flowpanel = new FlowPanel();
-		flowpanel.add(buildFaqTabPanel());
+		flowpanel.add(FaqTabPanel.getFaqTabPanel());
 		tabPanel.add(flowpanel, tab3Title);
 
 		flowpanel = new FlowPanel();
 		flowpanel.add(buildSettingsTabPanel());
 		tabPanel.add(flowpanel, tab4Title);
-	
-		
+
+
 		if(isAdmin){
 			flowpanel = new FlowPanel();
 			flowpanel.add(buildAccountTabPanel());
 			tabPanel.add(flowpanel, tab5Title);
 		}
-		
+
 		// first tab upon load
 		tabPanel.selectTab(0);
 		return tabPanel;
@@ -490,7 +488,7 @@ public class CrimeMapper implements EntryPoint {
 		trendsHPanel2.add(lastUploadedDateLabel);
 		mainTrendsPanel.add(trendsHPanel1);
 		mainTrendsPanel.add(trendsHPanel2);
-		
+
 
 		return mainTrendsPanel;
 	}
@@ -550,7 +548,7 @@ public class CrimeMapper implements EntryPoint {
 		return pieChart;
 	}
 
-	private Chart buildYearlyColChart(){
+	private Chart buildYearlyColChart(TreeMap<Integer, CrimeDataByYear> crimeDataMap2){
 		Chart colChart = new Chart();
 		colChart.setType(Series.Type.COLUMN)  
 		.setChartTitleText("Yearly Comparison of Crime Types")    
@@ -559,11 +557,11 @@ public class CrimeMapper implements EntryPoint {
 		.setBorderWidth(0)  
 				)  
 				.setLegend(new Legend()  
-				.setLayout(Legend.Layout.VERTICAL)  
+				.setLayout(Legend.Layout.HORIZONTAL)  
 				.setAlign(Legend.Align.LEFT)  
 				.setVerticalAlign(Legend.VerticalAlign.TOP)  
-				.setX(100)  
-				.setY(70)  
+				.setX(195)  
+				.setY(40)  
 				.setFloating(true)  
 				.setBackgroundColor("#FFFFFF")  
 				.setShadow(true)  
@@ -577,18 +575,19 @@ public class CrimeMapper implements EntryPoint {
 						})  
 								);  
 
-		CrimeDataByYear[] cdby = crimeDataMap.values().toArray(new CrimeDataByYear[crimeDataMap.size()]);
+		CrimeDataByYear[] cdby = crimeDataMap2.values().toArray(new CrimeDataByYear[crimeDataMap2.size()]);
 		String[] years = new String[cdby.length];
 		ArrayList<String> yearsA = new ArrayList<String>();
 		for (int i = 0; i < years.length; i++){
 			yearsA.add(cdby[i].yearToString());
 		}
-		
+
 		// selectedYearLabel.setText(yearsA.toString());
 		colChart.getXAxis()
-		.setCategories(false,yearsA.toArray(new String[0]));
-		
-		colChart.getYAxis().setAxisTitleText("Number of Occurrences").setMin(0).setMax(18500);
+		.setCategories(yearsA.toArray(new String[0]));
+		colChart.getXAxis().setAxisTitleText("Years");
+
+		colChart.getYAxis().setAxisTitleText("Number of Occurrences").setMin(0).setMax(18000);
 
 		Number[] crimes = new Number[years.length];
 		for(int k = 0; k < CrimeTypes.getNumberOfTypes(); k++){
@@ -636,7 +635,7 @@ public class CrimeMapper implements EntryPoint {
 			crimeFlexTable.getCellFormatter().addStyleName(1, i, "crimeTypeHeaderTitles");
 			i++;
 		}
-		crimeFlexTable.setCellPadding(3);
+		crimeFlexTable.setCellPadding(PADDING);
 		try {
 			loadCrimeDataMap();
 		} catch (FailedToRetrieveDataException e) {
@@ -649,7 +648,6 @@ public class CrimeMapper implements EntryPoint {
 		crimeFlexTable.getCellFormatter().addStyleName(1, 5, "ofAutoUnder");
 		crimeFlexTable.getCellFormatter().addStyleName(1, 6, "ofAutoOver");
 		crimeFlexTable.getCellFormatter().addStyleName(1, 7, "commercialBE");
-		crimeFlexTable.setCellPadding(PADDING);
 
 		// Assemble resetPanel.
 		clearTrendsButtonPanel.setSpacing(SPACING);
@@ -722,68 +720,21 @@ public class CrimeMapper implements EntryPoint {
 
 		return settingsVPanel;
 	}
-	
+
 	private Panel buildAccountTabPanel(){
 		accountVPanel.add(adminLabel);
 		accountVPanel.add(localAccountListBox);
 		//accountVPanel.add(localAccountDelButton);
-		
+
 		//accountVPanel.add(adminTextBox);
 		//accountVPanel.add(localAccountAddButton);
-			for (int i = 0; i < lst.size(); i++) {
-				localAccountListBox.addItem(lst.get(i));
-			}
-			
+		for (int i = 0; i < lst.size(); i++) {
+			localAccountListBox.addItem(lst.get(i));
+		}
+
 		return accountVPanel;
 	}
 
-	private Panel buildFaqTabPanel(){
-		// Application facts
-		String appFact1 = "The Vancouver Police Department (VPD) has changed the way in "
-				+ "which it reports its crime statistics. Historically, it reported data "
-				+ "based on Statistics Canada reporting requirements, which meant that "
-				+ "only the most serious offence per incident was counted. Now, the all "
-				+ "violations method is used. Other policing agencies like Edmonton, "
-				+ "Toronto, Ottawa and Calgary also present their crime statistics using "
-				+ "the all violations method. It is important to note these differences "
-				+ "in reporting when comparing our crime statistics to other Police "
-				+ "Agencies and Statistics Canada.";
-		String appFact2 = "Fact 2";
-		String appFact3 = "Fact 3";
-
-		// Crime Types
-		ArrayList<String> explanations = new ArrayList<String>();
-		explanations.add("Explanation 1");
-		explanations.add("Explanation 2");
-		explanations.add("Explanation 3");
-		explanations.add("Explanation 4");
-		explanations.add("Explanation 5");
-		explanations.add("Explanation 6");
-		explanations.add("Explanation 7");
-
-		faqPanel.setSize(WIDTH,HEIGHT);
-
-		Label label;
-
-		// Application Facts
-		label = new Label(appFact1);
-		faqPanel.add(label, "Comparing Crime Statistics", false);
-
-		label = new Label(appFact2);
-		faqPanel.add(label, "App Fact2", false);
-
-		label = new Label(appFact3);
-		faqPanel.add(label, "App Fact3", false);
-
-		String whatIs = "What is ";
-
-		// Crime facts
-		for (int i = 0; i < CrimeTypes.getNumberOfTypes(); i++) {
-			label = new Label(explanations.get(i));
-			faqPanel.add(label, whatIs + CrimeTypes.getType(i), false);
-		}
-		return faqPanel;
-	}
 	// ===================================================================================== //
 	/**
 	 * Add crimedata to FlexTable 
@@ -807,7 +758,7 @@ public class CrimeMapper implements EntryPoint {
 					addCrimeDataSet(result);
 					localBackupPanel.setVisible(false);
 				} else {
-					settingsLabel.setText("Seems Like an Error Loading Data");
+					settingsLabel.setText("Error Loading Data");
 					localBackupPanel.setVisible(true);
 				}
 			}
@@ -815,6 +766,10 @@ public class CrimeMapper implements EntryPoint {
 
 		// Make the call to the crime data service.
 		crimeDataSvc.getCrimeDataByYear(crimeURL, callback);
+	}
+	// ===================================================================================== //
+	private void removeFromCrimeList(int year) {
+		// TODO Implement Remove from list functionality in Sprint 2
 	}
 	// ===================================================================================== //
 	private void addCrimeDataSet(CrimeDataByYear result) {
@@ -826,32 +781,17 @@ public class CrimeMapper implements EntryPoint {
 			e.printStackTrace();
 		}
 		updateTableView(crimeDataMap);
-		updateColChartView(result.getYear());
+		updateColChartView(crimeDataMap);
 	}
 
-	private void updatePieChartView(int year){
+	private void updateColChartView(TreeMap<Integer, CrimeDataByYear> crimeDataMap2){
 
-		if (pieChart.getSeries().length > 0){
-			pieChart.removeAllSeries();
-			pieChart.redraw();
-		}
-		pieChart.setWidth("100%");
-		pieChartPanel.add(buildYearlyPieChart(getYearFromTable(year)));
-	}
-
-	private void updateColChartView(int year){
-
-		/*if(colChart.getSeries().length > 0){
-			colChart.removeAllSeries();
-			colChart.redraw();
-		}
-		colChart.setWidth("100%");*/
 		colChartPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		colChartPanel.add(buildYearlyColChart());
+		colChartPanel.add(buildYearlyColChart(crimeDataMap2));
 		// Removing previous elements from panel
 		int i = colChartPanel.getWidgetCount();
 		int n = 0;
-		if(i != 1){
+		if((i != 1) && (i != 0)){
 			while (n < i-1){
 				colChartPanel.remove(n);
 				n++;

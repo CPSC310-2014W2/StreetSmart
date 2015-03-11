@@ -20,10 +20,15 @@ public class UserSettings {
 	@Persistent
 	private Date createDate;
 	@Persistent
-	private int selectedRow;
+	private int selectedRow = -1;
 
 	public UserSettings() {
 		this.createDate = new Date();
+	}
+	
+	public UserSettings(User user) {
+		this();
+		this.user = user;
 	}
 
 	public UserSettings(User user, int selectedRow) {
