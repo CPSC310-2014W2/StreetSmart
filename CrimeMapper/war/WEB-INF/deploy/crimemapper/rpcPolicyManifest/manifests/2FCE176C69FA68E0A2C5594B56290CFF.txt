@@ -1,0 +1,2 @@
+serviceClass: com.google.gwt.cs310project.crimemapper.client.UserSettingsService
+path: B3985583172C5E2BC912673F91095434.gwt.rpc
