@@ -3,7 +3,6 @@
 	margin: 0px;
 	padding: 0px;
 }*/
-
 h1 {
 	text-align: center;
 	color: #2062B8;
@@ -11,7 +10,7 @@ h1 {
 	padding-top: 10px;
 	font-family: arial, sans-serif;
 	font-style: normal;
-}	
+}
 
 #menuBar {
 	padding-top: 0px;
@@ -95,4 +94,28 @@ h1 {
 	color: white;
 	font-style: normal;
 	text-align: center;
+}
+
+.selectedYearLabelStyle {
+	width: 100px;
+	height: 25px;
+	background-color: #7B7B7B;
+	color: white;
+	text-align: center;
+	margin: auto;
+	padding-left: 3px;
+	padding-right: 3px;
+}
+
+.clearButtonStyle {
+	width: 100px;
+	height: 25px;
+	text-align: center;
+	padding-top: 4px;
+	padding-left: 3px;
+	padding-right: 3px;
+}
+
+.UnSelectedYearLabelStyle {
+	
 }
