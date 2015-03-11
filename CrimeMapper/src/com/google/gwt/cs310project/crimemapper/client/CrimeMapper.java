@@ -297,7 +297,7 @@ public class CrimeMapper implements EntryPoint {
 		localBackupAddButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				int year = BASE_YEAR + localBackupListBox.getSelectedIndex();
-				String filePath = "http://127.0.0.1:8888/data/crime_" + year + ".csv";
+				String filePath = "http://1-dot-ddwaychen.appspot.com/data/crime_" + year + ".csv";
 				refreshCrimeList(filePath);
 			}
 		});
@@ -454,12 +454,14 @@ public class CrimeMapper implements EntryPoint {
 		flowpanel.add(FaqTabPanel.getFaqTabPanel());
 		tabPanel.add(flowpanel, tab3Title);
 
-		flowpanel = new FlowPanel();
-		flowpanel.add(buildSettingsTabPanel());
-		tabPanel.add(flowpanel, tab4Title);
+		
 
 
 		if(isAdmin){
+			flowpanel = new FlowPanel();
+			flowpanel.add(buildSettingsTabPanel());
+			tabPanel.add(flowpanel, tab4Title);
+			
 			flowpanel = new FlowPanel();
 			flowpanel.add(buildAccountTabPanel());
 			tabPanel.add(flowpanel, tab5Title);
