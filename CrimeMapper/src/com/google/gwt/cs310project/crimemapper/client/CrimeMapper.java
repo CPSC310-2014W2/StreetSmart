@@ -112,6 +112,7 @@ public class CrimeMapper implements EntryPoint {
 	private ListBox localBackupListBox = new ListBox();
 	private Label localBackupLabel = new Label("Please choose a file to load from local backup:");
 	private Button localBackupAddButton = new Button("Add");
+	private Button localBackupRemoveButton = new Button("Remove");
 	private Button localBackupCancelButton = new Button("Cancel");
 
 	// CrimeData RPC fields
@@ -197,7 +198,7 @@ public class CrimeMapper implements EntryPoint {
 	}
 
 	private void updateChartViewDStore() {
-		
+
 		Chart colChart = buildYearlyColChart(crimeDataMap);
 		colChartPanel.setPixelSize(1600, 400);
 		colChartPanel.add(colChart);	
@@ -301,6 +302,14 @@ public class CrimeMapper implements EntryPoint {
 			}
 		});
 
+		// Listen for mouse events on local backup Add button
+		localBackupRemoveButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				int year = BASE_YEAR + localBackupListBox.getSelectedIndex();
+				removeFromCrimeList(year);
+			}
+		});
+
 		// Listen for mouse events on local backup Cancel button
 		localBackupCancelButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
@@ -330,7 +339,7 @@ public class CrimeMapper implements EntryPoint {
 
 					/*loginInfo.setAccountList(lst);
 
-					
+
 							if(loginService == null)
 								loginService = GWT.create(LoginService.class);
 
@@ -725,7 +734,7 @@ public class CrimeMapper implements EntryPoint {
 
 		return accountVPanel;
 	}
-	
+
 	// ===================================================================================== //
 	/**
 	 * Add crimedata to FlexTable 
@@ -757,6 +766,11 @@ public class CrimeMapper implements EntryPoint {
 
 		// Make the call to the crime data service.
 		crimeDataSvc.getCrimeDataByYear(crimeURL, callback);
+	}
+	// ===================================================================================== //
+	private void removeFromCrimeList(int year) {
+		// TODO Implement Remove from list functionality
+		
 	}
 	// ===================================================================================== //
 	private void addCrimeDataSet(CrimeDataByYear result) {
