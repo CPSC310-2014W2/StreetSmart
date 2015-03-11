@@ -769,8 +769,7 @@ public class CrimeMapper implements EntryPoint {
 	}
 	// ===================================================================================== //
 	private void removeFromCrimeList(int year) {
-		// TODO Implement Remove from list functionality
-		
+		// TODO Implement Remove from list functionality in Sprint 2
 	}
 	// ===================================================================================== //
 	private void addCrimeDataSet(CrimeDataByYear result) {
