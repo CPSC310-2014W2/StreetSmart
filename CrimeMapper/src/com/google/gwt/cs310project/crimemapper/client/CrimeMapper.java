@@ -63,13 +63,12 @@ public class CrimeMapper implements EntryPoint {
 	private static final int START_OF_DATA_ROWS = 2;
 	private static final int START_OF_DATA_COLUMNS = 1;
 	private static final int NO_TABLE_SELECTION_FLAG = -1;
-	private static final int BASE_YEAR = 2003;
-	private static final int NUM_YEARS = 12;
+	private static final int BASE_YEAR = 2009;
+	private static final int NUM_YEARS = 5;
 	private static final int PADDING = 7;
 
 	// Dynamic Panels
 	private TabPanel tabPanel = new TabPanel();
-	private StackPanel faqPanel = new StackPanel();
 
 	// Static Panels
 	private VerticalPanel mainPanel = new VerticalPanel();
@@ -78,7 +77,6 @@ public class CrimeMapper implements EntryPoint {
 	private VerticalPanel mapsVPanel = new VerticalPanel();
 	private HorizontalPanel clearTrendsButtonPanel = new HorizontalPanel();
 	private VerticalPanel accountVPanel = new VerticalPanel();
-	private VerticalPanel trendsVPanel = new VerticalPanel();
 	private HorizontalPanel trendsHPanel1 = new HorizontalPanel();
 	private VerticalPanel trendsHPanel2 = new VerticalPanel();
 	private HorizontalPanel pieChartPanel = new HorizontalPanel();
@@ -333,11 +331,11 @@ public class CrimeMapper implements EntryPoint {
 					localAccountListBox.addItem(str);
 
 
-					//loginInfo.setAccountList(lst);
+					loginInfo.setAccountList(lst);
 
-					/*	
-						//	if(loginService == null)
-							//	loginService = GWT.create(LoginService.class);
+					
+							if(loginService == null)
+								loginService = GWT.create(LoginService.class);
 
 							loginService.addAccount(str, new AsyncCallback<Void>() {
 								public void onFailure(Throwable error) {
@@ -348,7 +346,7 @@ public class CrimeMapper implements EntryPoint {
 								public void onSuccess(Void result) {
 								}
 							});
-					 */
+					 
 
 
 
@@ -452,7 +450,7 @@ public class CrimeMapper implements EntryPoint {
 		tabPanel.add(flowpanel, tab2Title);
 
 		flowpanel = new FlowPanel();
-		flowpanel.add(buildFaqTabPanel());
+		flowpanel.add(FaqTabPanel.getFaqTabPanel());
 		tabPanel.add(flowpanel, tab3Title);
 
 		flowpanel = new FlowPanel();
@@ -736,53 +734,6 @@ public class CrimeMapper implements EntryPoint {
 		return accountVPanel;
 	}
 
-	private Panel buildFaqTabPanel(){
-		// Application facts
-		String appFact1 = "The Vancouver Police Department (VPD) has changed the way in "
-				+ "which it reports its crime statistics. Historically, it reported data "
-				+ "based on Statistics Canada reporting requirements, which meant that "
-				+ "only the most serious offence per incident was counted. Now, the all "
-				+ "violations method is used. Other policing agencies like Edmonton, "
-				+ "Toronto, Ottawa and Calgary also present their crime statistics using "
-				+ "the all violations method. It is important to note these differences "
-				+ "in reporting when comparing our crime statistics to other Police "
-				+ "Agencies and Statistics Canada.";
-		String appFact2 = "Fact 2";
-		String appFact3 = "Fact 3";
-
-		// Crime Types
-		ArrayList<String> explanations = new ArrayList<String>();
-		explanations.add("Explanation 1");
-		explanations.add("Explanation 2");
-		explanations.add("Explanation 3");
-		explanations.add("Explanation 4");
-		explanations.add("Explanation 5");
-		explanations.add("Explanation 6");
-		explanations.add("Explanation 7");
-
-		faqPanel.setSize(WIDTH,HEIGHT);
-
-		Label label;
-
-		// Application Facts
-		label = new Label(appFact1);
-		faqPanel.add(label, "Comparing Crime Statistics", false);
-
-		label = new Label(appFact2);
-		faqPanel.add(label, "App Fact2", false);
-
-		label = new Label(appFact3);
-		faqPanel.add(label, "App Fact3", false);
-
-		String whatIs = "What is ";
-
-		// Crime facts
-		for (int i = 0; i < CrimeTypes.getNumberOfTypes(); i++) {
-			label = new Label(explanations.get(i));
-			faqPanel.add(label, whatIs + CrimeTypes.getType(i), false);
-		}
-		return faqPanel;
-	}
 	// ===================================================================================== //
 	/**
 	 * Add crimedata to FlexTable 
