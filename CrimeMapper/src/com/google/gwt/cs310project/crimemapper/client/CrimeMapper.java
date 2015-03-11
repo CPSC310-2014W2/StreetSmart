@@ -64,7 +64,7 @@ public class CrimeMapper implements EntryPoint {
 	private static final int START_OF_DATA_COLUMNS = 1;
 	private static final int NO_TABLE_SELECTION_FLAG = -1;
 	private static final int BASE_YEAR = 2009;
-	private static final int NUM_YEARS = 5;
+	private static final int NUM_YEARS = 6;
 	private static final int PADDING = 7;
 
 	// Dynamic Panels
@@ -297,7 +297,7 @@ public class CrimeMapper implements EntryPoint {
 		localBackupAddButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				int year = BASE_YEAR + localBackupListBox.getSelectedIndex();
-				String filePath = "http://127.0.0.1:8888/data/crime_" + year + ".csv";
+				String filePath = "http://1-dot-crimemapper310.appspot.com/data/crime_" + year + ".csv";
 				refreshCrimeList(filePath);
 			}
 		});
@@ -495,7 +495,7 @@ public class CrimeMapper implements EntryPoint {
 
 
 	private Chart buildYearlyPieChart(int year){
-		// TODO: Needs implementation
+		// TODO: Finish for Sprint 2
 		pieChart.setType(Series.Type.PIE)  
 		.setChartTitleText("Year Added: "+ year)
 		.setPlotBackgroundColor((String) null)  
