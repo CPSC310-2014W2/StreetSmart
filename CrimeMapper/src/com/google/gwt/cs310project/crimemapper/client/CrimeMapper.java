@@ -328,7 +328,7 @@ public class CrimeMapper implements EntryPoint {
 					localAccountListBox.addItem(str);
 
 
-					loginInfo.setAccountList(lst);
+					/*loginInfo.setAccountList(lst);
 
 					
 							if(loginService == null)
@@ -342,12 +342,7 @@ public class CrimeMapper implements EntryPoint {
 
 								public void onSuccess(Void result) {
 								}
-							});
-					 
-
-
-
-
+							});*/
 				}
 			}
 		});
