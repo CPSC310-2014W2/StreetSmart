@@ -20,7 +20,7 @@ public class UserSettings {
 	@Persistent
 	private Date createDate;
 	@Persistent
-	private int selectedRow = 0;
+	private int selectedRow = -1;
 
 	public UserSettings() {
 		this.createDate = new Date();
