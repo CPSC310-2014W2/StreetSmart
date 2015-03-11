@@ -109,7 +109,6 @@ public class CrimeDataServiceImpl extends RemoteServiceServlet implements CrimeD
 	public void setCrimeDataMap(TreeMap<Integer, CrimeDataByYear> crimeDataMap) {
 		PersistenceManager pm = getPersistenceManager();
 		try {
-			GlobalPersistentData globalPersistentData = getGlobalPersistentData(pm);
 			getGlobalPersistentData(pm).setCrimeDataMap(crimeDataMap);
 		} finally {
 			pm.close();
