@@ -8,6 +8,7 @@ public final class CrimeTypes implements Serializable {
 	
 	private static HashMap<Integer, String> crimeTypes = new HashMap<Integer, String>();
 	
+	
 	private CrimeTypes() {
 		// Do not allow instantiation of this class
 	}

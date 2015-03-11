@@ -1,5 +1,7 @@
 package com.google.gwt.cs310project.crimemapper.server;
 
+
+import java.util.ArrayList;
 import java.util.Date;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
@@ -21,6 +23,9 @@ public class GlobalPersistentData {
 	
 	@Persistent(serialized = "true")
 	private TreeMap<Integer, CrimeDataByYear> crimeDataMap = null;
+	
+	@Persistent(serialized = "true")
+	private ArrayList<String> adminAccounts = null;
 
 	public TreeMap<Integer, CrimeDataByYear> getCrimeDataMap() {
 		return crimeDataMap;
@@ -32,5 +37,14 @@ public class GlobalPersistentData {
 	
 	public Long getId() {
 		return this.id;
+	}
+
+	public ArrayList<String> getAdminAccounts() {
+		
+		return adminAccounts;
+	}
+
+	public void setAdminAccounts(ArrayList<String> adminAcct) {
+		adminAccounts = adminAcct;
 	}
 }
