@@ -137,6 +137,13 @@ public class CrimeDataServiceImpl extends RemoteServiceServlet implements CrimeD
 		} finally {
 			pm.close();
 		}
+	
+			pm = getPersistenceManager();
+		try {
+			getGlobalPersistentData(pm).setAdminAccounts(admins);
+		} finally {
+			pm.close();
+		}
 	}
 	
 	private GlobalPersistentData getGlobalPersistentData(PersistenceManager pm) {

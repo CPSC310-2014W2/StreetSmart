@@ -1,7 +1,5 @@
 package com.google.gwt.cs310project.crimemapper.client;
 
-import java.util.ArrayList;
-
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.StackPanel;
 
@@ -18,7 +16,6 @@ public final class FaqTabPanel extends StackPanel {
 
 	public static StackPanel getFaqTabPanel(){
 
-		//Application facts
 		String appFact1 = "The Vancouver Police Department (VPD) has changed the way in "
 				+ "which it reports its crime statistics. Historically, it reported data "
 				+ "based on Statistics Canada reporting requirements, which meant that "
@@ -32,14 +29,10 @@ public final class FaqTabPanel extends StackPanel {
 		String appFact3 = "Fact 3";
 
 		// Crime Types
-		ArrayList<String> explanations = new ArrayList<String>();
-		explanations.add("Explanation 1");
-		explanations.add("Explanation 2");
-		explanations.add("Explanation 3");
-		explanations.add("Explanation 4");
-		explanations.add("Explanation 5");
-		explanations.add("Explanation 6");
-		explanations.add("Explanation 7");
+		String mischiefDiscription = "md";
+		String theftFromAutoDiscription = "tfad";
+		String theftOfAutoDiscription = "toad";
+		String commercialBEDiscription = "cbed";
 
 		faqTabPanel.setSize(WIDTH,HEIGHT);
 
@@ -54,14 +47,18 @@ public final class FaqTabPanel extends StackPanel {
 
 		label = new Label(appFact3);
 		faqTabPanel.add(label, "App Fact3", false);
-
-		String whatIs = "What is ";
-
-		// Crime facts
-		for (int i = 0; i < CrimeTypes.getNumberOfTypes(); i++) {
-			label = new Label(explanations.get(i));
-			faqTabPanel.add(label, whatIs + CrimeTypes.getType(i), false);
-		}
+		
+		label = new Label(mischiefDiscription);
+		faqTabPanel.add(label, "What is Mischief?", false);
+		
+		label = new Label(theftFromAutoDiscription);
+		faqTabPanel.add(label, "What is Theft From Auto?", false);
+		
+		label = new Label(theftOfAutoDiscription);
+		faqTabPanel.add(label, "What is Theft Of Auto?", false);
+		
+		label = new Label(commercialBEDiscription);
+		faqTabPanel.add(label, "What is Commercial Break and Enter?", false);
 
 		return faqTabPanel;
 	}
