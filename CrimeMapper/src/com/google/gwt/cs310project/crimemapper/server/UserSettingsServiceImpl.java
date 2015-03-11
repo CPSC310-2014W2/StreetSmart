@@ -22,30 +22,43 @@ public class UserSettingsServiceImpl extends RemoteServiceServlet implements Use
 
 	public void setSelectedRow(int selectedRow) throws NotLoggedInException {
 		checkLoggedIn();
-		getUserSettings().setSelectedRow(selectedRow);
+		PersistenceManager pm = getPersistenceManager();
+		try {
+			getUserSettings(pm).setSelectedRow(selectedRow);
+		} finally {
+			pm.close();
+		}
 	}
 
 
 	public int getSelectedRow() throws NotLoggedInException {
 		checkLoggedIn();
 		int selectedRow = 0;
-		selectedRow = getUserSettings().getSelectedRow();
+		PersistenceManager pm = getPersistenceManager();
+		try {
+			selectedRow = getUserSettings(pm).getSelectedRow();
+		} finally {
+			pm.close();
+		}
 		return selectedRow;
 	}
 	
 	@SuppressWarnings("unchecked")
-	private UserSettings getUserSettings() {
-		PersistenceManager pm = getPersistenceManager();
-		List<UserSettings> userSettings = null;
-		try {
-			Query q = pm.newQuery(UserSettings.class, "user == u");
-			q.declareParameters("com.google.appengine.api.users.User u");
-			userSettings = (List<UserSettings>) q.execute(getUser());
-			assert userSettings.size() == 1;
-		} finally {
-			pm.close();
+	private UserSettings getUserSettings(PersistenceManager pm) {
+		List<UserSettings> userSettingsList = null;
+		Query q = pm.newQuery(UserSettings.class, "user == u");
+		q.declareParameters("com.google.appengine.api.users.User u");
+		userSettingsList = (List<UserSettings>) q.execute(getUser());
+		int size = userSettingsList.size();
+		UserSettings userSettings = null;
+		assert size == 1 || size == 0;
+		if (size == 0) {
+			userSettings = new UserSettings(getUser());
+			pm.makePersistent(userSettings);
+		} else {
+			userSettings = userSettingsList.get(0);
 		}
-		return userSettings.get(0);
+		return userSettings;
 	}
 
 	private void checkLoggedIn() throws NotLoggedInException {
