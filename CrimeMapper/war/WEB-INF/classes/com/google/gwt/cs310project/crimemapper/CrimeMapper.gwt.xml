@@ -6,9 +6,10 @@
 <module rename-to='crimemapper'>
 	<!-- Inherit the core Web Toolkit stuff. -->
 	<inherits name='com.google.gwt.user.User' />
-	<inherits name='org.moxieapps.gwt.highcharts.Highcharts' />
+	<script src="js/gwt-openlayers/util.js"></script>
+	<!-- Do not fail to compile using GWT xsiframe linker. -->
+    <set-configuration-property name='xsiframe.failIfScriptTag' value='FALSE'/>
 	
-
 	<!-- Inherit the default GWT style sheet. You can change -->
 	<!-- the theme of your GWT application by uncommenting -->
 	<!-- any one of the following lines. -->
@@ -18,7 +19,9 @@
 	<!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/> -->
 
 	<!-- Other module inherits -->
-
+	<inherits name='org.moxieapps.gwt.highcharts.Highcharts' />
+	<inherits name='org.gwtopenmaps.openlayers.OpenLayers'/>
+	
 
 	<!-- Specify the app entry point class. -->
 	<entry-point
@@ -30,4 +33,6 @@
 
 	<!-- allow Super Dev Mode -->
 	<add-linker name="xsiframe" />
+
+	
 </module>
