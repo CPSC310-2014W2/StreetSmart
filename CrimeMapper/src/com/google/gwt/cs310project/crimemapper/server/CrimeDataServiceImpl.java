@@ -81,6 +81,11 @@ public class CrimeDataServiceImpl extends RemoteServiceServlet implements CrimeD
 		int year = Integer.parseInt(sc.next());
 		int month = Integer.parseInt(sc.next());
 		String location = sc.next();
+		
+		//Format the location string
+		location.replace("XX", "00");
+		location.replace("/", "+");
+		
 		sc.close();
 		return new CrimeData(type, year, month, location);
 	}

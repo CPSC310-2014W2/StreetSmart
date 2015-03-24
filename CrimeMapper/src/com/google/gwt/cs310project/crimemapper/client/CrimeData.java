@@ -21,6 +21,12 @@ public class CrimeData implements Serializable {
 		this.location = location;
 	}
 	
+	public String formatLocation(String location){
+		location.replace("XX", "00");
+		location.replace("/", "+");
+		return location;
+	}
+	
 	public String getId(){
 		return id;
 	}
