@@ -8,7 +8,7 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 @SuppressWarnings("serial")
-@PersistenceCapable(identityType = IdentityType.APPLICATION)
+//@PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class CrimeData implements Serializable {
 	
 //	@PrimaryKey
@@ -31,7 +31,7 @@ public class CrimeData implements Serializable {
 	private CrimeData(){}
 	
 	public CrimeData(String type, int year, int month, String location){
-		this.type = type;
+		this.type = type; 
 		this.year = year;
 		this.month = month;
 		this.location = location;
@@ -54,7 +54,6 @@ public class CrimeData implements Serializable {
 	public int getMonth() {
 		return month;
 	}
-
 
 	public String getLocation() {
 		return location;
