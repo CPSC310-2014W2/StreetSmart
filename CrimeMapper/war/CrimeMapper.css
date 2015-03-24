@@ -20,6 +20,14 @@ h1 {
 	margin: auto;
 }
 
+.social{
+position: absolute;
+display: inline-block;
+float: left;
+padding-right: 50px;
+padding-top:30px;
+	}
+
 /* crime type header row*/
 .crimeTypeHeader {
 	background-color: #7B7B7B;
@@ -109,6 +117,24 @@ h1 {
 }
 
 .clearButtonStyle {
+	width: 100px;
+	height: 25px;
+	text-align: center;
+	padding-top: 4px;
+	padding-left: 3px;
+	padding-right: 3px;
+}
+
+.filterButtonStyle {
+	width: 100px;
+	height: 25px;
+	text-align: center;
+	padding-top: 4px;
+	padding-left: 3px;
+	padding-right: 3px;
+}
+
+.loadDataButtonStyle {
 	width: 100px;
 	height: 25px;
 	text-align: center;
