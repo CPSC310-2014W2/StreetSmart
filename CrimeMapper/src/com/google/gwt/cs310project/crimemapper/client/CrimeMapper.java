@@ -341,11 +341,11 @@ public class CrimeMapper implements EntryPoint {
 		localBackupAddButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				int year = BASE_YEAR + localBackupListBox.getSelectedIndex();
-<<<<<<< HEAD
+
 				String filePath = "http://1-dot-ddwaychen.appspot.com/data/crime_" + year + ".csv";
-=======
-				String filePath = "http://1-dot-crimemapper310.appspot.com/data/crime_" + year + ".csv";
->>>>>>> 13b63050e4166e5b1d353cfbc308947c87090114
+
+
+				//String filePath = "http://1-dot-crimemapper310.appspot.com/data/crime_" + year + ".csv";
 				refreshCrimeList(filePath);
 			}
 		});
