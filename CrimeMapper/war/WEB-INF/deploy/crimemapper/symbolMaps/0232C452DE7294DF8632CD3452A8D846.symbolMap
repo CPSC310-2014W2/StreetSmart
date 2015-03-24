@@ -347,11 +347,11 @@ Xg,com.google.gwt.core.client.impl.UnloadSupport::clearTimeout0(I)V,com.google.g
 Yg,com.google.gwt.core.client.impl.UnloadSupport::setTimeout0(Lcom/google/gwt/core/client/JavaScriptObject;ILcom/google/gwt/core/client/impl/Disposable;)I,com.google.gwt.core.client.impl.UnloadSupport,setTimeout0,com/google/gwt/core/client/impl/UnloadSupport.java,40,0
 Zg,,com.google.gwt.cs310project.crimemapper.client.CrimeData,,com/google/gwt/cs310project/crimemapper/client/CrimeData.java,6,-1
 $g,com.google.gwt.cs310project.crimemapper.client.CrimeData::CrimeData()V,com.google.gwt.cs310project.crimemapper.client.CrimeData,CrimeData,com/google/gwt/cs310project/crimemapper/client/CrimeData.java,15,0
-_g,com.google.gwt.cs310project.crimemapper.client.CrimeData::equals(Ljava/lang/Object;)Z,com.google.gwt.cs310project.crimemapper.client.CrimeData,equals,com/google/gwt/cs310project/crimemapper/client/CrimeData.java,77,0
+_g,com.google.gwt.cs310project.crimemapper.client.CrimeData::equals(Ljava/lang/Object;)Z,com.google.gwt.cs310project.crimemapper.client.CrimeData,equals,com/google/gwt/cs310project/crimemapper/client/CrimeData.java,76,0
 a,com.google.gwt.cs310project.crimemapper.client.CrimeData::id,com.google.gwt.cs310project.crimemapper.client.CrimeData,id,com/google/gwt/cs310project/crimemapper/client/CrimeData.java,12,-1
 b,com.google.gwt.cs310project.crimemapper.client.CrimeData::location,com.google.gwt.cs310project.crimemapper.client.CrimeData,location,com/google/gwt/cs310project/crimemapper/client/CrimeData.java,11,-1
 c,com.google.gwt.cs310project.crimemapper.client.CrimeData::month,com.google.gwt.cs310project.crimemapper.client.CrimeData,month,com/google/gwt/cs310project/crimemapper/client/CrimeData.java,10,-1
-ah,com.google.gwt.cs310project.crimemapper.client.CrimeData::toString()Ljava/lang/String;,com.google.gwt.cs310project.crimemapper.client.CrimeData,toString,com/google/gwt/cs310project/crimemapper/client/CrimeData.java,93,0
+ah,com.google.gwt.cs310project.crimemapper.client.CrimeData::toString()Ljava/lang/String;,com.google.gwt.cs310project.crimemapper.client.CrimeData,toString,com/google/gwt/cs310project/crimemapper/client/CrimeData.java,92,0
 d,com.google.gwt.cs310project.crimemapper.client.CrimeData::type,com.google.gwt.cs310project.crimemapper.client.CrimeData,type,com/google/gwt/cs310project/crimemapper/client/CrimeData.java,8,-1
 e,com.google.gwt.cs310project.crimemapper.client.CrimeData::year,com.google.gwt.cs310project.crimemapper.client.CrimeData,year,com/google/gwt/cs310project/crimemapper/client/CrimeData.java,9,-1
 bh,,com.google.gwt.cs310project.crimemapper.client.CrimeDataByYear,,com/google/gwt/cs310project/crimemapper/client/CrimeDataByYear.java,10,-1

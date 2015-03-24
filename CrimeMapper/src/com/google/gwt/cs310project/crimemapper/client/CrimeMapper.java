@@ -762,10 +762,10 @@ public class CrimeMapper implements EntryPoint {
 		mapSearchTextBox.setText("Enter Vancouver Street Location");
 		mapSearchTextBox.setSize("400px", "25px");
 		searchPanel.add(mapSearchTextBox);
-		yearListBox.setSize("60px", "45px");
+		yearListBox.setSize("60px", "30px");
 		
 		searchPanel.add(yearListBox);
-		crimeTypeListBox.setSize("190px", "45px");
+		crimeTypeListBox.setSize("190px", "30px");
 		for (int i = 0; i < CrimeTypes.getNumberOfTypes(); i++) {
 			crimeTypeListBox.addItem(CrimeTypes.getType(i)); 
 		}
