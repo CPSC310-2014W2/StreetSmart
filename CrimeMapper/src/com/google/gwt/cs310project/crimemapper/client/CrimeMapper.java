@@ -78,7 +78,7 @@ public class CrimeMapper implements EntryPoint {
 	private static final int BASE_YEAR = 2007;
 	private static final int NUM_YEARS = 8;
 	private static final int PADDING = 7;
-	//private static final String DOMAIN_NAME = "http://crimemapper310.appspot.com";
+	//private static final String DOMAIN_NAME = "http://crimemapper310.appspot.com"; //add your own domain here
 	private static final String DOMAIN_NAME = "http://127.0.0.1:8888";
 	private static final double VAN_LON = -123.116226;
 	private static final double VAN_LAT = 49.246292;
