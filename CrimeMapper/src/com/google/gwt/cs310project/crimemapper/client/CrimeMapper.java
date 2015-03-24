@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.gwtopenmaps.openlayers.client.LonLat;
 import org.gwtopenmaps.openlayers.client.MapOptions;
@@ -77,9 +79,12 @@ public class CrimeMapper implements EntryPoint {
 	private static final int START_OF_DATA_ROWS = 2;
 	private static final int START_OF_DATA_COLUMNS = 1;
 	private static final int NO_TABLE_SELECTION_FLAG = -1;
-	private static final int BASE_YEAR = 2009;
-	private static final int NUM_YEARS = 6;
+	private static final int BASE_YEAR = 2003;
+	private static final int NUM_YEARS = 12;
 	private static final int PADDING = 7;
+	private static final String DOMAIN_NAME = "http://jh1993crimemapper.appspot.com";
+	
+	private static final Logger LOG = Logger.getLogger(CrimeMapper.class.getName());
 
 	// Dynamic Panels
 	private TabPanel tabPanel = new TabPanel();
@@ -188,7 +193,7 @@ public class CrimeMapper implements EntryPoint {
 							break;
 						}					
 					}
-
+					crimeDataMap = new TreeMap<Integer, CrimeDataByYear>();
 					loadMainPanel();
 				} else {
 					loadLogin();
@@ -203,20 +208,24 @@ public class CrimeMapper implements EntryPoint {
 			crimeDataSvc = GWT.create(CrimeDataService.class);
 		}
 		// Set up the callback object.
-		AsyncCallback<TreeMap<Integer, CrimeDataByYear>> callback = new AsyncCallback<TreeMap<Integer, CrimeDataByYear>>(){
+		AsyncCallback<CrimeDataByYear> callback = new AsyncCallback<CrimeDataByYear>(){
 			public void onFailure(Throwable caught){
 				throw new FailedToRetrieveDataException();
 			}
 
-			public void onSuccess(TreeMap<Integer, CrimeDataByYear> result) {
-				crimeDataMap = result;
-				updateTableView(crimeDataMap);
-				updateChartViewDStore();
+			public void onSuccess(CrimeDataByYear result) {
+				if (result != null) {
+					crimeDataMap.put(result.getYear(), result);
+					updateTableView(crimeDataMap);
+					updateChartViewDStore();
+				}
 			}
 		}; 
 
 		// Make the call to the crime data service.
-		crimeDataSvc.getCrimeDataMap(callback);
+		for (int year = BASE_YEAR; year < BASE_YEAR + NUM_YEARS; year++) {
+			crimeDataSvc.getPersistentCrimeDataByYear(year, callback);
+		}
 	}
 
 	private void updateChartViewDStore() {
@@ -226,7 +235,7 @@ public class CrimeMapper implements EntryPoint {
 		colChartPanel.add(colChart);	
 	}
 
-	private void updateCrimeDataMap() {
+	private void updateCrimeDataMap(int year) {
 		//Initialize the service proxy.
 		if (crimeDataSvc == null) {
 			crimeDataSvc = GWT.create(CrimeDataService.class);
@@ -241,7 +250,7 @@ public class CrimeMapper implements EntryPoint {
 		}; 
 
 		// Make the call to the crime data service.
-		crimeDataSvc.setCrimeDataMap(crimeDataMap, callback);
+		crimeDataSvc.addPersistentCrimeDataByYear(crimeDataMap.get(year), callback);
 	}
 
 	private void loadUserSelectedRow() {
@@ -362,7 +371,7 @@ public class CrimeMapper implements EntryPoint {
 		localBackupAddButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				int year = BASE_YEAR + localBackupListBox.getSelectedIndex();
-				String filePath = "http://1-dot-crimemapper310.appspot.com/data/crime_" + year + ".csv";
+				String filePath = DOMAIN_NAME + "/data/crime_" + year + ".csv";
 				refreshCrimeList(filePath);
 			}
 		});
@@ -445,8 +454,9 @@ public class CrimeMapper implements EntryPoint {
 			selectedRow = NO_TABLE_SELECTION_FLAG;
 			try {
 				updateUserSelectedRow();
-			} catch (FailedToRetrieveDataException e) {
+			} catch (Exception e) {
 				// TODO Add the reload data panel
+				LOG.log(Level.SEVERE, "CrimeMapper.selectRow()", e);
 			}
 		} else {
 			int row = crimeFlexTable.getRowCount();
@@ -456,8 +466,9 @@ public class CrimeMapper implements EntryPoint {
 			if (rowIndex != userSelectedRow) {
 				try {
 					updateUserSelectedRow();
-				} catch (FailedToRetrieveDataException e) {
+				} catch (Exception e) {
 					// TODO Add the reload data panel
+					LOG.log(Level.SEVERE, "CrimeMapper.selectRow()", e);
 				}
 			}
 
@@ -717,8 +728,9 @@ public class CrimeMapper implements EntryPoint {
 		try {
 			loadCrimeDataMap();
 			loadUserSelectedRow();
-		} catch (FailedToRetrieveDataException e) {
+		} catch (Exception e) {
 			// TODO Add the reload data panel
+			LOG.log(Level.SEVERE, "CrimeMapper.buildTableVPanel()", e);
 		}
 		crimeFlexTable.getCellFormatter().addStyleName(1, 1, "mischiefUnder");
 		crimeFlexTable.getCellFormatter().addStyleName(1, 2, "mischiefOver");
@@ -914,10 +926,10 @@ public class CrimeMapper implements EntryPoint {
 		crimeDataMap.put(result.getYear(), result);
 		updateYearListBox();
 		try {
-			updateCrimeDataMap();
-		} catch (FailedToRetrieveDataException e) {
+			updateCrimeDataMap(result.getYear());
+		} catch (Exception e) {
 			// TODO Add the reload data panel
-			e.printStackTrace();
+			LOG.log(Level.SEVERE, "CrimeMapper.addCrimeDataSet()", e);
 		}
 		updateTableView(crimeDataMap);
 		updateColChartView(crimeDataMap);
