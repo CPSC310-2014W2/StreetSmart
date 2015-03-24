@@ -11,6 +11,8 @@ public interface CrimeDataService extends RemoteService {
 	CrimeDataByYear getCrimeDataByYear(String url);
 	TreeMap<Integer, CrimeDataByYear> getCrimeDataMap();
 	void setCrimeDataMap(TreeMap<Integer, CrimeDataByYear> crimeDataMap);
+	void addPersistentCrimeDataByYear(CrimeDataByYear crimeDataByYear);
+	CrimeDataByYear getPersistentCrimeDataByYear(int year);
 	ArrayList<String> getAdminAccounts();
 	void setAdminAccounts(ArrayList<String> admins);
 }
