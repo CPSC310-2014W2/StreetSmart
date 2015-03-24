@@ -15,7 +15,7 @@ public class CrimeData implements Serializable {
 	private CrimeData(){}
 	
 	public CrimeData(String type, int year, int month, String location){
-		this.type = type;
+		this.type = type; 
 		this.year = year;
 		this.month = month;
 		this.location = location;
@@ -38,7 +38,6 @@ public class CrimeData implements Serializable {
 	public int getMonth() {
 		return month;
 	}
-
 
 	public String getLocation() {
 		return location;
