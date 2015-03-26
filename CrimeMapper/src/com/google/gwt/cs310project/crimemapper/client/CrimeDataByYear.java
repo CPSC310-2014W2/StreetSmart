@@ -4,16 +4,28 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.IdentityType;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
+
 import com.google.gwt.cs310project.crimemapper.client.CrimeTypes;
 
 @SuppressWarnings("serial")
+@PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class CrimeDataByYear implements Serializable {
-
+	
+	@PrimaryKey
+	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+	private Long key;
+	
+	@Persistent
 	private int year;
 	
-	
 	//String is type of crime
-	private HashMap<String, ArrayList<CrimeData>> crimesDataList;
+	@Persistent(serialized = "true", defaultFetchGroup="true")
+	private HashMap<String, ArrayList<CrimeData>> crimesDataList = null;
 	
 	@SuppressWarnings("unused")
 	private CrimeDataByYear(){}
@@ -35,6 +47,10 @@ public class CrimeDataByYear implements Serializable {
 			crimesDataList.get(crime.getType()).add(crime);
 		}
 	}
+	
+	public Long getKey() {
+		return this.key;
+	}
 
 	public int getYear(){
 		return this.year;
@@ -46,6 +62,10 @@ public class CrimeDataByYear implements Serializable {
 
 	public int getNumberOfCrimeTypeOccurrences(String crimeType){
 		return crimesDataList.get(crimeType).size();
+	}
+	
+	public HashMap<String, ArrayList<CrimeData>> getCrimesDataList() {
+		return crimesDataList;
 	}
 	
 	public String toString(){

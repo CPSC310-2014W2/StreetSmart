@@ -1,2 +1,2 @@
 serviceClass: com.google.gwt.cs310project.crimemapper.client.CrimeDataService
-path: 1679F3A152C20C0BE53E677BEBB361F8.gwt.rpc
+path: 4C6230DBCEF620A043E1BA3E67A6439D.gwt.rpc

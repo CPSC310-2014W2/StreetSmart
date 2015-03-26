@@ -1,21 +1,37 @@
 package com.google.gwt.cs310project.crimemapper.client;
 
 import java.io.Serializable;
+import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.IdentityType;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
 
 @SuppressWarnings("serial")
+//@PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class CrimeData implements Serializable {
 	
-	private String type;
-	private int year;
-	private int month;
-	private String location;
+//	@PrimaryKey
+//	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private String id;
+	
+//	@Persistent
+	private String type;
+	
+//	@Persistent
+	private int year;
+	
+//	@Persistent
+	private int month;
+	
+//	@Persistent
+	private String location;
 	
 	@SuppressWarnings("unused")
 	private CrimeData(){}
 	
 	public CrimeData(String type, int year, int month, String location){
-		this.type = type;
+		this.type = type; 
 		this.year = year;
 		this.month = month;
 		this.location = location;
@@ -38,7 +54,6 @@ public class CrimeData implements Serializable {
 	public int getMonth() {
 		return month;
 	}
-
 
 	public String getLocation() {
 		return location;

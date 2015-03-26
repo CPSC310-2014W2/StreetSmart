@@ -1,5 +1,5 @@
 # Module crimemapper
 # RPC service class, partial path of RPC policy file
+com.google.gwt.cs310project.crimemapper.client.CrimeDataService, 4C6230DBCEF620A043E1BA3E67A6439D.gwt.rpc
 com.google.gwt.cs310project.crimemapper.client.UserSettingsService, B3985583172C5E2BC912673F91095434.gwt.rpc
 com.google.gwt.cs310project.crimemapper.client.LoginService, 6AAA28071CB51296048382C44E1B2293.gwt.rpc
-com.google.gwt.cs310project.crimemapper.client.CrimeDataService, 1679F3A152C20C0BE53E677BEBB361F8.gwt.rpc
