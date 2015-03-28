@@ -8,7 +8,6 @@ import java.net.*;
 import java.io.*;
 import java.util.List;
 
-import javax.jdo.JDOException;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
@@ -17,7 +16,6 @@ import javax.jdo.Query;
 import com.google.gwt.cs310project.crimemapper.client.CrimeData;
 import com.google.gwt.cs310project.crimemapper.client.CrimeDataByYear;
 import com.google.gwt.cs310project.crimemapper.client.CrimeDataService;
-import com.google.gwt.cs310project.crimemapper.client.CrimeTypes;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 @SuppressWarnings("serial")
