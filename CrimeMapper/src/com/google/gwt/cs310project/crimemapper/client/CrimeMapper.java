@@ -381,6 +381,8 @@ public class CrimeMapper implements EntryPoint {
 				loadFilter();
 			}
 		});
+		
+		
 
 		// Listen for mouse events on Clear Trends btn
 		clearTrendsButton.addClickHandler(new ClickHandler() {
@@ -412,10 +414,8 @@ public class CrimeMapper implements EntryPoint {
 			public void onClick(ClickEvent event) {
 				int year = BASE_YEAR + localBackupListBox.getSelectedIndex();
 
-				String filePath = "http://1-dot-ddwaychen.appspot.com/data/crime_" + year + ".csv";
-				
-
-//				String filePath = DOMAIN_NAME + "/data/crime_" + year + ".csv";
+				//String filePath = "http://1-dot-ddwaychen.appspot.com/data/crime_" + year + ".csv";	
+				String filePath = DOMAIN_NAME + "/data/crime_" + year + ".csv";
 
 				refreshCrimeList(filePath);
 			}

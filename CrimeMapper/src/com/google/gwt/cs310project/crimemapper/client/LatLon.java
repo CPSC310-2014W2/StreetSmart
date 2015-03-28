@@ -1,7 +1,5 @@
 package com.google.gwt.cs310project.crimemapper.client;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * A latitude/longitude coordinate pair
@@ -20,10 +18,6 @@ public class LatLon {
 		this.lon = lon;
 	}
 	
-	public LatLon(JSONObject json) throws JSONException {
-		this(json.getString("Latitude"), json.getString("Longitude"));
-	}
-
 	public double getLatitude() {
 		return lat;
 	}
@@ -63,16 +57,4 @@ public class LatLon {
             return false;
         return true;
     }
-
-    /**
-	 * Produces JSONObject from this lat/lon
-	 * @return  the JSONObject containing lat and lon
-	 * @throws JSONException 
-	 */
-	public JSONObject toJSON() throws JSONException {
-		JSONObject json = new JSONObject();
-		json.put("Latitude", Double.toString(lat));
-		json.put("Longitude", Double.toString(lon));
-		return json;
-	}
 }
