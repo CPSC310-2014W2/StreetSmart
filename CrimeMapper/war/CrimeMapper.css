@@ -7,7 +7,7 @@ h1 {
 	text-align: center;
 	color: #2062B8;
 	padding-left: 10px;
-	padding-top: 10px;
+	padding-top: 0px;
 	font-family: arial, sans-serif;
 	font-style: normal;
 }
@@ -19,14 +19,6 @@ h1 {
 	height: 60px;
 	margin: auto;
 }
-
-.social{
-position: absolute;
-display: inline-block;
-float: left;
-padding-right: 50px;
-padding-top:30px;
-	}
 
 /* crime type header row*/
 .crimeTypeHeader {

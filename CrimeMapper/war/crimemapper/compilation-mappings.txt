@@ -22,9 +22,16 @@ user.agent gecko1_8
 user.agent ie9
 
 DD69BA9D2B7B13EEDB2A78FA4E30CF97.cache.js
+6885F8EBCA9586021ADC0C6C722789C7.cache.js
 user.agent safari
 
-E5D77413BEADCBF2BB372A287E67B744.cache.js
+814B8FC878496A0D4B2182EDF70C3143.cache.js
+user.agent ie10
+
+CD996D2679D3E2A4DFEB53A2B2BAC8B3.cache.js
+user.agent gecko1_8
+
+F8CCC8C1C05BB3FFDECD8FF35D427354.cache.js
 user.agent ie8
 
 Devmode:devmode.js
