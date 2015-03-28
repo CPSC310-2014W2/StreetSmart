@@ -37,7 +37,7 @@ public class CrimeData implements Serializable {
 		this.location = location;
 	}
 	
-	public String formatLocation(String location){
+	private String formatLocation(String location){
 		location.replace("XX", "00");
 		location.replace("/", "+");
 		return location;
@@ -62,7 +62,7 @@ public class CrimeData implements Serializable {
 	}
 
 	public String getLocation() {
-		return location;
+		return formatLocation(location);
 	}
 
 	public void setID(int lineNumber){
