@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.gwtopenmaps.openlayers.client.LonLat;
 import org.gwtopenmaps.openlayers.client.MapOptions;
@@ -92,7 +94,8 @@ public class CrimeMapper implements EntryPoint {
 	private static final String MAP_WIDTH = "1200px";
 	private static final String MAP_HEIGHT = "550px";
 
-	//private static final Logger LOG = Logger.getLogger(CrimeMapper.class.getName());
+	private static final Logger LOG = Logger.getLogger(CrimeMapper.class.getName());
+	
 	private static final int COL_CHART_WIDTH = 1400;
 	private static final int COL_CHART_HEIGHT = 400;
 
@@ -178,6 +181,9 @@ public class CrimeMapper implements EntryPoint {
 
 	// Databases 
 	private TreeMap<Integer, CrimeDataByYear> crimeDataMap;
+	
+	private int numberOfYearsLoaded = 0;
+	
 	/**
 	 * Entry point method.
 	 */
@@ -226,7 +232,10 @@ public class CrimeMapper implements EntryPoint {
 					updateTableView(crimeDataMap);
 					updateChartViewDStore();
 					updateColChartView(crimeDataMap);
-
+				}
+				numberOfYearsLoaded++;
+				if (numberOfYearsLoaded == NUM_YEARS) {
+					loadUserSelectedRow();
 				}
 			}
 		}; 
@@ -275,6 +284,13 @@ public class CrimeMapper implements EntryPoint {
 
 			public void onSuccess(Integer result) {
 				userSelectedRow = result;
+				// LOG.log(Level.WARNING, "result = " + Integer.toString(result));
+				// LOG.log(Level.WARNING, "userSelectedRow = " + Integer.toString(userSelectedRow));
+				// while (!(doneLoadingUserSettings && doneLoadingCrimeDataMap)) {}
+				// LOG.log(Level.WARNING, "userSelectedRow at local = " + Integer.toString(userSelectedRow));
+				if (userSelectedRow != NO_TABLE_SELECTION_FLAG) {
+					selectRow(userSelectedRow);
+				}
 			}
 		}; 
 
@@ -293,13 +309,12 @@ public class CrimeMapper implements EntryPoint {
 				throw new FailedToRetrieveDataException();
 			}
 
-			public void onSuccess(Void result) {
-				userSelectedRow = selectedRow;
-			}
+			public void onSuccess(Void result) {}
 		}; 
 
 		// Make the call to the user settings service.
 		userSettingsSvc.setSelectedRow(selectedRow, callback);
+		userSelectedRow = selectedRow;
 	}
 
 	// ===================================================================================== //
@@ -478,10 +493,14 @@ public class CrimeMapper implements EntryPoint {
 			if (rowIndex != userSelectedRow) {
 				try {
 					updateUserSelectedRow();
+					// TODO
+//					userSelectedRow = 0;
+//					loadUserSelectedRow();
 				} catch (Exception e) {
 					// TODO Add the reload data panel
 					//LOG.log(Level.SEVERE, "CrimeMapper.selectRow()", e);
 				}
+//				LOG.log(Level.WARNING, "userSelectedRow = " + Integer.toString(userSelectedRow));
 			}
 
 			ArrayList<ArrayList<Double>> trends = getTrends(rowIndex);
@@ -491,7 +510,7 @@ public class CrimeMapper implements EntryPoint {
 			while(i < row){
 				if(i == rowIndex){
 					crimeFlexTable.getRowFormatter().setStyleName(rowIndex, "rowSelectedShadow");
-					selectedYearLabel.setText("Base Year: "+getYearFromTable(rowIndex));
+					selectedYearLabel.setText("Base Year: " + getYearFromTable(rowIndex));
 					selectedYearLabel.setStyleName("selectedYearLabelStyle");
 
 				} else {
@@ -684,14 +703,11 @@ public class CrimeMapper implements EntryPoint {
 		crimeFlexTable.setCellPadding(PADDING);
 		try {
 			loadCrimeDataMap();
-			loadUserSelectedRow();
-			if (userSelectedRow != NO_TABLE_SELECTION_FLAG) {
-				selectRow(userSelectedRow);
-			}
 		} catch (Exception e) {
 			// TODO Add the reload data panel
 			//LOG.log(Level.SEVERE, "CrimeMapper.buildTableVPanel()", e);
 		}
+		
 		crimeFlexTable.getCellFormatter().addStyleName(1, 1, "mischiefUnder");
 		crimeFlexTable.getCellFormatter().addStyleName(1, 2, "mischiefOver");
 		crimeFlexTable.getCellFormatter().addStyleName(1, 3, "fromAutoUnder");
@@ -699,7 +715,7 @@ public class CrimeMapper implements EntryPoint {
 		crimeFlexTable.getCellFormatter().addStyleName(1, 5, "ofAutoUnder");
 		crimeFlexTable.getCellFormatter().addStyleName(1, 6, "ofAutoOver");
 		crimeFlexTable.getCellFormatter().addStyleName(1, 7, "commercialBE");
-
+		
 		// Assemble resetPanel.
 		clearTrendsButtonPanel.setSpacing(SPACING);
 		clearTrendsButton.setStyleName("clearButtonStyle");
