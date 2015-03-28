@@ -155,6 +155,9 @@ public class CrimeMapper implements EntryPoint {
 
 	// UserSettings RPC fields
 	private UserSettingsServiceAsync userSettingsSvc = GWT.create(UserSettingsService.class);
+	
+	// MapData RPC fields
+	private MapDataServiceAsync mapDataSvc = GWT.create(MapDataService.class);
 
 	// Login Fields
 	private LoginInfo loginInfo = null;
