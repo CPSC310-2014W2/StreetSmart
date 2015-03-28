@@ -9,6 +9,8 @@ import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.JOptionPane;
+
 import org.gwtopenmaps.openlayers.client.LonLat;
 import org.gwtopenmaps.openlayers.client.MapOptions;
 import org.gwtopenmaps.openlayers.client.MapWidget;
@@ -50,7 +52,9 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
@@ -132,7 +136,7 @@ public class CrimeMapper implements EntryPoint {
 	private HorizontalPanel searchPanel = new HorizontalPanel();
 	private ListBox yearListBox = new ListBox();
 	private ListBox crimeTypeListBox = new ListBox();
-	private Button filter = new Button("Filter");
+	private Button loadFilterButton = new Button("Filter");
 	private MapOptions defaultMapOptions = new MapOptions();
 	private MapWidget mapWidget = new MapWidget(MAP_WIDTH, MAP_HEIGHT, defaultMapOptions);
 
@@ -178,6 +182,9 @@ public class CrimeMapper implements EntryPoint {
 	private boolean isAdmin = false;
 	private TextBox adminTextBox = new TextBox();
 	private Label adminLabel = new Label("Admin Account List");
+	
+	//Filter
+	private ArrayList<CrimeData> filterList;
 
 
 	// Databases 
@@ -214,6 +221,7 @@ public class CrimeMapper implements EntryPoint {
 				}
 			}
 		});
+		
 	}
 
 	private void loadCrimeDataMap() {
@@ -337,6 +345,8 @@ public class CrimeMapper implements EntryPoint {
 	}
 	// ===================================================================================== //
 	private void applicationHandlers(){
+		
+		
 		// Clear Text box when mouse places icon
 		newUrlTextBox.getValueBox().addClickHandler(new ClickHandler(){
 			public void onClick(ClickEvent event){
@@ -361,6 +371,14 @@ public class CrimeMapper implements EntryPoint {
 		loadCrimeDataButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				loadCrime();
+			}
+		});
+		
+		
+		// Listen for filter events on Filter btn
+		loadFilterButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				loadFilter();
 			}
 		});
 
@@ -393,14 +411,22 @@ public class CrimeMapper implements EntryPoint {
 		localBackupAddButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				int year = BASE_YEAR + localBackupListBox.getSelectedIndex();
-				String filePath = DOMAIN_NAME + "/data/crime_" + year + ".csv";
+
+				String filePath = "http://1-dot-ddwaychen.appspot.com/data/crime_" + year + ".csv";
+				
+
+//				String filePath = DOMAIN_NAME + "/data/crime_" + year + ".csv";
+
 				refreshCrimeList(filePath);
 			}
 		});
 
+
+
 		// Listen for mouse events on local backup Remove button
 		localBackupRemoveButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
+
 				int year = BASE_YEAR + localBackupListBox.getSelectedIndex();
 				try {
 					removeFromCrimeDataMap(year);
@@ -461,7 +487,7 @@ public class CrimeMapper implements EntryPoint {
 	}
 
 	// ===================================================================================== //
-
+	
 	@SuppressWarnings("deprecation")
 	private void loadCrime(){
 		String crimeURL = newUrlTextBox.getText().trim();
@@ -471,6 +497,47 @@ public class CrimeMapper implements EntryPoint {
 		selectedTextBox = CLEAR_TEXT_BOX_FLAG;
 		lastUploadedDateLabel.setText("Last update : "
 				+ DateTimeFormat.getMediumDateTimeFormat().format(new Date()));
+	}
+	
+	private void loadFilter(){
+		String filterText = mapSearchTextBox.getText();
+		Integer id;
+		Integer filterYear = 0;
+		String filterType = "";
+		ArrayList<CrimeData> templist = null;
+		CrimeData cd=null;
+		String tempStr="";
+		
+		filterList.clear();  //Clear the filter list
+		
+		id = yearListBox.getSelectedIndex();
+		if(id==-1)
+			return;
+		filterYear = Integer.parseInt(yearListBox.getItemText(id));
+		
+		id = crimeTypeListBox.getSelectedIndex();
+		if(id==-1)
+			return;
+		filterType = crimeTypeListBox.getItemText(id);
+		
+		//get CrimeData by Year
+		CrimeDataByYear cbdy = crimeDataMap.get(filterYear);
+		if(cbdy==null)
+			return;
+		
+		//Get Crime Data by Type
+		templist = cbdy.getByType(filterType);
+		if(templist == null)
+			return;
+		
+		//Get Crime Data by Street Name
+		for(int i=0; i<templist.size(); i++){
+			cd = templist.get(i);
+			tempStr = cd.getLocation().toLowerCase();
+			if(tempStr.contains(filterText.toLowerCase())){
+					filterList.add(cd);
+			}
+		}
 	}
 
 	private void selectRow(int rowIndex){
@@ -685,6 +752,7 @@ public class CrimeMapper implements EntryPoint {
 		for (int i = 0; i < CrimeTypes.getNumberOfTypes(); i++) {
 			crimeFlexTable.setText(1, i + 1, CrimeTypes.getType(i));
 		}
+		
 
 		// Merging Crime Type to be over the Crime Types
 		FlexCellFormatter crimeTypeCellFormatter = crimeFlexTable.getFlexCellFormatter();
@@ -751,15 +819,19 @@ public class CrimeMapper implements EntryPoint {
 		searchPanel.add(mapSearchTextBox);
 		yearListBox.setSize("60px", "30px");
 
+		for (Map.Entry<Integer,CrimeDataByYear> entry : crimeDataMap.entrySet()){
+			yearListBox.addItem(entry.getKey().toString());
+		}
 		searchPanel.add(yearListBox);
+		
 		crimeTypeListBox.setSize("190px", "30px");
 		for (int i = 0; i < CrimeTypes.getNumberOfTypes(); i++) {
 			crimeTypeListBox.addItem(CrimeTypes.getType(i)); 
 		}
 		searchPanel.add(crimeTypeListBox);
 		mapsVPanel.add(searchPanel);
-		filter.setStyleName("filterButtonStyle");
-		mapsVPanel.add(filter);
+		loadFilterButton.setStyleName("filterButtonStyle");
+		mapsVPanel.add(loadFilterButton);
 
 		// Bing Layer
 

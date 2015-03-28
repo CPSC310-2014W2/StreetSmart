@@ -48,6 +48,12 @@ public class CrimeDataByYear implements Serializable {
 		}
 	}
 	
+	//To get the crimedata list by year 
+	public ArrayList<CrimeData> getByType(String type){
+		ArrayList<CrimeData> cdlist = crimesDataList.get(type);
+		return cdlist;
+	}
+	
 	public Long getKey() {
 		return this.key;
 	}
