@@ -386,8 +386,13 @@ public class CrimeMapper implements EntryPoint {
 		localBackupRemoveButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				int year = BASE_YEAR + localBackupListBox.getSelectedIndex();
-				removeFromCrimeDataMap(year);
-				settingsLabel.setText("Data Removed Successfully");
+				try {
+					removeFromCrimeDataMap(year);
+					settingsLabel.setText("Data Removed Successfully");
+				} catch (Exception e) {
+					// TODO Add the reload data panel
+					//LOG.log(Level.SEVERE, "CrimeMapper.localBackupRemoveButton", e);
+				}
 			}
 		});
 
@@ -739,7 +744,7 @@ public class CrimeMapper implements EntryPoint {
 		mapsVPanel.add(searchPanel);
 		filter.setStyleName("filterButtonStyle");
 		mapsVPanel.add(filter);
-		
+
 		// Bing Layer
 
 		//Create some Bing layers
@@ -901,6 +906,21 @@ public class CrimeMapper implements EntryPoint {
 		updateTableView(crimeDataMap);
 		updateColChartView(crimeDataMap);
 
+		//Initialize the service proxy.
+		if (crimeDataSvc == null) {
+			crimeDataSvc = GWT.create(CrimeDataService.class);
+		}
+		// Set up the callback object.
+		AsyncCallback<Void> callback = new AsyncCallback<Void>(){
+			public void onFailure(Throwable caught){
+				throw new FailedToRetrieveDataException();
+			}
+
+			public void onSuccess(Void result) {}
+		};
+
+		// Make the call to the crime data service.
+		crimeDataSvc.removePersistentCrimeDataByYear(year, callback);
 	}
 	// ===================================================================================== //
 	private void addCrimeDataSet(CrimeDataByYear result) {
