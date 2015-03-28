@@ -53,6 +53,7 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
@@ -218,6 +219,20 @@ public class CrimeMapper implements EntryPoint {
 				}
 			}
 		});
+		
+		
+		tabPanel.addSelectionHandler(new SelectionHandler<Integer>() {
+			  @Override
+			  public void onSelection(SelectionEvent<Integer> event) {
+			    if (event.getSelectedItem() == 1) {
+			    	yearListBox.clear();
+			    	for (Map.Entry<Integer, CrimeDataByYear> entry : crimeDataMap.entrySet()) {
+			          yearListBox.addItem(entry.getKey().toString());
+			       }
+			    	
+			    }
+			  }
+			});
 		
 	}
 
@@ -636,8 +651,6 @@ public class CrimeMapper implements EntryPoint {
 		flowpanel = new FlowPanel();
 		flowpanel.add(FaqTabPanel.getFaqTabPanel());
 		tabPanel.add(flowpanel, tab3Title);
-
-
 
 
 		if(isAdmin){
