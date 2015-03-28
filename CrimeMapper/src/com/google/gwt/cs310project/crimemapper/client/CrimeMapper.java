@@ -711,7 +711,6 @@ public class CrimeMapper implements EntryPoint {
 		tableVPanel.add(signOutLink);
 		tableVPanel.add(lastUploadedDateLabel);
 
-
 		// return table constructed panel
 		return tableVPanel;
 	}
