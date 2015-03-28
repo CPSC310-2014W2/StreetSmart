@@ -10,15 +10,22 @@ import java.util.TreeMap;
 import org.gwtopenmaps.openlayers.client.LonLat;
 import org.gwtopenmaps.openlayers.client.MapOptions;
 import org.gwtopenmaps.openlayers.client.MapWidget;
+import org.gwtopenmaps.openlayers.client.control.LayerSwitcher;
+import org.gwtopenmaps.openlayers.client.control.OverviewMap;
+import org.gwtopenmaps.openlayers.client.control.ScaleLine;
 import org.gwtopenmaps.openlayers.client.control.SelectFeature;
 import org.gwtopenmaps.openlayers.client.event.VectorFeatureSelectedListener;
 import org.gwtopenmaps.openlayers.client.format.KML;
+import org.gwtopenmaps.openlayers.client.layer.Bing;
+import org.gwtopenmaps.openlayers.client.layer.BingOptions;
+import org.gwtopenmaps.openlayers.client.layer.BingType;
 import org.gwtopenmaps.openlayers.client.layer.OSM;
 import org.gwtopenmaps.openlayers.client.layer.Vector;
 import org.gwtopenmaps.openlayers.client.layer.VectorOptions;
 import org.gwtopenmaps.openlayers.client.protocol.HTTPProtocol;
 import org.gwtopenmaps.openlayers.client.protocol.HTTPProtocolOptions;
 import org.gwtopenmaps.openlayers.client.protocol.Protocol;
+import org.gwtopenmaps.openlayers.client.protocol.ProtocolType;
 import org.gwtopenmaps.openlayers.client.strategy.FixedStrategy;
 import org.gwtopenmaps.openlayers.client.strategy.Strategy;
 import org.moxieapps.gwt.highcharts.client.Chart;
@@ -82,6 +89,8 @@ public class CrimeMapper implements EntryPoint {
 	private static final String DOMAIN_NAME = "http://127.0.0.1:8888";
 	private static final double VAN_LON = -123.116226;
 	private static final double VAN_LAT = 49.246292;
+	private static final String MAP_WIDTH = "1200px";
+	private static final String MAP_HEIGHT = "550px";
 
 	//private static final Logger LOG = Logger.getLogger(CrimeMapper.class.getName());
 	private static final int COL_CHART_WIDTH = 1400;
@@ -103,11 +112,6 @@ public class CrimeMapper implements EntryPoint {
 	private VerticalPanel colChartPanel = new VerticalPanel();
 	private VerticalPanel mainTrendsPanel = new VerticalPanel();
 
-	// Data Visualization
-	private Chart pieChart = new Chart();
-
-
-
 	// Dimensions and Spacing
 	private final String WIDTH = "100%";
 	private final String HEIGHT = "100%";
@@ -128,6 +132,8 @@ public class CrimeMapper implements EntryPoint {
 	private ListBox yearListBox = new ListBox();
 	private ListBox crimeTypeListBox = new ListBox();
 	private Button filter = new Button("Filter");
+	private MapOptions defaultMapOptions = new MapOptions();
+	private MapWidget mapWidget = new MapWidget(MAP_WIDTH, MAP_HEIGHT, defaultMapOptions);
 
 	// Settings Tab elements
 	private Button loadCrimeDataButton = new Button("Load Data");
@@ -269,9 +275,6 @@ public class CrimeMapper implements EntryPoint {
 
 			public void onSuccess(Integer result) {
 				userSelectedRow = result;
-				if (userSelectedRow != NO_TABLE_SELECTION_FLAG) {
-					selectRow(userSelectedRow);
-				}
 			}
 		}; 
 
@@ -586,61 +589,6 @@ public class CrimeMapper implements EntryPoint {
 		return mainTrendsPanel;
 	}
 
-
-	private Chart buildYearlyPieChart(int year){
-		// TODO: Finish for Sprint 2
-		pieChart.setType(Series.Type.PIE)  
-		.setChartTitleText("Year Added: "+ year)
-		.setPlotBackgroundColor((String) null)  
-		.setPlotBorderWidth(null)  
-		.setPlotShadow(true)  
-		.setPiePlotOptions(new PiePlotOptions()  
-		.setAllowPointSelect(true)  
-		.setCursor(PlotOptions.Cursor.POINTER)  
-		.setPieDataLabels(new PieDataLabels()   
-		.setEnabled(false)  
-				)
-				.setShowInLegend(true)
-				)
-				.setToolTip(new ToolTip()  
-				.setFormatter(new ToolTipFormatter() {  
-					public String format(ToolTipData toolTipData) {  
-						return "<b>" + toolTipData.getPointName() + "</b>: " + toolTipData.getYAsDouble() + " %";  
-					}  
-				})  
-						);  
-		CrimeDataByYear cdby = crimeDataMap.get(year);
-		int i = 0;
-		double totalNumberCrimes = 0;
-		while(i < CrimeTypes.getNumberOfTypes()){
-			totalNumberCrimes = totalNumberCrimes + cdby.getNumberOfCrimeTypeOccurrences(CrimeTypes.getType(i));
-			i++;
-		}
-		pieChart.addSeries(pieChart.createSeries()  
-				.setName("Crime Distribution")  
-				.setPoints(new Point[]{  
-						new Point(CrimeTypes.getType(0), (cdby.getNumberOfCrimeTypeOccurrences
-								(CrimeTypes.getType(0))/totalNumberCrimes)*100),  
-								new Point(CrimeTypes.getType(1), (cdby.getNumberOfCrimeTypeOccurrences
-										(CrimeTypes.getType(1))/totalNumberCrimes)*100),  
-										new Point(CrimeTypes.getType(2), (cdby.getNumberOfCrimeTypeOccurrences
-												(CrimeTypes.getType(2))/totalNumberCrimes)*100)  
-						.setSliced(true)  
-						.setSelected(true),  
-						new Point(CrimeTypes.getType(3), (cdby.getNumberOfCrimeTypeOccurrences
-								(CrimeTypes.getType(3))/totalNumberCrimes)*100),  
-								new Point(CrimeTypes.getType(4), (cdby.getNumberOfCrimeTypeOccurrences
-										(CrimeTypes.getType(4))/totalNumberCrimes)*100),  
-										new Point(CrimeTypes.getType(5), (cdby.getNumberOfCrimeTypeOccurrences
-												(CrimeTypes.getType(5))/totalNumberCrimes)*100),
-												new Point(CrimeTypes.getType(6), (cdby.getNumberOfCrimeTypeOccurrences
-														(CrimeTypes.getType(6))/totalNumberCrimes)*100)
-				})  
-				); 
-		//pieChart.setVisible(true);
-		return pieChart;
-	}
-
 	private Chart buildYearlyColChart(TreeMap<Integer, CrimeDataByYear> crimeDataMap2){
 		Chart colChart = new Chart();
 		colChart.setType(Series.Type.COLUMN)  
@@ -732,6 +680,9 @@ public class CrimeMapper implements EntryPoint {
 		try {
 			loadCrimeDataMap();
 			loadUserSelectedRow();
+			if (userSelectedRow != NO_TABLE_SELECTION_FLAG) {
+				selectRow(userSelectedRow);
+			}
 		} catch (Exception e) {
 			// TODO Add the reload data panel
 			//LOG.log(Level.SEVERE, "CrimeMapper.buildTableVPanel()", e);
@@ -788,18 +739,38 @@ public class CrimeMapper implements EntryPoint {
 		mapsVPanel.add(searchPanel);
 		filter.setStyleName("filterButtonStyle");
 		mapsVPanel.add(filter);
+		
+		// Bing Layer
 
-		MapOptions defaultMapOptions = new MapOptions();
-		MapWidget mapWidget = new MapWidget("1200px", "550px", defaultMapOptions);
+		//Create some Bing layers
+		final String key = "Apd8EWF9Ls5tXmyHr22OuL1ay4HRJtI4JG4jgluTDVaJdUXZV6lpSBpX-TwnoRDG"; //Bing key
+		// configuring road options
+		BingOptions bingOptionRoad = new BingOptions("Bing Road Layer", key,
+				BingType.ROAD);
+		bingOptionRoad.setProtocol(ProtocolType.HTTP);
+		Bing road = new Bing(bingOptionRoad);
 
-		OSM osmMapnik = OSM.Mapnik("Mapnik");
-		OSM osmCycle = OSM.CycleMap("CycleMap");
+		// configuring hybrid options
+		BingOptions bingOptionHybrid = new BingOptions("Bing Hybrid Layer", key,
+				BingType.HYBRID);
+		bingOptionRoad.setProtocol(ProtocolType.HTTP);
+		Bing hybrid = new Bing(bingOptionHybrid);
 
-		osmMapnik.setIsBaseLayer(true);
-		osmCycle.setIsBaseLayer(true);
+		// configuring aerial options
+		BingOptions bingOptionAerial = new BingOptions("Bing Aerial Layer", key,
+				BingType.AERIAL);
+		bingOptionRoad.setProtocol(ProtocolType.HTTP);
+		Bing aerial = new Bing(bingOptionAerial);
 
-		mapWidget.getMap().addLayer(osmMapnik);
-		mapWidget.getMap().addLayer(osmCycle);
+		//Add layers to map
+		mapWidget.getMap().addLayer(road);
+		mapWidget.getMap().addLayer(hybrid);
+		mapWidget.getMap().addLayer(aerial);
+
+		//Map Controls
+		mapWidget.getMap().addControl(new LayerSwitcher()); //+ sign in the upperright corner to display the layer switcher
+		mapWidget.getMap().addControl(new OverviewMap()); //+ sign in the lowerright to display the overviewmap
+		mapWidget.getMap().addControl(new ScaleLine()); //Display the scaleline*/
 
 		// Vancouver coordinates
 		LonLat lonLat = new LonLat(VAN_LON, VAN_LAT);
@@ -819,6 +790,7 @@ public class CrimeMapper implements EntryPoint {
 		Protocol protocol = new HTTPProtocol(protocolOptions);
 		kmlOptions.setProtocol(protocol);
 		Vector kmlLayer = new Vector("KML", kmlOptions);
+		kmlLayer.setOpacity(1);
 
 		mapWidget.getMap().addLayer(kmlLayer);
 
