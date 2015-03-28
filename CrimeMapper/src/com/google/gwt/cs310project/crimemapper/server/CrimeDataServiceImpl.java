@@ -1,6 +1,7 @@
 package com.google.gwt.cs310project.crimemapper.server;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
 import java.net.*;
@@ -16,6 +17,7 @@ import javax.jdo.Query;
 import com.google.gwt.cs310project.crimemapper.client.CrimeData;
 import com.google.gwt.cs310project.crimemapper.client.CrimeDataByYear;
 import com.google.gwt.cs310project.crimemapper.client.CrimeDataService;
+import com.google.gwt.cs310project.crimemapper.client.CrimeTypes;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 @SuppressWarnings("serial")
@@ -106,7 +108,7 @@ public class CrimeDataServiceImpl extends RemoteServiceServlet implements CrimeD
 		}
 		return new TreeMap<Integer, CrimeDataByYear>(crimeDataMap);
 	}
-	
+
 	@Override
 	public void setCrimeDataMap(TreeMap<Integer, CrimeDataByYear> crimeDataMap) {
 		PersistenceManager pm = getPersistenceManager();
@@ -116,7 +118,7 @@ public class CrimeDataServiceImpl extends RemoteServiceServlet implements CrimeD
 			pm.close();
 		}
 	}
-	
+
 	@Override
 	public ArrayList<String> getAdminAccounts() {
 		ArrayList<String> adminAcct = null;
@@ -133,7 +135,7 @@ public class CrimeDataServiceImpl extends RemoteServiceServlet implements CrimeD
 		}
 		return new ArrayList<String>();
 	}
-	
+
 	@Override
 	public void setAdminAccounts(ArrayList<String> admins) {
 		PersistenceManager pm = getPersistenceManager();
@@ -142,15 +144,8 @@ public class CrimeDataServiceImpl extends RemoteServiceServlet implements CrimeD
 		} finally {
 			pm.close();
 		}
-	
-			pm = getPersistenceManager();
-		try {
-			getGlobalPersistentData(pm).setAdminAccounts(admins);
-		} finally {
-			pm.close();
-		}
 	}
-	
+
 	private GlobalPersistentData getGlobalPersistentData(PersistenceManager pm) {
 		GlobalPersistentData globalPersistentData = null;
 		Query q = pm.newQuery(GlobalPersistentData.class);
@@ -170,5 +165,61 @@ public class CrimeDataServiceImpl extends RemoteServiceServlet implements CrimeD
 
 	private PersistenceManager getPersistenceManager() {
 		return PMF.getPersistenceManager();
+	}
+
+	@Override
+	public void addPersistentCrimeDataByYear(CrimeDataByYear crimeDataByYear) {
+		PersistenceManager pm = getPersistenceManager();
+		try {
+			/*for (Map.Entry<String, ArrayList<CrimeData>> i : crimeDataByYear.getCrimesDataList().entrySet()) {
+				for (CrimeData j : i.getValue()) {
+					pm.makePersistent(j);
+				}
+			}*/
+			pm.makePersistent(crimeDataByYear);
+		} finally {
+			pm.close();
+		}
+	}
+
+	@Override
+	public CrimeDataByYear getPersistentCrimeDataByYear(int year) {
+		PersistenceManager pm = getPersistenceManager();
+		CrimeDataByYear crimeDataByYear = null;
+		/*ArrayList<CrimeData> crimes = new ArrayList<CrimeData>();
+		try {
+			for (int i = 0; i < CrimeTypes.getNumberOfTypes(); i++) {
+				String crimeType = CrimeTypes.getType(i);
+				for (int month = 1; month <= 12; month++) {
+					Query q = pm.newQuery(CrimeData.class);
+					q.declareParameters("Integer y, Integer m, String t");
+					q.setFilter("year == y && month == m && type == t");
+					List<CrimeData> crimeDataList = (List<CrimeData>) q.execute(year, month, crimeType);
+					if (!crimeDataList.isEmpty()) {
+						for (CrimeData crimeData : crimeDataList) {
+							crimes.add((CrimeData) pm.detachCopy(crimeData));
+						}
+					}
+				}
+			}
+			if (!crimes.isEmpty()) {
+				crimeDataByYear = new CrimeDataByYear(year, crimes);
+			}
+		} finally {
+			pm.close();
+		}*/
+		try {
+			Query q = pm.newQuery(CrimeDataByYear.class);
+			q.declareParameters("Integer y");
+			q.setFilter("year == y");
+			List<CrimeDataByYear> cdbyList = (List<CrimeDataByYear>) q.execute(year);
+			assert cdbyList.size() == 1 || cdbyList.size() == 0;
+			if (cdbyList.size() == 1) {
+				crimeDataByYear = pm.detachCopy(cdbyList.get(0));
+			}
+		} finally {
+			pm.close();
+		}
+		return crimeDataByYear;
 	}
 }

@@ -114,6 +114,7 @@ padding-top:30px;
 	margin: auto;
 	padding-left: 3px;
 	padding-right: 3px;
+	cursor: default;
 }
 
 .clearButtonStyle {
@@ -144,5 +145,10 @@ padding-top:30px;
 }
 
 .UnSelectedYearLabelStyle {
+}
+
+social {
+    float: right;
+    padding-right: 10px;
 }
 

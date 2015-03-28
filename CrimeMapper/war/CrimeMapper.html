@@ -41,8 +41,34 @@
 <!--                                           -->
 <body class="crimeApp">
 
+	<meta property=“og:url” content=“http://127.0.0.1:8888/CrimeMapper.html” />
+	<meta property=“og:title” content=“CrimeMapper” />
+	<meta property=“og:description” content=“A visual representation of crime data in Vancouver!”/>
+	<meta property=“og:site_name” content=“CrimeMapper: StreetSmart”/>
+	<meta property=“og:image” content=“” />
+	<div id="fb-root"></div>
+	<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+	<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+	<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+
+
 	<div id="menuBar">
-		<h1>Street Smart: Crime Mapper</h1>
+		<h1>
+			Street Smart: Crime Mapper
+			<social> <a class="fb-share-button"
+				data-href="http://127.0.0.1:8888/CrimeMapper.html"
+				data-layout="button"></a> <br>
+			<a href="https://twitter.com/share" class="twitter-share-button"
+				data-text="Check out the Vancouver crime data!" data-count="none"
+				data-hashtags="CrimeMapper">Tweet</a> </social>
+		</h1>
 	</div>
 	<div id="crimeList" align="center"></div>
 
