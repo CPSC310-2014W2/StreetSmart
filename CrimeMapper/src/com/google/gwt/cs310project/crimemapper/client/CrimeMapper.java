@@ -93,8 +93,6 @@ public class CrimeMapper implements EntryPoint {
 	private static final double VAN_LAT = 49.246292;
 	private static final String MAP_WIDTH = "1200px";
 	private static final String MAP_HEIGHT = "550px";
-
-	private static final Logger LOG = Logger.getLogger(CrimeMapper.class.getName());
 	
 	private static final int COL_CHART_WIDTH = 1400;
 	private static final int COL_CHART_HEIGHT = 400;
