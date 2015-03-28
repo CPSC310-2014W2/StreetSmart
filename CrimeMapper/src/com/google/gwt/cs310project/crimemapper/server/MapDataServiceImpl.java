@@ -26,6 +26,7 @@ import com.google.gwt.cs310project.crimemapper.client.CrimeData;
 import com.google.gwt.cs310project.crimemapper.client.LatLon;
 import com.google.gwt.cs310project.crimemapper.client.MapDataService;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import com.google.gwt.xml.client.XMLParser;
 
 
 @SuppressWarnings("serial")
@@ -44,15 +45,17 @@ MapDataService {
 	private final static String GEN = "8";
 	private final static String CITY = "Vancouver";
 
+	@SuppressWarnings("null")
 	@Override
 	public TreeMap<LatLon, Integer> getMapData(ArrayList<CrimeData> crimeDataList) {
-		// TODO Auto-generated method stub
-		return null;
+		TreeMap<LatLon, Integer> mapData = null;
+		for(CrimeData cd: crimeDataList){
+			LatLon latlon = getLatLon(cd.getLocation());
+			mapData.put(latlon, cd.getMonth());
+		}
+		return mapData;
 	}
 
-
-
-	@SuppressWarnings("unused")
 	private static LatLon getLatLon(String location) {
 		LatLon latlon = null;
 		HttpURLConnection conn = null;
@@ -67,7 +70,7 @@ MapDataService {
 			URL url = new URL(sb.toString());
 			conn = (HttpURLConnection) url.openConnection();
 
-			latlon = readXML(url);
+			latlon = readLatLon(url);
 
 		} catch (MalformedURLException e) {
 			return latlon;
@@ -84,7 +87,7 @@ MapDataService {
 		return latlon;
 	}
 
-	private static LatLon readXML(URL url){
+	private static LatLon readLatLon(URL url){
 		double latitude = 0.0;
 		double longitude = 0.0;
 
@@ -119,5 +122,29 @@ MapDataService {
 
 		return new LatLon(latitude, longitude); 
 	}
+	
+	/*private static LatLon readLatLon(URL url) {
+		  try {
+		    // parse the XML document into a DOM
+		    Document messageDom = XMLParser.parse(url.openStream());
+
+		    // find the sender's display name in an attribute of the <from> tag
+		    Node fromNode = messageDom.getElementsByTagName("from").item(0);
+		    String from = ((Element)fromNode).getAttribute("displayName");
+		    fromLabel.setText(from);
+
+		    // get the subject using Node's getNodeValue() function
+		    String subject = messageDom.getElementsByTagName("subject").item(0).getFirstChild().getNodeValue();
+		    subjectLabel.setText(subject);
+
+		    // get the message body by explicitly casting to a Text node
+		    Text bodyNode = (Text)messageDom.getElementsByTagName("body").item(0).getFirstChild();
+		    String body = bodyNode.getData();
+		    bodyLabel.setText(body);
+
+		  } catch (DOMException e) {
+		    Window.alert("Could not parse XML document.");
+		  }
+		}*/
 
 }
