@@ -15,6 +15,5 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/objectify-3.1.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/objectify-gwt-1.2.1.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-openlayers-client-1.0-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/appengine-endpoints.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
