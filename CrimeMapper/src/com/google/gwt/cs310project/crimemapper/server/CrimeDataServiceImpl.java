@@ -169,7 +169,21 @@ public class CrimeDataServiceImpl extends RemoteServiceServlet implements CrimeD
 					pm.makePersistent(j);
 				}
 			}*/
+			removePersistentCrimeDataByYear(crimeDataByYear.getYear());
 			pm.makePersistent(crimeDataByYear);
+		} finally {
+			pm.close();
+		}
+	}
+	
+	@Override
+	public void removePersistentCrimeDataByYear(int year) {
+		PersistenceManager pm = getPersistenceManager();
+		try {
+			CrimeDataByYear oldCrimeDataByYear = getPersistentCrimeDataByYearNotDetached(year, pm);
+			if (oldCrimeDataByYear != null) {
+				pm.deletePersistent(oldCrimeDataByYear);
+			}
 		} finally {
 			pm.close();
 		}
@@ -178,6 +192,14 @@ public class CrimeDataServiceImpl extends RemoteServiceServlet implements CrimeD
 	@Override
 	public CrimeDataByYear getPersistentCrimeDataByYear(int year) {
 		PersistenceManager pm = getPersistenceManager();
+		try {
+			return pm.detachCopy(getPersistentCrimeDataByYearNotDetached(year, pm));
+		} finally {
+			pm.close();
+		}
+	}
+	
+	private CrimeDataByYear getPersistentCrimeDataByYearNotDetached(int year, PersistenceManager pm) {
 		CrimeDataByYear crimeDataByYear = null;
 		/*ArrayList<CrimeData> crimes = new ArrayList<CrimeData>();
 		try {
@@ -201,17 +223,13 @@ public class CrimeDataServiceImpl extends RemoteServiceServlet implements CrimeD
 		} finally {
 			pm.close();
 		}*/
-		try {
-			Query q = pm.newQuery(CrimeDataByYear.class);
-			q.declareParameters("Integer y");
-			q.setFilter("year == y");
-			List<CrimeDataByYear> cdbyList = (List<CrimeDataByYear>) q.execute(year);
-			assert cdbyList.size() == 1 || cdbyList.size() == 0;
-			if (cdbyList.size() == 1) {
-				crimeDataByYear = pm.detachCopy(cdbyList.get(0));
-			}
-		} finally {
-			pm.close();
+		Query q = pm.newQuery(CrimeDataByYear.class);
+		q.declareParameters("Integer y");
+		q.setFilter("year == y");
+		List<CrimeDataByYear> cdbyList = (List<CrimeDataByYear>) q.execute(year);
+		assert cdbyList.size() == 1 || cdbyList.size() == 0;
+		if (cdbyList.size() == 1) {
+			crimeDataByYear = cdbyList.get(0);
 		}
 		return crimeDataByYear;
 	}
