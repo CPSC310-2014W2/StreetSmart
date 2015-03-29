@@ -3,6 +3,7 @@ package com.google.gwt.cs310project.crimemapper.client;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -128,10 +129,10 @@ public class CrimeMapper implements EntryPoint {
 	private Label lastUploadedDateLabel = new Label();
 	private Label selectedYearLabel = new Label();
 	private int selectedRow;
-	private int userSelectedRow = NO_TABLE_SELECTION_FLAG;
+
 
 	// Map Tab elements
-	private MultiWordSuggestOracle mapSearchOracle =  new MultiWordSuggestOracle();
+	private MultiWordSuggestOracle mapSearchOracle = new MultiWordSuggestOracle();
 	private SuggestBox mapSearchTextBox = new SuggestBox(mapSearchOracle);
 	private HorizontalPanel searchPanel = new HorizontalPanel();
 	private HorizontalPanel buttonPanel = new HorizontalPanel();
@@ -181,6 +182,10 @@ public class CrimeMapper implements EntryPoint {
 	private Anchor signInLink = new Anchor("Sign In");
 	private Anchor signOutLink = new Anchor("Sign Out");
 	private LoginServiceAsync loginService = null;
+
+	// User Settings
+	private int userSelectedRow = NO_TABLE_SELECTION_FLAG;
+	private LinkedList<String> searchHistory;
 
 	//Admin Account
 	private ListBox localAccountListBox = new ListBox();
@@ -347,6 +352,58 @@ public class CrimeMapper implements EntryPoint {
 		// Make the call to the user settings service.
 		userSettingsSvc.setSelectedRow(selectedRow, callback);
 		userSelectedRow = selectedRow;
+	}
+
+	private void loadUserSearchHistory() {
+		//Initialize the service proxy.
+		if (userSettingsSvc == null) {
+			userSettingsSvc = GWT.create(UserSettingsService.class);
+		}
+		// Set up the callback object.
+		AsyncCallback<LinkedList<String>> callback = new AsyncCallback<LinkedList<String>>(){
+			public void onFailure(Throwable caught){
+				throw new FailedToRetrieveDataException();
+			}
+
+			public void onSuccess(LinkedList<String> result) {
+				searchHistory = result;
+				mapSearchOracle.addAll(searchHistory);
+			}
+		};
+		userSettingsSvc.getSearchHistory(callback);
+	}
+
+	private void addToUserSearchHistory(String searchTerm) {
+		//Initialize the service proxy.
+		if (userSettingsSvc == null) {
+			userSettingsSvc = GWT.create(UserSettingsService.class);
+		}
+		// Set up the callback object.
+		AsyncCallback<Void> callback = new AsyncCallback<Void>(){
+			public void onFailure(Throwable caught){
+				throw new FailedToRetrieveDataException();
+			}
+
+			public void onSuccess(Void result) {}
+		}; 
+		userSettingsSvc.addToSearchHistory(searchTerm, callback);
+		mapSearchOracle.add(searchTerm);
+	}
+
+	private void clearUserSearchHistory() {
+		//Initialize the service proxy.
+		if (userSettingsSvc == null) {
+			userSettingsSvc = GWT.create(UserSettingsService.class);
+		}
+		// Set up the callback object.
+		AsyncCallback<Void> callback = new AsyncCallback<Void>(){
+			public void onFailure(Throwable caught){
+				throw new FailedToRetrieveDataException();
+			}
+
+			public void onSuccess(Void result) {}
+		}; 
+		userSettingsSvc.clearSearchHistory(callback);
 	}
 
 	// ===================================================================================== //
@@ -592,37 +649,34 @@ public class CrimeMapper implements EntryPoint {
 
 	private void loadFilter(){
 		String filterText = mapSearchTextBox.getText();
+		addToUserSearchHistory(filterText);
 		Integer id;
 		Integer filterYear = 0;
 		String filterType = "";
 		ArrayList<CrimeData> templist = null;
-		CrimeData cd=null;
-		String tempStr="";
+		CrimeData cd = null;
+		String tempStr = "";
 
 		filterList.clear();  //Clear the filter list
 
 		id = yearListBox.getSelectedIndex();
-		if(id==-1)
-			return;
+		if(id == -1) return;
 		filterYear = Integer.parseInt(yearListBox.getItemText(id));
 
 		id = crimeTypeListBox.getSelectedIndex();
-		if(id==-1)
-			return;
+		if(id == -1) return;
 		filterType = crimeTypeListBox.getItemText(id);
 
 		//get CrimeData by Year
 		CrimeDataByYear cbdy = crimeDataMap.get(filterYear);
-		if(cbdy==null)
-			return;
+		if(cbdy == null) return;
 
 		//Get Crime Data by Type
 		templist = cbdy.getByType(filterType);
-		if(templist == null)
-			return;
+		if(templist == null) return;
 
 		//Get Crime Data by Street Name
-		for(int i=0; i<templist.size(); i++){
+		for(int i = 0; i < templist.size(); i++){
 			cd = templist.get(i);
 			tempStr = cd.getLocation().toLowerCase();
 			if(tempStr.contains(filterText.toLowerCase())){
@@ -902,6 +956,9 @@ public class CrimeMapper implements EntryPoint {
 		mapsVPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		mapsVPanel.setSpacing(SPACING);
 		mapsVPanel.add(mapLabel);
+		
+		// Load search history from user settings
+		loadUserSearchHistory();
 
 		// Assemble filter panel
 		searchPanel.setSpacing(SPACING);

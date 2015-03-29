@@ -21,8 +21,8 @@ public class UserSettings {
 	private Date createDate;
 	@Persistent
 	private int selectedRow = -1;
-	@Persistent(serialized = "true", defaultFetchGroup="true")
-	private LinkedList<String> searchHistory;
+	@Persistent
+	private LinkedList<String> searchHistory = new LinkedList<String>();
 	
 	private static final int MAX_SEARCH_HISTORY_SIZE = 5;
 

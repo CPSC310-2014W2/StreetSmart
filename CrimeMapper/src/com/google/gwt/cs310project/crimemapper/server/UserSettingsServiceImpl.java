@@ -96,9 +96,9 @@ public class UserSettingsServiceImpl extends RemoteServiceServlet implements Use
 		// TODO Auto-generated method stub
 		PersistenceManager pm = getPersistenceManager();
 		try {
-			
+			getUserSettings(pm).addToSearchHistory(searchTerm);
 		} finally {
-			
+			pm.close();
 		}
 	}
 
