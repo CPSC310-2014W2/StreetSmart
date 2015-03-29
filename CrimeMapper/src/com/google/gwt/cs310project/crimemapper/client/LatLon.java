@@ -1,12 +1,13 @@
 package com.google.gwt.cs310project.crimemapper.client;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.io.Serializable;
+
 
 /**
  * A latitude/longitude coordinate pair
  */
-public class LatLon {
+@SuppressWarnings("serial")
+public class LatLon implements Serializable {
 	private double lat;
 	private double lon;
 
@@ -14,16 +15,15 @@ public class LatLon {
 		this.lat = Double.parseDouble(lat);
 		this.lon = Double.parseDouble(lon);
 	}
-
+	
+	@SuppressWarnings("unused")
+	private LatLon(){}
+	
 	public LatLon(double lat, double lon) {
 		this.lat = lat;
 		this.lon = lon;
 	}
 	
-	public LatLon(JSONObject json) throws JSONException {
-		this(json.getString("Latitude"), json.getString("Longitude"));
-	}
-
 	public double getLatitude() {
 		return lat;
 	}
@@ -63,16 +63,4 @@ public class LatLon {
             return false;
         return true;
     }
-
-    /**
-	 * Produces JSONObject from this lat/lon
-	 * @return  the JSONObject containing lat and lon
-	 * @throws JSONException 
-	 */
-	public JSONObject toJSON() throws JSONException {
-		JSONObject json = new JSONObject();
-		json.put("Latitude", Double.toString(lat));
-		json.put("Longitude", Double.toString(lon));
-		return json;
-	}
 }

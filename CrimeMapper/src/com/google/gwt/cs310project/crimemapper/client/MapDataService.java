@@ -10,5 +10,5 @@ import java.util.TreeMap;
 @RemoteServiceRelativePath("mapData")
 public interface MapDataService extends RemoteService {
 	
-	TreeMap<LatLon, Integer> getMapData(ArrayList<CrimeData> crimeDataList); 
+	ArrayList<LatLon> getHereMapData(ArrayList<CrimeData> crimeDataList); 
 }
