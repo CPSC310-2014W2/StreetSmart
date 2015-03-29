@@ -66,6 +66,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
@@ -106,6 +107,7 @@ public class CrimeMapper implements EntryPoint {
 	private TabPanel tabPanel = new TabPanel();
 
 	// Static Panels
+	private HorizontalPanel menuBarPanel = new HorizontalPanel();
 	private VerticalPanel mainPanel = new VerticalPanel();
 	private VerticalPanel tableVPanel = new VerticalPanel();
 	private VerticalPanel settingsVPanel = new VerticalPanel();
@@ -742,9 +744,24 @@ public class CrimeMapper implements EntryPoint {
 
 		mainPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		mainPanel.setSize(WIDTH, HEIGHT);
+		mainPanel.add(buildMenuBarPanel());
 		mainPanel.add(buildTabPanel());
 
 		return mainPanel;
+	}
+	
+	private Panel buildMenuBarPanel(){
+		Image appLogo = new Image(DOMAIN_NAME+"/images/appLogo.png");
+		appLogo.setStyleName("appLogoStyle");
+		menuBarPanel.setStyleName("menuBarStyle");
+		menuBarPanel.add(appLogo);
+		Label siteTitleLabel = new Label("Street Smart: Crime Mapper");
+		siteTitleLabel.setStyleName("siteTitleLabelStyle");
+		menuBarPanel.add(siteTitleLabel);
+		signOutLink.addStyleName("signOutLinkStyle");
+		menuBarPanel.add(signOutLink);
+		return menuBarPanel;
+		
 	}
 
 	/**
@@ -935,7 +952,6 @@ public class CrimeMapper implements EntryPoint {
 		//tableVPanel.add(selectedYearLabel);
 		tableVPanel.add(crimeFlexTable);
 		tableVPanel.add(clearTrendsButtonPanel);
-		tableVPanel.add(signOutLink);
 		tableVPanel.add(lastUploadedDateLabel);
 
 		// return table constructed panel

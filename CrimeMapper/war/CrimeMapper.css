@@ -20,6 +20,36 @@ h1 {
 	width: 100%;
 	height: 60px;
 }
+
+.menuBarStyle{
+	width: 100%;
+	height: 60px;
+	background-color: #CCCCCC;
+}
+
+.signOutLinkStyle{
+	width: 150px;
+	height: 35px;
+	padding-top: 25px;
+	font-size: 20px;
+	float: right;
+	
+}
+
+.siteTitleLabelStyle{
+	color: #0A6AAB;
+	font-family: arial, sans-serif;
+	font-style: bold;
+	padding-top: 20px;
+	font-size: 40px;
+	float: left;
+}	
+
+.appLogoStyle{
+	padding-top: 5px;
+	padding-left: 10px;
+}
+
 /* =============================== Trends Tab CSS ===============================*/
 /* crime type header row*/
 .crimeTypeHeader {
@@ -121,6 +151,7 @@ h1 {
 
 .UnSelectedYearLabelStyle {
 }
+
 
 
 /* =============================== Map Tab CSS ===============================*/
