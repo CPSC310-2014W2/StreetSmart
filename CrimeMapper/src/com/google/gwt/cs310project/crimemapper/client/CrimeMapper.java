@@ -142,6 +142,7 @@ public class CrimeMapper implements EntryPoint {
 	private ListBox crimeTypeListBox = new ListBox();
 	private Button loadFilterButton = new Button("Filter");
 	private Button clearFilterButton = new Button("Clear Map");
+	private Button clearSearchHistoryButton = new Button("Clear Search History");
 	private static final String BING_API = "Apd8EWF9Ls5tXmyHr22OuL1ay4HRJtI4JG4jgluTDVaJdUXZV6lpSBpX-TwnoRDG";
 	private MapOptions defaultMapOptions = new MapOptions();
 	private MapWidget mapWidget = new MapWidget(MAP_WIDTH, MAP_HEIGHT, defaultMapOptions);
@@ -407,6 +408,7 @@ public class CrimeMapper implements EntryPoint {
 			public void onSuccess(Void result) {}
 		}; 
 		userSettingsSvc.clearSearchHistory(callback);
+		mapSearchOracle.clear();
 	}
 
 	// ===================================================================================== //
@@ -476,6 +478,12 @@ public class CrimeMapper implements EntryPoint {
 				dataMap.clear();
 				layer.clearMarkers();
 				layer.redraw();
+			}
+		});
+		
+		clearSearchHistoryButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				clearUserSearchHistory();
 			}
 		});
 
@@ -993,8 +1001,10 @@ public class CrimeMapper implements EntryPoint {
 		//buttonPanel.setSpacing(SPACING);
 		loadFilterButton.setStyleName("filterButtonStyle");
 		clearFilterButton.setStyleName("filterButtonStyle");
+		clearSearchHistoryButton.setStyleName("filterButtonStyle");
 		searchPanel.add(loadFilterButton);
 		searchPanel.add(clearFilterButton);
+		searchPanel.add(clearSearchHistoryButton);
 		//mapsVPanel.add(buttonPanel);
 
 		// Bing Layer
