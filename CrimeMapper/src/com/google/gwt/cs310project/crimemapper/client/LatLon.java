@@ -1,10 +1,13 @@
 package com.google.gwt.cs310project.crimemapper.client;
 
+import java.io.Serializable;
+
 
 /**
  * A latitude/longitude coordinate pair
  */
-public class LatLon {
+@SuppressWarnings("serial")
+public class LatLon implements Serializable {
 	private double lat;
 	private double lon;
 
@@ -12,7 +15,10 @@ public class LatLon {
 		this.lat = Double.parseDouble(lat);
 		this.lon = Double.parseDouble(lon);
 	}
-
+	
+	@SuppressWarnings("unused")
+	private LatLon(){}
+	
 	public LatLon(double lat, double lon) {
 		this.lat = lat;
 		this.lon = lon;

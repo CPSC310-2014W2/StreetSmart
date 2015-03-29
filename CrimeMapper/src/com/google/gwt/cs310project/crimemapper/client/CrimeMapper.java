@@ -134,16 +134,19 @@ public class CrimeMapper implements EntryPoint {
 	private MultiWordSuggestOracle mapSearchOracle =  new MultiWordSuggestOracle();
 	private SuggestBox mapSearchTextBox = new SuggestBox(mapSearchOracle);
 	private HorizontalPanel searchPanel = new HorizontalPanel();
+	private HorizontalPanel buttonPanel = new HorizontalPanel();
 	private ListBox yearListBox = new ListBox();
 	private ListBox crimeTypeListBox = new ListBox();
 	private Button loadFilterButton = new Button("Filter");
+	private Button clearFilterButton = new Button("Clear Map");
 	private MapOptions defaultMapOptions = new MapOptions();
 	private MapWidget mapWidget = new MapWidget(MAP_WIDTH, MAP_HEIGHT, defaultMapOptions);
 	private static final Projection DEFAULT_PROJECTION = new Projection(
 			"EPSG:4326");
 	private static Markers layer = new Markers("Crime Type Markers");
 	private Popup popup;
-	private Label mapLabel = new Label("Map Label for Test");
+	private Label mapLabel = new Label("");
+
 
 	// Settings Tab elements
 	private Button loadCrimeDataButton = new Button("Load Data");
@@ -191,7 +194,7 @@ public class CrimeMapper implements EntryPoint {
 	//Filter
 	private ArrayList<CrimeData> filterList = new ArrayList<CrimeData>();
 
-	private TreeMap<LatLon, Integer> dataMap = new TreeMap<LatLon, Integer>();
+	private ArrayList<LatLon> dataMap = new ArrayList<LatLon>();
 
 	// Databases 
 	private TreeMap<Integer, CrimeDataByYear> crimeDataMap;
@@ -365,7 +368,7 @@ public class CrimeMapper implements EntryPoint {
 	}
 	// ===================================================================================== //
 	private void applicationHandlers(){
-		
+
 		// Clear Text box when mouse places icon
 		newUrlTextBox.getValueBox().addClickHandler(new ClickHandler(){
 			public void onClick(ClickEvent event){
@@ -398,12 +401,31 @@ public class CrimeMapper implements EntryPoint {
 		loadFilterButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				loadFilter();
-				mapLabel.setText("" + filterList.get(0).getLocation()); //Test to show first location in filter list
-				
+				//mapLabel.setText("" + filterList.get(0).getLocation() + ": List Size " + filterList.size()); //Test to show first location in filter list
+				loadMapData();
+				layer.clearMarkers();
 			}
 		});
 
 
+		clearFilterButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				loadFilter();
+				mapLabel.setText("");
+				mapSearchTextBox.setText("Please Enter Street Name");
+				dataMap.clear();
+				layer.clearMarkers();
+				layer.redraw();
+			}
+		});
+
+		mapSearchTextBox.getValueBox().addClickHandler(new ClickHandler(){
+			public void onClick(ClickEvent event) {
+				mapSearchTextBox.setText("");
+
+			}
+
+		});
 
 		// Listen for mouse events on Clear Trends btn
 		clearTrendsButton.addClickHandler(new ClickHandler() {
@@ -493,44 +515,44 @@ public class CrimeMapper implements EntryPoint {
 	// ===================================================================================== //
 
 	private void loadMapData() {
-		
-		
+
+
 		if(mapDataSvc == null)
 			mapDataSvc = GWT.create(MapDataService.class);
 
-		AsyncCallback<TreeMap<LatLon, Integer>> callback = new AsyncCallback<TreeMap<LatLon, Integer>>(){
+		AsyncCallback<ArrayList<LatLon>> callback = new AsyncCallback<ArrayList<LatLon>>(){
 			public void onFailure(Throwable caught){
 				//TODO: Do something with errors.
 			}
 
 			@Override
-			public void onSuccess(TreeMap<LatLon, Integer> result) {
-				dataMap.clear();
+			public void onSuccess(ArrayList<LatLon> result) {
 				dataMap = result;
-				layer.clearMarkers();
+				mapLabel.setText("Size of Data from Here Map: " + dataMap.size());
 				plotPoints(dataMap);
 			}
 		}; 
 
 		// Make the call to the crime data service.
-		mapDataSvc.getMapData(filterList, callback);
+		mapDataSvc.getHereMapData(filterList, callback);
 	}
 
-	private void plotPoints(TreeMap<LatLon, Integer> dataMap) {
-
+	private void plotPoints(ArrayList<LatLon> dataMap) {
+		layer.redraw();
 		mapWidget.getMap().addLayer(layer);
 
-		Icon icon = new Icon(DOMAIN_NAME+"/images/anonymous.png",
-				new Size(32, 32));
 
-		for(LatLon latlon: dataMap.keySet()){
+		for(LatLon latlon: dataMap){
+			// Multiple Icons
+			Icon icon = new Icon(DOMAIN_NAME+"/images/anonymous.png",
+					new Size(16, 16));
 
 			LonLat p = new LonLat(latlon.getLongitude(), latlon.getLatitude());
 			p.transform(DEFAULT_PROJECTION.getProjectionCode(), mapWidget.getMap().getProjection());
 			final Marker marker = new Marker(p, icon);
 			layer.addMarker(marker);
 
-			marker.addBrowserEventListener(EventType.VECTOR_FEATURE_SELECTED, new MarkerBrowserEventListener() {
+			/*marker.addBrowserEventListener(EventType.VECTOR_FEATURE_SELECTED, new MarkerBrowserEventListener() {
 
 				public void onBrowserEvent(MarkerBrowserEventListener.MarkerBrowserEvent markerBrowserEvent) {
 					popup = new FramedCloud("id1", marker.getLonLat(), null, "<,h1>Crime Info<,/H1><,BR/>And more text", null, false);
@@ -550,7 +572,7 @@ public class CrimeMapper implements EntryPoint {
 					}
 				}
 
-			});
+			});*/
 
 		}
 
@@ -879,32 +901,37 @@ public class CrimeMapper implements EntryPoint {
 		mapsVPanel.setSize(WIDTH, HEIGHT);
 		mapsVPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		mapsVPanel.setSpacing(SPACING);
-		// Assemble elements for Map Panel
+		mapsVPanel.add(mapLabel);
+
+		// Assemble filter panel
 		searchPanel.setSpacing(SPACING);
 		mapSearchTextBox.setText("Enter Vancouver Street Location");
 		mapSearchTextBox.setSize("400px", "25px");
 		searchPanel.add(mapSearchTextBox);
 		yearListBox.setSize("60px", "30px");
-
 		for (Map.Entry<Integer,CrimeDataByYear> entry : crimeDataMap.entrySet()){
 			yearListBox.addItem(entry.getKey().toString());
 		}
 		searchPanel.add(yearListBox);
-
 		crimeTypeListBox.setSize("190px", "30px");
 		for (int i = 0; i < CrimeTypes.getNumberOfTypes(); i++) {
 			crimeTypeListBox.addItem(CrimeTypes.getType(i)); 
 		}
 		searchPanel.add(crimeTypeListBox);
-		mapsVPanel.add(mapLabel);
 		mapsVPanel.add(searchPanel);
+
+		// Assemble button panel
+		buttonPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		buttonPanel.setSpacing(SPACING);
 		loadFilterButton.setStyleName("filterButtonStyle");
-		mapsVPanel.add(loadFilterButton);
+		clearFilterButton.setStyleName("filterButtonStyle");
+		buttonPanel.add(loadFilterButton);
+		buttonPanel.add(clearFilterButton);
+		mapsVPanel.add(buttonPanel);
 
 		// Bing Layer
-
 		//Create some Bing layers
-		final String key = "Apd8EWF9Ls5tXmyHr22OuL1ay4HRJtI4JG4jgluTDVaJdUXZV6lpSBpX-TwnoRDG"; //Bing key
+		final String key = "Apd8EWF9Ls5tXmyHr22OuL1ay4HRJtI4JG4jgluTDVaJdUXZV6lpSBpX-TwnoRDG";
 		// configuring road options
 		BingOptions bingOptionRoad = new BingOptions("Bing Road Layer", key,
 				BingType.ROAD);
@@ -928,7 +955,7 @@ public class CrimeMapper implements EntryPoint {
 		mapWidget.getMap().addLayer(hybrid);
 		mapWidget.getMap().addLayer(aerial);
 
-		//Map Controls
+		/*//Map Controls
 		mapWidget.getMap().addControl(new LayerSwitcher()); //+ sign in the upperright corner to display the layer switcher
 		mapWidget.getMap().addControl(new OverviewMap()); //+ sign in the lowerright to display the overviewmap
 		mapWidget.getMap().addControl(new ScaleLine()); //Display the scaleline*/

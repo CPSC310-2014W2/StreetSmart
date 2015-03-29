@@ -1,42 +1,36 @@
 package com.google.gwt.cs310project.crimemapper.server;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TreeMap;
-import java.io.File;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.TreeMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 import com.google.gwt.cs310project.crimemapper.client.CrimeData;
 import com.google.gwt.cs310project.crimemapper.client.LatLon;
 import com.google.gwt.cs310project.crimemapper.client.MapDataService;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-import com.google.gwt.xml.client.XMLParser;
+
+
 
 
 @SuppressWarnings("serial")
 public class MapDataServiceImpl extends RemoteServiceServlet implements
 MapDataService {
 
-
-
 	private static final String GEOCODE_API_BASE = "http://geocoder.cit.api.here.com/6.2/geocode.xml";
-
 	/**
 	 * Here Maps Keys
 	 */
@@ -45,61 +39,60 @@ MapDataService {
 	private final static String GEN = "8";
 	private final static String CITY = "Vancouver";
 
-	@SuppressWarnings("null")
 	@Override
-	public TreeMap<LatLon, Integer> getMapData(ArrayList<CrimeData> crimeDataList) {
-		TreeMap<LatLon, Integer> mapData = null;
+	public ArrayList<LatLon> getHereMapData(ArrayList<CrimeData> crimeDataList) {
+		ArrayList<LatLon> latlonList = new ArrayList<LatLon>();
 		for(CrimeData cd: crimeDataList){
+
 			LatLon latlon = getLatLon(cd.getLocation());
-			mapData.put(latlon, cd.getMonth());
+			latlonList.add(latlon);
+
 		}
-		return mapData;
+		return latlonList;
 	}
-	
-	private static String urlMapBuilder(String str){
+
+	private static String uriBuilder(String str){
 		StringBuilder sb = new StringBuilder(GEOCODE_API_BASE);
 		sb.append("?app_id="+APP_ID);
-		sb.append("?app_code="+APP_CODE);
-		sb.append("gen="+GEN);
+		sb.append("&app_code="+APP_CODE);
+		sb.append("&gen="+GEN);
 		sb.append("&searchtext=" + str +"+,");
 		sb.append("+"+CITY);
-		
+
 		return sb.toString();
 	}
+
 	private static LatLon getLatLon(String location) {
 		LatLon latlon = null;
-		HttpURLConnection conn = null;
 		try {
+			URL url = new URL(uriBuilder(location));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+			String line;
 
-			URL url = new URL(urlMapBuilder(location));
-			conn = (HttpURLConnection) url.openConnection();
+			while((line = reader.readLine()) != null){
+				latlon = readLatLon(line);
+			}
 
-			latlon = readLatLon(url);
 
 		} catch (MalformedURLException e) {
-			return latlon;
+			// Do something
 
-		} catch (IOException e) {
-			return latlon;
-
-		} finally {
-			if (conn != null) {
-				conn.disconnect();
-			}
+		} catch (IOException e){
+			// Do something
 		}
-
 		return latlon;
 	}
 
-	private static LatLon readLatLon(URL url){
-		double latitude = 0.0;
-		double longitude = 0.0;
-
+	private static LatLon readLatLon(String hereXML){
+		double lat = 0.0;
+		double lon = 0.0;
+		String latStr = "";
+		String lonStr = "";
 		try{
 
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document document = builder.parse(url.openStream());
+			Document document = builder.parse(new InputSource(new ByteArrayInputStream(hereXML.getBytes("utf-8"))));
 
 			NodeList nodeList = document.getDocumentElement().getChildNodes();
 			for (int i = 0; i < nodeList.getLength(); i++) {
@@ -110,13 +103,10 @@ MapDataService {
 					Element elem = (Element) node;
 
 					// Get the value of all sub-elements.
-					String latStr = elem.getElementsByTagName("Latitude")
+					latStr = elem.getElementsByTagName("Latitude")
 							.item(0).getChildNodes().item(0).getNodeValue();
-					latitude = Double.parseDouble(latStr);
-					String longStr = elem.getElementsByTagName("Longitude")
+					lonStr = elem.getElementsByTagName("Longitude")
 							.item(0).getChildNodes().item(0).getNodeValue();
-					latitude = Double.parseDouble(longStr);
-
 
 				}
 			}
@@ -124,6 +114,8 @@ MapDataService {
 			e.printStackTrace();
 		}	
 
-		return new LatLon(latitude, longitude); 
+		lat = Double.parseDouble(latStr);
+		lon = Double.parseDouble(lonStr);
+		return new LatLon(lat, lon);
 	}
 }
