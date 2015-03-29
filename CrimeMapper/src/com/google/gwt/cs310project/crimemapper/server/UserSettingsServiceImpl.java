@@ -1,5 +1,6 @@
 package com.google.gwt.cs310project.crimemapper.server;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.jdo.JDOHelper;
@@ -74,5 +75,38 @@ public class UserSettingsServiceImpl extends RemoteServiceServlet implements Use
 
 	private PersistenceManager getPersistenceManager() {
 		return PMF.getPersistenceManager();
+	}
+
+
+	@Override
+	public LinkedList<String> getSearchHistory() throws NotLoggedInException {
+		checkLoggedIn();
+		PersistenceManager pm = getPersistenceManager();
+		try {
+			return pm.detachCopy(getUserSettings(pm)).getSearchHistory();
+		} finally {
+			pm.close();
+		}
+	}
+
+
+	@Override
+	public void addToSearchHistory(String searchTerm) throws NotLoggedInException {
+		checkLoggedIn();
+		// TODO Auto-generated method stub
+		PersistenceManager pm = getPersistenceManager();
+		try {
+			
+		} finally {
+			
+		}
+	}
+
+
+	@Override
+	public void clearSearchHistory() throws NotLoggedInException {
+		checkLoggedIn();
+		// TODO Auto-generated method stub
+		
 	}
 }
