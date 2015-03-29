@@ -55,19 +55,23 @@ MapDataService {
 		}
 		return mapData;
 	}
-
+	
+	private static String urlMapBuilder(String str){
+		StringBuilder sb = new StringBuilder(GEOCODE_API_BASE);
+		sb.append("?app_id="+APP_ID);
+		sb.append("?app_code="+APP_CODE);
+		sb.append("gen="+GEN);
+		sb.append("&searchtext=" + str +"+,");
+		sb.append("+"+CITY);
+		
+		return sb.toString();
+	}
 	private static LatLon getLatLon(String location) {
 		LatLon latlon = null;
 		HttpURLConnection conn = null;
 		try {
-			StringBuilder sb = new StringBuilder(GEOCODE_API_BASE);
-			sb.append("?app_id="+APP_ID);
-			sb.append("?app_code="+APP_CODE);
-			sb.append("gen="+GEN);
-			sb.append("&searchtext=" + location+"+,");
-			sb.append("+"+CITY);
 
-			URL url = new URL(sb.toString());
+			URL url = new URL(urlMapBuilder(location));
 			conn = (HttpURLConnection) url.openConnection();
 
 			latlon = readLatLon(url);
@@ -122,29 +126,4 @@ MapDataService {
 
 		return new LatLon(latitude, longitude); 
 	}
-	
-	/*private static LatLon readLatLon(URL url) {
-		  try {
-		    // parse the XML document into a DOM
-		    Document messageDom = XMLParser.parse(url.openStream());
-
-		    // find the sender's display name in an attribute of the <from> tag
-		    Node fromNode = messageDom.getElementsByTagName("from").item(0);
-		    String from = ((Element)fromNode).getAttribute("displayName");
-		    fromLabel.setText(from);
-
-		    // get the subject using Node's getNodeValue() function
-		    String subject = messageDom.getElementsByTagName("subject").item(0).getFirstChild().getNodeValue();
-		    subjectLabel.setText(subject);
-
-		    // get the message body by explicitly casting to a Text node
-		    Text bodyNode = (Text)messageDom.getElementsByTagName("body").item(0).getFirstChild();
-		    String body = bodyNode.getData();
-		    bodyLabel.setText(body);
-
-		  } catch (DOMException e) {
-		    Window.alert("Could not parse XML document.");
-		  }
-		}*/
-
 }

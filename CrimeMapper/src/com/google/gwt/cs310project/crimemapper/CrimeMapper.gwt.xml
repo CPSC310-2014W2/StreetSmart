@@ -7,6 +7,7 @@
 	<!-- Inherit the core Web Toolkit stuff. -->
 	<inherits name='com.google.gwt.user.User' />
 	<inherits name="com.google.gwt.xml.XML" />
+	
 <!-- 	<inherits name="com.google.gwt.logging.Logging"/> -->
 	<script src="js/gwt-openlayers/util.js"></script>
 	<!-- Do not fail to compile using GWT xsiframe linker. -->

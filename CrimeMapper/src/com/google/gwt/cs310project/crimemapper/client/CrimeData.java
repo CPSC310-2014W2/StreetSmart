@@ -38,9 +38,10 @@ public class CrimeData implements Serializable {
 	}
 	
 	private String formatLocation(String location){
-		location.replace("XX", "00");
-		location.replace("/", "+");
-		return location;
+		String tmpLocation = location.replace("XX", "00");
+		tmpLocation = tmpLocation.replace(" / ", "+");
+		tmpLocation = tmpLocation.replaceAll("\\s", "+");
+		return tmpLocation;
 	}
 	
 	public String getId(){
@@ -60,7 +61,7 @@ public class CrimeData implements Serializable {
 	public int getMonth() {
 		return month;
 	}
-
+	
 	public String getLocation() {
 		return formatLocation(location);
 	}
