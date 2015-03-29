@@ -93,7 +93,6 @@ public class UserSettingsServiceImpl extends RemoteServiceServlet implements Use
 	@Override
 	public void addToSearchHistory(String searchTerm) throws NotLoggedInException {
 		checkLoggedIn();
-		// TODO Auto-generated method stub
 		PersistenceManager pm = getPersistenceManager();
 		try {
 			getUserSettings(pm).addToSearchHistory(searchTerm);
@@ -106,7 +105,11 @@ public class UserSettingsServiceImpl extends RemoteServiceServlet implements Use
 	@Override
 	public void clearSearchHistory() throws NotLoggedInException {
 		checkLoggedIn();
-		// TODO Auto-generated method stub
-		
+		PersistenceManager pm = getPersistenceManager();
+		try {
+			getUserSettings(pm).clearSearchHistory();;
+		} finally {
+			pm.close();
+		}
 	}
 }
