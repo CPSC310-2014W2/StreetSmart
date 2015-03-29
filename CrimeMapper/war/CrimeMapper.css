@@ -20,7 +20,7 @@ h1 {
 	width: 100%;
 	height: 60px;
 }
-
+/* =============================== Trends Tab CSS ===============================*/
 /* crime type header row*/
 .crimeTypeHeader {
 	background-color: #7B7B7B;
@@ -107,7 +107,6 @@ h1 {
 	margin: auto;
 	padding-left: 3px;
 	padding-right: 3px;
-	cursor: default;
 }
 
 .clearButtonStyle {
@@ -119,6 +118,12 @@ h1 {
 	padding-right: 3px;
 }
 
+
+.UnSelectedYearLabelStyle {
+}
+
+
+/* =============================== Map Tab CSS ===============================*/
 .filterButtonStyle {
 	width: 100px;
 	height: 25px;
@@ -128,6 +133,15 @@ h1 {
 	padding-right: 3px;
 }
 
+.searchPanelStyle{
+	width: 1200px;
+	height: 50px;
+	background-color: #678DC0;
+	vertical-align: center;
+	
+	}
+
+/* =============================== Settings Tab CSS ===============================*/
 .loadDataButtonStyle {
 	width: 100px;
 	height: 25px;
@@ -135,9 +149,6 @@ h1 {
 	padding-top: 4px;
 	padding-left: 3px;
 	padding-right: 3px;
-}
-
-.UnSelectedYearLabelStyle {
 }
 
 social {

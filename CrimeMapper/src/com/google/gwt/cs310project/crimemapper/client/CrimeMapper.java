@@ -28,7 +28,6 @@ import org.gwtopenmaps.openlayers.client.layer.BingType;
 import org.gwtopenmaps.openlayers.client.layer.Markers;
 import org.gwtopenmaps.openlayers.client.layer.Vector;
 import org.gwtopenmaps.openlayers.client.layer.VectorOptions;
-import org.gwtopenmaps.openlayers.client.popup.FramedCloud;
 import org.gwtopenmaps.openlayers.client.popup.Popup;
 import org.gwtopenmaps.openlayers.client.protocol.HTTPProtocol;
 import org.gwtopenmaps.openlayers.client.protocol.HTTPProtocolOptions;
@@ -55,6 +54,7 @@ import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.shared.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
@@ -545,7 +545,7 @@ public class CrimeMapper implements EntryPoint {
 		for(LatLon latlon: dataMap){
 			// Multiple Icons
 			Icon icon = new Icon(DOMAIN_NAME+"/images/anonymous.png",
-					new Size(16, 16));
+					new Size(20, 20));
 
 			LonLat p = new LonLat(latlon.getLongitude(), latlon.getLatitude());
 			p.transform(DEFAULT_PROJECTION.getProjectionCode(), mapWidget.getMap().getProjection());
@@ -579,7 +579,6 @@ public class CrimeMapper implements EntryPoint {
 
 	}
 
-	@SuppressWarnings("deprecation")
 	private void loadCrime(){
 		String crimeURL = newUrlTextBox.getText().trim();
 		oracleUrl.add(crimeURL);
@@ -587,7 +586,7 @@ public class CrimeMapper implements EntryPoint {
 		newUrlTextBox.setText("Paste Crime URL here");
 		selectedTextBox = CLEAR_TEXT_BOX_FLAG;
 		lastUploadedDateLabel.setText("Last update : "
-				+ DateTimeFormat.getMediumDateTimeFormat().format(new Date()));
+				+ DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT).format(new Date()));
 	}
 
 	private void loadFilter(){
@@ -683,9 +682,6 @@ public class CrimeMapper implements EntryPoint {
 	// ===================================================================================== //
 	/**
 	 * Method for constructing Main Panel
-	 * @throws Exception 
-	 * @throws IOException 
-	 * @throws SAXException 
 	 */
 	private Panel buildMainPanel(){
 
@@ -698,9 +694,6 @@ public class CrimeMapper implements EntryPoint {
 
 	/**
 	 * Method for constructing Tab Panel
-	 * @throws Exception 
-	 * @throws IOException 
-	 * @throws SAXException 
 	 */
 	private TabPanel buildTabPanel(){
 
@@ -900,13 +893,14 @@ public class CrimeMapper implements EntryPoint {
 	private Panel buildMapTabPanel(){
 		mapsVPanel.setSize(WIDTH, HEIGHT);
 		mapsVPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		mapsVPanel.setSpacing(SPACING);
+		//mapsVPanel.setSpacing(SPACING);
 		mapsVPanel.add(mapLabel);
 
 		// Assemble filter panel
 		searchPanel.setSpacing(SPACING);
+		searchPanel.setStyleName("searchPanelStyle");
 		mapSearchTextBox.setText("Enter Vancouver Street Location");
-		mapSearchTextBox.setSize("400px", "25px");
+		mapSearchTextBox.setSize("250px", "25px");
 		searchPanel.add(mapSearchTextBox);
 		yearListBox.setSize("60px", "30px");
 		for (Map.Entry<Integer,CrimeDataByYear> entry : crimeDataMap.entrySet()){
@@ -921,13 +915,13 @@ public class CrimeMapper implements EntryPoint {
 		mapsVPanel.add(searchPanel);
 
 		// Assemble button panel
-		buttonPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		buttonPanel.setSpacing(SPACING);
+		//buttonPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		//buttonPanel.setSpacing(SPACING);
 		loadFilterButton.setStyleName("filterButtonStyle");
 		clearFilterButton.setStyleName("filterButtonStyle");
-		buttonPanel.add(loadFilterButton);
-		buttonPanel.add(clearFilterButton);
-		mapsVPanel.add(buttonPanel);
+		searchPanel.add(loadFilterButton);
+		searchPanel.add(clearFilterButton);
+		//mapsVPanel.add(buttonPanel);
 
 		// Bing Layer
 		//Create some Bing layers
@@ -955,10 +949,10 @@ public class CrimeMapper implements EntryPoint {
 		mapWidget.getMap().addLayer(hybrid);
 		mapWidget.getMap().addLayer(aerial);
 
-		/*//Map Controls
-		mapWidget.getMap().addControl(new LayerSwitcher()); //+ sign in the upperright corner to display the layer switcher
+		//Map Controls
+		//mapWidget.getMap().addControl(new LayerSwitcher()); //+ sign in the upperright corner to display the layer switcher
 		mapWidget.getMap().addControl(new OverviewMap()); //+ sign in the lowerright to display the overviewmap
-		mapWidget.getMap().addControl(new ScaleLine()); //Display the scaleline*/
+		mapWidget.getMap().addControl(new ScaleLine()); //Display the scaleline
 
 		// Vancouver coordinates
 		LonLat lonLat = new LonLat(VAN_LON, VAN_LAT);
