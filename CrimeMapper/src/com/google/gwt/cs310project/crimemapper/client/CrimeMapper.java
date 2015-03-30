@@ -61,6 +61,8 @@ import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.reveregroup.gwt.facebook4gwt.Facebook;
+import com.reveregroup.gwt.facebook4gwt.ShareButton;
 
 
 
@@ -82,6 +84,7 @@ public class CrimeMapper implements EntryPoint {
 	private static final String DOMAIN_NAME = "http://127.0.0.1:8888";
 	private static final double VAN_LON = -123.116226;
 	private static final double VAN_LAT = 49.246292;
+	public ShareButton facebookButton = new ShareButton("http://crimemapper310.appspot.com", "Crime Mapper");
 
 	//private static final Logger LOG = Logger.getLogger(CrimeMapper.class.getName());
 	private static final int COL_CHART_WIDTH = 1400;
@@ -201,6 +204,8 @@ public class CrimeMapper implements EntryPoint {
 				}
 			}
 		});
+		// Social networking stuff
+		Facebook.init("1378776005757292");
 	}
 
 	private void loadCrimeDataMap() {
@@ -757,6 +762,7 @@ public class CrimeMapper implements EntryPoint {
 		//tableVPanel.add(selectedYearLabel);
 		tableVPanel.add(crimeFlexTable);
 		tableVPanel.add(clearTrendsButtonPanel);
+		tableVPanel.add(facebookButton);
 		tableVPanel.add(signOutLink);
 		tableVPanel.add(lastUploadedDateLabel);
 
