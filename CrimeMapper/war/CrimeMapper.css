@@ -3,11 +3,13 @@
 	margin: 0px;
 	padding: 0px;
 }*/
+
+
 h1 {
 	text-align: center;
 	color: #2062B8;
 	padding-left: 10px;
-	padding-top: 10px;
+	padding-top: 0px;
 	font-family: arial, sans-serif;
 	font-style: normal;
 }
@@ -17,17 +19,38 @@ h1 {
 	background-color: #CCCCCC;
 	width: 100%;
 	height: 60px;
-	margin: auto;
 }
 
-.social{
-position: absolute;
-display: inline-block;
-float: left;
-padding-right: 50px;
-padding-top:30px;
-	}
+.menuBarStyle{
+	width: 100%;
+	height: 60px;
+	background-color: #CCCCCC;
+}
 
+.signOutLinkStyle{
+	width: 150px;
+	height: 35px;
+	padding-top: 25px;
+	font-size: 20px;
+	float: right;
+	
+}
+
+.siteTitleLabelStyle{
+	color: #0A6AAB;
+	font-family: arial, sans-serif;
+	font-style: bold;
+	padding-top: 20px;
+	font-size: 40px;
+	float: left;
+}	
+
+.appLogoStyle{
+	padding-top: 5px;
+	padding-left: 10px;
+}
+
+/* =============================== Trends Tab CSS ===============================*/
 /* crime type header row*/
 .crimeTypeHeader {
 	background-color: #7B7B7B;
@@ -125,6 +148,13 @@ padding-top:30px;
 	padding-right: 3px;
 }
 
+
+.UnSelectedYearLabelStyle {
+}
+
+
+
+/* =============================== Map Tab CSS ===============================*/
 .filterButtonStyle {
 	width: 100px;
 	height: 25px;
@@ -134,6 +164,15 @@ padding-top:30px;
 	padding-right: 3px;
 }
 
+.searchPanelStyle{
+	width: 1200px;
+	height: 50px;
+	background-color: #678DC0;
+	vertical-align: center;
+	
+	}
+
+/* =============================== Settings Tab CSS ===============================*/
 .loadDataButtonStyle {
 	width: 100px;
 	height: 25px;
@@ -143,7 +182,14 @@ padding-top:30px;
 	padding-right: 3px;
 }
 
+<<<<<<< HEAD
 .UnSelectedYearLabelStyle {
 }
 
+=======
+social {
+    float: right;
+    padding-right: 10px;
+}
+>>>>>>> fd7739fd2dc1a117ac92b02ff9352a1a858ce659
 

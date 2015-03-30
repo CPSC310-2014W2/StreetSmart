@@ -1,7 +1,7 @@
 package com.google.gwt.cs310project.crimemapper.server;
 
 import java.util.Date;
-
+import java.util.LinkedList;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.PersistenceCapable;
@@ -21,6 +21,10 @@ public class UserSettings {
 	private Date createDate;
 	@Persistent
 	private int selectedRow = -1;
+	@Persistent
+	private LinkedList<String> searchHistory = new LinkedList<String>();
+	
+	private static final int MAX_SEARCH_HISTORY_SIZE = 5;
 
 	public UserSettings() {
 		this.createDate = new Date();
@@ -59,5 +63,20 @@ public class UserSettings {
 
 	public void setSelectedRow(int selectedRow) {
 		this.selectedRow = selectedRow;
+	}
+	
+	public LinkedList<String> getSearchHistory() {
+		return this.searchHistory;
+	}
+	
+	public void addToSearchHistory(String searchTerm) {
+		if (searchHistory.size() > MAX_SEARCH_HISTORY_SIZE) {
+			searchHistory.removeLast();
+		}
+		searchHistory.addFirst(searchTerm);
+	}
+	
+	public void clearSearchHistory() {
+		searchHistory.clear();
 	}
 }

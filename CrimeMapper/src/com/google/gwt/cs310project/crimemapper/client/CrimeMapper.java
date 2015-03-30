@@ -3,35 +3,46 @@ package com.google.gwt.cs310project.crimemapper.client;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.gwtopenmaps.openlayers.client.Icon;
 import org.gwtopenmaps.openlayers.client.LonLat;
 import org.gwtopenmaps.openlayers.client.MapOptions;
 import org.gwtopenmaps.openlayers.client.MapWidget;
+import org.gwtopenmaps.openlayers.client.Marker;
+import org.gwtopenmaps.openlayers.client.Projection;
+import org.gwtopenmaps.openlayers.client.Size;
+import org.gwtopenmaps.openlayers.client.control.LayerSwitcher;
+import org.gwtopenmaps.openlayers.client.control.OverviewMap;
+import org.gwtopenmaps.openlayers.client.control.ScaleLine;
 import org.gwtopenmaps.openlayers.client.control.SelectFeature;
+import org.gwtopenmaps.openlayers.client.event.EventType;
+import org.gwtopenmaps.openlayers.client.event.MarkerBrowserEventListener;
 import org.gwtopenmaps.openlayers.client.event.VectorFeatureSelectedListener;
 import org.gwtopenmaps.openlayers.client.format.KML;
-import org.gwtopenmaps.openlayers.client.layer.OSM;
+import org.gwtopenmaps.openlayers.client.layer.Bing;
+import org.gwtopenmaps.openlayers.client.layer.BingOptions;
+import org.gwtopenmaps.openlayers.client.layer.BingType;
+import org.gwtopenmaps.openlayers.client.layer.Markers;
 import org.gwtopenmaps.openlayers.client.layer.Vector;
 import org.gwtopenmaps.openlayers.client.layer.VectorOptions;
+import org.gwtopenmaps.openlayers.client.popup.Popup;
 import org.gwtopenmaps.openlayers.client.protocol.HTTPProtocol;
 import org.gwtopenmaps.openlayers.client.protocol.HTTPProtocolOptions;
 import org.gwtopenmaps.openlayers.client.protocol.Protocol;
+import org.gwtopenmaps.openlayers.client.protocol.ProtocolType;
 import org.gwtopenmaps.openlayers.client.strategy.FixedStrategy;
 import org.gwtopenmaps.openlayers.client.strategy.Strategy;
 import org.moxieapps.gwt.highcharts.client.Chart;
 import org.moxieapps.gwt.highcharts.client.Legend;
-import org.moxieapps.gwt.highcharts.client.Point;
 import org.moxieapps.gwt.highcharts.client.Series;
 import org.moxieapps.gwt.highcharts.client.ToolTip;
 import org.moxieapps.gwt.highcharts.client.ToolTipData;
 import org.moxieapps.gwt.highcharts.client.ToolTipFormatter;
-import org.moxieapps.gwt.highcharts.client.labels.PieDataLabels;
 import org.moxieapps.gwt.highcharts.client.plotOptions.ColumnPlotOptions;
-import org.moxieapps.gwt.highcharts.client.plotOptions.PiePlotOptions;
-import org.moxieapps.gwt.highcharts.client.plotOptions.PlotOptions;
 import org.xml.sax.SAXException;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -41,7 +52,10 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.shared.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
@@ -52,6 +66,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
@@ -84,9 +99,13 @@ public class CrimeMapper implements EntryPoint {
 	private static final String DOMAIN_NAME = "http://127.0.0.1:8888";
 	private static final double VAN_LON = -123.116226;
 	private static final double VAN_LAT = 49.246292;
+<<<<<<< HEAD
 	public ShareButton facebookButton = new ShareButton("http://crimemapper310.appspot.com", "Crime Mapper");
+=======
+	private static final String MAP_WIDTH = "1200px";
+	private static final String MAP_HEIGHT = "550px";
+>>>>>>> fd7739fd2dc1a117ac92b02ff9352a1a858ce659
 
-	//private static final Logger LOG = Logger.getLogger(CrimeMapper.class.getName());
 	private static final int COL_CHART_WIDTH = 1400;
 	private static final int COL_CHART_HEIGHT = 400;
 
@@ -94,6 +113,7 @@ public class CrimeMapper implements EntryPoint {
 	private TabPanel tabPanel = new TabPanel();
 
 	// Static Panels
+	private HorizontalPanel menuBarPanel = new HorizontalPanel();
 	private VerticalPanel mainPanel = new VerticalPanel();
 	private VerticalPanel tableVPanel = new VerticalPanel();
 	private VerticalPanel settingsVPanel = new VerticalPanel();
@@ -106,11 +126,6 @@ public class CrimeMapper implements EntryPoint {
 	private VerticalPanel colChartPanel = new VerticalPanel();
 	private VerticalPanel mainTrendsPanel = new VerticalPanel();
 
-	// Data Visualization
-	private Chart pieChart = new Chart();
-
-
-
 	// Dimensions and Spacing
 	private final String WIDTH = "100%";
 	private final String HEIGHT = "100%";
@@ -122,15 +137,27 @@ public class CrimeMapper implements EntryPoint {
 	private Label lastUploadedDateLabel = new Label();
 	private Label selectedYearLabel = new Label();
 	private int selectedRow;
-	private int userSelectedRow = NO_TABLE_SELECTION_FLAG;
+
 
 	// Map Tab elements
-	private MultiWordSuggestOracle mapSearchOracle =  new MultiWordSuggestOracle();
+	private MultiWordSuggestOracle mapSearchOracle = new MultiWordSuggestOracle();
 	private SuggestBox mapSearchTextBox = new SuggestBox(mapSearchOracle);
 	private HorizontalPanel searchPanel = new HorizontalPanel();
+	private HorizontalPanel buttonPanel = new HorizontalPanel();
 	private ListBox yearListBox = new ListBox();
 	private ListBox crimeTypeListBox = new ListBox();
-	private Button filter = new Button("Filter");
+	private Button loadFilterButton = new Button("Filter");
+	private Button clearFilterButton = new Button("Clear Map");
+	private Button clearSearchHistoryButton = new Button("Clear Search History");
+	private static final String BING_API = "Apd8EWF9Ls5tXmyHr22OuL1ay4HRJtI4JG4jgluTDVaJdUXZV6lpSBpX-TwnoRDG";
+	private MapOptions defaultMapOptions = new MapOptions();
+	private MapWidget mapWidget = new MapWidget(MAP_WIDTH, MAP_HEIGHT, defaultMapOptions);
+	private static final Projection DEFAULT_PROJECTION = new Projection(
+			"EPSG:4326");
+	private static Markers layer = new Markers("Crime Type Markers");
+	private Popup popup;
+	private Label mapLabel = new Label("");
+
 
 	// Settings Tab elements
 	private Button loadCrimeDataButton = new Button("Load Data");
@@ -152,6 +179,9 @@ public class CrimeMapper implements EntryPoint {
 	// UserSettings RPC fields
 	private UserSettingsServiceAsync userSettingsSvc = GWT.create(UserSettingsService.class);
 
+	// MapData RPC fields
+	private MapDataServiceAsync mapDataSvc = GWT.create(MapDataService.class);
+
 	// Login Fields
 	private LoginInfo loginInfo = null;
 	private VerticalPanel loginPanel = new VerticalPanel();
@@ -163,6 +193,10 @@ public class CrimeMapper implements EntryPoint {
 	private Anchor signOutLink = new Anchor("Sign Out");
 	private LoginServiceAsync loginService = null;
 
+	// User Settings
+	private int userSelectedRow = NO_TABLE_SELECTION_FLAG;
+	private LinkedList<String> searchHistory;
+
 	//Admin Account
 	private ListBox localAccountListBox = new ListBox();
 	private Button localAccountAddButton = new Button("Add");
@@ -172,9 +206,16 @@ public class CrimeMapper implements EntryPoint {
 	private TextBox adminTextBox = new TextBox();
 	private Label adminLabel = new Label("Admin Account List");
 
+	//Filter
+	private ArrayList<CrimeData> filterList = new ArrayList<CrimeData>();
+
+	private ArrayList<LatLon> dataMap = new ArrayList<LatLon>();
 
 	// Databases 
 	private TreeMap<Integer, CrimeDataByYear> crimeDataMap;
+
+	private int numberOfYearsLoaded = 0;
+
 	/**
 	 * Entry point method.
 	 */
@@ -204,8 +245,26 @@ public class CrimeMapper implements EntryPoint {
 				}
 			}
 		});
+<<<<<<< HEAD
 		// Social networking stuff
 		Facebook.init("1378776005757292");
+=======
+
+
+		tabPanel.addSelectionHandler(new SelectionHandler<Integer>() {
+			@Override
+			public void onSelection(SelectionEvent<Integer> event) {
+				if (event.getSelectedItem() == 1) {
+					yearListBox.clear();
+					for (Map.Entry<Integer, CrimeDataByYear> entry : crimeDataMap.entrySet()) {
+						yearListBox.addItem(entry.getKey().toString());
+					}
+
+				}
+			}
+		});
+
+>>>>>>> fd7739fd2dc1a117ac92b02ff9352a1a858ce659
 	}
 
 	private void loadCrimeDataMap() {
@@ -225,7 +284,10 @@ public class CrimeMapper implements EntryPoint {
 					updateTableView(crimeDataMap);
 					updateChartViewDStore();
 					updateColChartView(crimeDataMap);
-
+				}
+				numberOfYearsLoaded++;
+				if (numberOfYearsLoaded == NUM_YEARS) {
+					loadUserSelectedRow();
 				}
 			}
 		}; 
@@ -274,6 +336,10 @@ public class CrimeMapper implements EntryPoint {
 
 			public void onSuccess(Integer result) {
 				userSelectedRow = result;
+				// LOG.log(Level.WARNING, "result = " + Integer.toString(result));
+				// LOG.log(Level.WARNING, "userSelectedRow = " + Integer.toString(userSelectedRow));
+				// while (!(doneLoadingUserSettings && doneLoadingCrimeDataMap)) {}
+				// LOG.log(Level.WARNING, "userSelectedRow at local = " + Integer.toString(userSelectedRow));
 				if (userSelectedRow != NO_TABLE_SELECTION_FLAG) {
 					selectRow(userSelectedRow);
 				}
@@ -295,13 +361,65 @@ public class CrimeMapper implements EntryPoint {
 				throw new FailedToRetrieveDataException();
 			}
 
-			public void onSuccess(Void result) {
-				userSelectedRow = selectedRow;
-			}
+			public void onSuccess(Void result) {}
 		}; 
 
 		// Make the call to the user settings service.
 		userSettingsSvc.setSelectedRow(selectedRow, callback);
+		userSelectedRow = selectedRow;
+	}
+
+	private void loadUserSearchHistory() {
+		//Initialize the service proxy.
+		if (userSettingsSvc == null) {
+			userSettingsSvc = GWT.create(UserSettingsService.class);
+		}
+		// Set up the callback object.
+		AsyncCallback<LinkedList<String>> callback = new AsyncCallback<LinkedList<String>>(){
+			public void onFailure(Throwable caught){
+				throw new FailedToRetrieveDataException();
+			}
+
+			public void onSuccess(LinkedList<String> result) {
+				searchHistory = result;
+				mapSearchOracle.addAll(searchHistory);
+			}
+		};
+		userSettingsSvc.getSearchHistory(callback);
+	}
+
+	private void addToUserSearchHistory(String searchTerm) {
+		//Initialize the service proxy.
+		if (userSettingsSvc == null) {
+			userSettingsSvc = GWT.create(UserSettingsService.class);
+		}
+		// Set up the callback object.
+		AsyncCallback<Void> callback = new AsyncCallback<Void>(){
+			public void onFailure(Throwable caught){
+				throw new FailedToRetrieveDataException();
+			}
+
+			public void onSuccess(Void result) {}
+		}; 
+		userSettingsSvc.addToSearchHistory(searchTerm, callback);
+		mapSearchOracle.add(searchTerm);
+	}
+
+	private void clearUserSearchHistory() {
+		//Initialize the service proxy.
+		if (userSettingsSvc == null) {
+			userSettingsSvc = GWT.create(UserSettingsService.class);
+		}
+		// Set up the callback object.
+		AsyncCallback<Void> callback = new AsyncCallback<Void>(){
+			public void onFailure(Throwable caught){
+				throw new FailedToRetrieveDataException();
+			}
+
+			public void onSuccess(Void result) {}
+		}; 
+		userSettingsSvc.clearSearchHistory(callback);
+		mapSearchOracle.clear();
 	}
 
 	// ===================================================================================== //
@@ -323,6 +441,7 @@ public class CrimeMapper implements EntryPoint {
 	}
 	// ===================================================================================== //
 	private void applicationHandlers(){
+
 		// Clear Text box when mouse places icon
 		newUrlTextBox.getValueBox().addClickHandler(new ClickHandler(){
 			public void onClick(ClickEvent event){
@@ -348,6 +467,43 @@ public class CrimeMapper implements EntryPoint {
 			public void onClick(ClickEvent event) {
 				loadCrime();
 			}
+		});
+
+
+		// Listen for filter events on Filter btn
+		loadFilterButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				loadFilter();
+				//mapLabel.setText("" + filterList.get(0).getLocation() + ": List Size " + filterList.size()); //Test to show first location in filter list
+				loadMapData();
+				layer.clearMarkers();
+			}
+		});
+
+
+		clearFilterButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				loadFilter();
+				mapLabel.setText("");
+				mapSearchTextBox.setText("Please Enter Street Name");
+				dataMap.clear();
+				layer.clearMarkers();
+				layer.redraw();
+			}
+		});
+		
+		clearSearchHistoryButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				clearUserSearchHistory();
+			}
+		});
+
+		mapSearchTextBox.getValueBox().addClickHandler(new ClickHandler(){
+			public void onClick(ClickEvent event) {
+				mapSearchTextBox.setText("");
+
+			}
+
 		});
 
 		// Listen for mouse events on Clear Trends btn
@@ -379,17 +535,28 @@ public class CrimeMapper implements EntryPoint {
 		localBackupAddButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				int year = BASE_YEAR + localBackupListBox.getSelectedIndex();
+
+				//String filePath = "http://1-dot-ddwaychen.appspot.com/data/crime_" + year + ".csv";	
 				String filePath = DOMAIN_NAME + "/data/crime_" + year + ".csv";
+
 				refreshCrimeList(filePath);
 			}
 		});
 
+
+
 		// Listen for mouse events on local backup Remove button
 		localBackupRemoveButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
+
 				int year = BASE_YEAR + localBackupListBox.getSelectedIndex();
-				removeFromCrimeDataMap(year);
-				settingsLabel.setText("Data Removed Successfully");
+				try {
+					removeFromCrimeDataMap(year);
+					settingsLabel.setText("Data Removed Successfully");
+				} catch (Exception e) {
+					// TODO Add the reload data panel
+					//LOG.log(Level.SEVERE, "CrimeMapper.localBackupRemoveButton", e);
+				}
 			}
 		});
 
@@ -418,23 +585,6 @@ public class CrimeMapper implements EntryPoint {
 
 					lst.add(str);
 					localAccountListBox.addItem(str);
-
-
-					/*loginInfo.setAccountList(lst);
-
-
-							if(loginService == null)
-								loginService = GWT.create(LoginService.class);
-
-							loginService.addAccount(str, new AsyncCallback<Void>() {
-								public void onFailure(Throwable error) {
-
-									Window.alert(error.toString());
-								}
-
-								public void onSuccess(Void result) {
-								}
-							});*/
 				}
 			}
 		});
@@ -443,7 +593,71 @@ public class CrimeMapper implements EntryPoint {
 
 	// ===================================================================================== //
 
-	@SuppressWarnings("deprecation")
+	private void loadMapData() {
+
+
+		if(mapDataSvc == null)
+			mapDataSvc = GWT.create(MapDataService.class);
+
+		AsyncCallback<ArrayList<LatLon>> callback = new AsyncCallback<ArrayList<LatLon>>(){
+			public void onFailure(Throwable caught){
+				//TODO: Do something with errors.
+			}
+
+			@Override
+			public void onSuccess(ArrayList<LatLon> result) {
+				dataMap = result;
+				mapLabel.setText("Size of Data from Here Map: " + dataMap.size());
+				plotPoints(dataMap);
+			}
+		}; 
+
+		// Make the call to the crime data service.
+		mapDataSvc.getHereMapData(filterList, callback);
+	}
+
+	private void plotPoints(ArrayList<LatLon> dataMap) {
+		layer.redraw();
+		mapWidget.getMap().addLayer(layer);
+
+
+		for(LatLon latlon: dataMap){
+			// Multiple Icons
+			Icon icon = new Icon(DOMAIN_NAME+"/images/anonymous.png",
+					new Size(20, 20));
+
+			LonLat p = new LonLat(latlon.getLongitude(), latlon.getLatitude());
+			p.transform(DEFAULT_PROJECTION.getProjectionCode(), mapWidget.getMap().getProjection());
+			final Marker marker = new Marker(p, icon);
+			layer.addMarker(marker);
+
+			/*marker.addBrowserEventListener(EventType.VECTOR_FEATURE_SELECTED, new MarkerBrowserEventListener() {
+
+				public void onBrowserEvent(MarkerBrowserEventListener.MarkerBrowserEvent markerBrowserEvent) {
+					popup = new FramedCloud("id1", marker.getLonLat(), null, "<,h1>Crime Info<,/H1><,BR/>And more text", null, false);
+					popup.setPanMapIfOutOfView(true); 
+					popup.setAutoSize(true);
+					mapWidget.getMap().addPopup(popup);
+				}
+
+			});
+
+			marker.addBrowserEventListener(EventType.VECTOR_FEATURE_UNSELECTED, new MarkerBrowserEventListener() {
+
+				public void onBrowserEvent(MarkerBrowserEventListener.MarkerBrowserEvent markerBrowserEvent) {
+					if(popup != null) {
+						mapWidget.getMap().removePopup(popup);
+						popup.destroy();
+					}
+				}
+
+			});*/
+
+		}
+
+
+	}
+
 	private void loadCrime(){
 		String crimeURL = newUrlTextBox.getText().trim();
 		oracleUrl.add(crimeURL);
@@ -451,7 +665,45 @@ public class CrimeMapper implements EntryPoint {
 		newUrlTextBox.setText("Paste Crime URL here");
 		selectedTextBox = CLEAR_TEXT_BOX_FLAG;
 		lastUploadedDateLabel.setText("Last update : "
-				+ DateTimeFormat.getMediumDateTimeFormat().format(new Date()));
+				+ DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT).format(new Date()));
+	}
+
+	private void loadFilter(){
+		String filterText = mapSearchTextBox.getText();
+		addToUserSearchHistory(filterText);
+		Integer id;
+		Integer filterYear = 0;
+		String filterType = "";
+		ArrayList<CrimeData> templist = null;
+		CrimeData cd = null;
+		String tempStr = "";
+
+		filterList.clear();  //Clear the filter list
+
+		id = yearListBox.getSelectedIndex();
+		if(id == -1) return;
+		filterYear = Integer.parseInt(yearListBox.getItemText(id));
+
+		id = crimeTypeListBox.getSelectedIndex();
+		if(id == -1) return;
+		filterType = crimeTypeListBox.getItemText(id);
+
+		//get CrimeData by Year
+		CrimeDataByYear cbdy = crimeDataMap.get(filterYear);
+		if(cbdy == null) return;
+
+		//Get Crime Data by Type
+		templist = cbdy.getByType(filterType);
+		if(templist == null) return;
+
+		//Get Crime Data by Street Name
+		for(int i = 0; i < templist.size(); i++){
+			cd = templist.get(i);
+			tempStr = cd.getLocation().toLowerCase();
+			if(tempStr.contains(filterText.toLowerCase())){
+				filterList.add(cd);
+			}
+		}
 	}
 
 	private void selectRow(int rowIndex){
@@ -475,10 +727,14 @@ public class CrimeMapper implements EntryPoint {
 			if (rowIndex != userSelectedRow) {
 				try {
 					updateUserSelectedRow();
+					// TODO
+					//					userSelectedRow = 0;
+					//					loadUserSelectedRow();
 				} catch (Exception e) {
 					// TODO Add the reload data panel
 					//LOG.log(Level.SEVERE, "CrimeMapper.selectRow()", e);
 				}
+				//				LOG.log(Level.WARNING, "userSelectedRow = " + Integer.toString(userSelectedRow));
 			}
 
 			ArrayList<ArrayList<Double>> trends = getTrends(rowIndex);
@@ -488,7 +744,7 @@ public class CrimeMapper implements EntryPoint {
 			while(i < row){
 				if(i == rowIndex){
 					crimeFlexTable.getRowFormatter().setStyleName(rowIndex, "rowSelectedShadow");
-					selectedYearLabel.setText("Base Year: "+getYearFromTable(rowIndex));
+					selectedYearLabel.setText("Base Year: " + getYearFromTable(rowIndex));
 					selectedYearLabel.setStyleName("selectedYearLabelStyle");
 
 				} else {
@@ -502,24 +758,33 @@ public class CrimeMapper implements EntryPoint {
 	// ===================================================================================== //
 	/**
 	 * Method for constructing Main Panel
-	 * @throws Exception 
-	 * @throws IOException 
-	 * @throws SAXException 
 	 */
 	private Panel buildMainPanel(){
 
 		mainPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		mainPanel.setSize(WIDTH, HEIGHT);
+		mainPanel.add(buildMenuBarPanel());
 		mainPanel.add(buildTabPanel());
 
 		return mainPanel;
 	}
+	
+	private Panel buildMenuBarPanel(){
+		Image appLogo = new Image(DOMAIN_NAME+"/images/appLogo.png");
+		appLogo.setStyleName("appLogoStyle");
+		menuBarPanel.setStyleName("menuBarStyle");
+		menuBarPanel.add(appLogo);
+		Label siteTitleLabel = new Label("Street Smart: Crime Mapper");
+		siteTitleLabel.setStyleName("siteTitleLabelStyle");
+		menuBarPanel.add(siteTitleLabel);
+		signOutLink.addStyleName("signOutLinkStyle");
+		menuBarPanel.add(signOutLink);
+		return menuBarPanel;
+		
+	}
 
 	/**
 	 * Method for constructing Tab Panel
-	 * @throws Exception 
-	 * @throws IOException 
-	 * @throws SAXException 
 	 */
 	private TabPanel buildTabPanel(){
 
@@ -549,8 +814,6 @@ public class CrimeMapper implements EntryPoint {
 		flowpanel = new FlowPanel();
 		flowpanel.add(FaqTabPanel.getFaqTabPanel());
 		tabPanel.add(flowpanel, tab3Title);
-
-
 
 
 		if(isAdmin){
@@ -589,61 +852,6 @@ public class CrimeMapper implements EntryPoint {
 
 
 		return mainTrendsPanel;
-	}
-
-
-	private Chart buildYearlyPieChart(int year){
-		// TODO: Finish for Sprint 2
-		pieChart.setType(Series.Type.PIE)  
-		.setChartTitleText("Year Added: "+ year)
-		.setPlotBackgroundColor((String) null)  
-		.setPlotBorderWidth(null)  
-		.setPlotShadow(true)  
-		.setPiePlotOptions(new PiePlotOptions()  
-		.setAllowPointSelect(true)  
-		.setCursor(PlotOptions.Cursor.POINTER)  
-		.setPieDataLabels(new PieDataLabels()   
-		.setEnabled(false)  
-				)
-				.setShowInLegend(true)
-				)
-				.setToolTip(new ToolTip()  
-				.setFormatter(new ToolTipFormatter() {  
-					public String format(ToolTipData toolTipData) {  
-						return "<b>" + toolTipData.getPointName() + "</b>: " + toolTipData.getYAsDouble() + " %";  
-					}  
-				})  
-						);  
-		CrimeDataByYear cdby = crimeDataMap.get(year);
-		int i = 0;
-		double totalNumberCrimes = 0;
-		while(i < CrimeTypes.getNumberOfTypes()){
-			totalNumberCrimes = totalNumberCrimes + cdby.getNumberOfCrimeTypeOccurrences(CrimeTypes.getType(i));
-			i++;
-		}
-		pieChart.addSeries(pieChart.createSeries()  
-				.setName("Crime Distribution")  
-				.setPoints(new Point[]{  
-						new Point(CrimeTypes.getType(0), (cdby.getNumberOfCrimeTypeOccurrences
-								(CrimeTypes.getType(0))/totalNumberCrimes)*100),  
-								new Point(CrimeTypes.getType(1), (cdby.getNumberOfCrimeTypeOccurrences
-										(CrimeTypes.getType(1))/totalNumberCrimes)*100),  
-										new Point(CrimeTypes.getType(2), (cdby.getNumberOfCrimeTypeOccurrences
-												(CrimeTypes.getType(2))/totalNumberCrimes)*100)  
-						.setSliced(true)  
-						.setSelected(true),  
-						new Point(CrimeTypes.getType(3), (cdby.getNumberOfCrimeTypeOccurrences
-								(CrimeTypes.getType(3))/totalNumberCrimes)*100),  
-								new Point(CrimeTypes.getType(4), (cdby.getNumberOfCrimeTypeOccurrences
-										(CrimeTypes.getType(4))/totalNumberCrimes)*100),  
-										new Point(CrimeTypes.getType(5), (cdby.getNumberOfCrimeTypeOccurrences
-												(CrimeTypes.getType(5))/totalNumberCrimes)*100),
-												new Point(CrimeTypes.getType(6), (cdby.getNumberOfCrimeTypeOccurrences
-														(CrimeTypes.getType(6))/totalNumberCrimes)*100)
-				})  
-				); 
-		//pieChart.setVisible(true);
-		return pieChart;
 	}
 
 	private Chart buildYearlyColChart(TreeMap<Integer, CrimeDataByYear> crimeDataMap2){
@@ -718,6 +926,7 @@ public class CrimeMapper implements EntryPoint {
 			crimeFlexTable.setText(1, i + 1, CrimeTypes.getType(i));
 		}
 
+
 		// Merging Crime Type to be over the Crime Types
 		FlexCellFormatter crimeTypeCellFormatter = crimeFlexTable.getFlexCellFormatter();
 		crimeTypeCellFormatter.setHorizontalAlignment(0, 1, HasHorizontalAlignment.ALIGN_CENTER);
@@ -736,11 +945,11 @@ public class CrimeMapper implements EntryPoint {
 		crimeFlexTable.setCellPadding(PADDING);
 		try {
 			loadCrimeDataMap();
-			loadUserSelectedRow();
 		} catch (Exception e) {
 			// TODO Add the reload data panel
 			//LOG.log(Level.SEVERE, "CrimeMapper.buildTableVPanel()", e);
 		}
+
 		crimeFlexTable.getCellFormatter().addStyleName(1, 1, "mischiefUnder");
 		crimeFlexTable.getCellFormatter().addStyleName(1, 2, "mischiefOver");
 		crimeFlexTable.getCellFormatter().addStyleName(1, 3, "fromAutoUnder");
@@ -762,10 +971,12 @@ public class CrimeMapper implements EntryPoint {
 		//tableVPanel.add(selectedYearLabel);
 		tableVPanel.add(crimeFlexTable);
 		tableVPanel.add(clearTrendsButtonPanel);
+<<<<<<< HEAD
 		tableVPanel.add(facebookButton);
 		tableVPanel.add(signOutLink);
+=======
+>>>>>>> fd7739fd2dc1a117ac92b02ff9352a1a858ce659
 		tableVPanel.add(lastUploadedDateLabel);
-
 
 		// return table constructed panel
 		return tableVPanel;
@@ -777,14 +988,22 @@ public class CrimeMapper implements EntryPoint {
 	private Panel buildMapTabPanel(){
 		mapsVPanel.setSize(WIDTH, HEIGHT);
 		mapsVPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		mapsVPanel.setSpacing(SPACING);
-		// Assemble elements for Map Panel
+		//mapsVPanel.setSpacing(SPACING);
+		mapsVPanel.add(mapLabel);
+		
+		// Load search history from user settings
+		loadUserSearchHistory();
+
+		// Assemble filter panel
 		searchPanel.setSpacing(SPACING);
+		searchPanel.setStyleName("searchPanelStyle");
 		mapSearchTextBox.setText("Enter Vancouver Street Location");
-		mapSearchTextBox.setSize("400px", "25px");
+		mapSearchTextBox.setSize("250px", "25px");
 		searchPanel.add(mapSearchTextBox);
 		yearListBox.setSize("60px", "30px");
-
+		for (Map.Entry<Integer,CrimeDataByYear> entry : crimeDataMap.entrySet()){
+			yearListBox.addItem(entry.getKey().toString());
+		}
 		searchPanel.add(yearListBox);
 		crimeTypeListBox.setSize("190px", "30px");
 		for (int i = 0; i < CrimeTypes.getNumberOfTypes(); i++) {
@@ -792,20 +1011,48 @@ public class CrimeMapper implements EntryPoint {
 		}
 		searchPanel.add(crimeTypeListBox);
 		mapsVPanel.add(searchPanel);
-		filter.setStyleName("filterButtonStyle");
-		mapsVPanel.add(filter);
 
-		MapOptions defaultMapOptions = new MapOptions();
-		MapWidget mapWidget = new MapWidget("1200px", "550px", defaultMapOptions);
+		// Assemble button panel
+		//buttonPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		//buttonPanel.setSpacing(SPACING);
+		loadFilterButton.setStyleName("filterButtonStyle");
+		clearFilterButton.setStyleName("filterButtonStyle");
+		clearSearchHistoryButton.setStyleName("filterButtonStyle");
+		searchPanel.add(loadFilterButton);
+		searchPanel.add(clearFilterButton);
+		searchPanel.add(clearSearchHistoryButton);
+		//mapsVPanel.add(buttonPanel);
 
-		OSM osmMapnik = OSM.Mapnik("Mapnik");
-		OSM osmCycle = OSM.CycleMap("CycleMap");
+		// Bing Layer
+		//Create some Bing layers
+		final String key = BING_API;
+		// configuring road options
+		BingOptions bingOptionRoad = new BingOptions("Bing Road Layer", key,
+				BingType.ROAD);
+		bingOptionRoad.setProtocol(ProtocolType.HTTP);
+		Bing road = new Bing(bingOptionRoad);
 
-		osmMapnik.setIsBaseLayer(true);
-		osmCycle.setIsBaseLayer(true);
+		// configuring hybrid options
+		BingOptions bingOptionHybrid = new BingOptions("Bing Hybrid Layer", key,
+				BingType.HYBRID);
+		bingOptionRoad.setProtocol(ProtocolType.HTTP);
+		Bing hybrid = new Bing(bingOptionHybrid);
 
-		mapWidget.getMap().addLayer(osmMapnik);
-		mapWidget.getMap().addLayer(osmCycle);
+		// configuring aerial options
+		BingOptions bingOptionAerial = new BingOptions("Bing Aerial Layer", key,
+				BingType.AERIAL);
+		bingOptionRoad.setProtocol(ProtocolType.HTTP);
+		Bing aerial = new Bing(bingOptionAerial);
+
+		//Add layers to map
+		mapWidget.getMap().addLayer(road);
+		mapWidget.getMap().addLayer(hybrid);
+		mapWidget.getMap().addLayer(aerial);
+
+		//Map Controls
+		//mapWidget.getMap().addControl(new LayerSwitcher()); //+ sign in the upperright corner to display the layer switcher
+		mapWidget.getMap().addControl(new OverviewMap()); //+ sign in the lowerright to display the overviewmap
+		mapWidget.getMap().addControl(new ScaleLine()); //Display the scaleline
 
 		// Vancouver coordinates
 		LonLat lonLat = new LonLat(VAN_LON, VAN_LAT);
@@ -825,6 +1072,7 @@ public class CrimeMapper implements EntryPoint {
 		Protocol protocol = new HTTPProtocol(protocolOptions);
 		kmlOptions.setProtocol(protocol);
 		Vector kmlLayer = new Vector("KML", kmlOptions);
+		kmlLayer.setOpacity(1);
 
 		mapWidget.getMap().addLayer(kmlLayer);
 
@@ -935,6 +1183,21 @@ public class CrimeMapper implements EntryPoint {
 		updateTableView(crimeDataMap);
 		updateColChartView(crimeDataMap);
 
+		//Initialize the service proxy.
+		if (crimeDataSvc == null) {
+			crimeDataSvc = GWT.create(CrimeDataService.class);
+		}
+		// Set up the callback object.
+		AsyncCallback<Void> callback = new AsyncCallback<Void>(){
+			public void onFailure(Throwable caught){
+				throw new FailedToRetrieveDataException();
+			}
+
+			public void onSuccess(Void result) {}
+		};
+
+		// Make the call to the crime data service.
+		crimeDataSvc.removePersistentCrimeDataByYear(year, callback);
 	}
 	// ===================================================================================== //
 	private void addCrimeDataSet(CrimeDataByYear result) {
@@ -947,20 +1210,6 @@ public class CrimeMapper implements EntryPoint {
 		}
 		updateTableView(crimeDataMap);
 		updateColChartView(crimeDataMap);	
-	}
-	/**
-	 * Updating filter box in map
-	 */
-	private void updateYearListBox(){
-		//TODO: Bug in code, need to fix
-		int itmC = yearListBox.getItemCount();
-		for (int i = 0; i < itmC; i++){
-			yearListBox.removeItem(i);
-		}
-
-		for (Integer key: crimeDataMap.keySet()){
-			yearListBox.addItem("" + key);
-		}
 	}
 
 	private void updateColChartView(TreeMap<Integer, CrimeDataByYear> crimeDataMap2){

@@ -23,6 +23,16 @@
   </servlet-mapping>
   
   <servlet>
+    <servlet-name>mapDataServiceImpl</servlet-name>
+    <servlet-class>com.google.gwt.cs310project.crimemapper.server.MapDataServiceImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>mapDataServiceImpl</servlet-name>
+    <url-pattern>/crimemapper/mapData</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
     <servlet-name>userSettingsServiceImpl</servlet-name>
     <servlet-class>com.google.gwt.cs310project.crimemapper.server.UserSettingsServiceImpl</servlet-class>
   </servlet>
@@ -41,5 +51,7 @@
     <servlet-name>loginService</servlet-name>
     <url-pattern>/crimemapper/login</url-pattern>
   </servlet-mapping>
+  
+  
   
 </web-app>
