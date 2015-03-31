@@ -7,3 +7,4 @@ java.lang.Exception, true, false, true, false, java.lang.Exception/1920171873, 1
 java.lang.RuntimeException, true, false, true, false, java.lang.RuntimeException/515124647, 515124647
 java.lang.String, true, true, true, true, java.lang.String/2004016611, 2004016611
 java.lang.Throwable, true, false, true, false, java.lang.Throwable/2953622131, 2953622131
+java.util.LinkedList, true, true, false, false, java.util.LinkedList/3953877921, 3953877921
