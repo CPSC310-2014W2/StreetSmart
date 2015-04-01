@@ -20,8 +20,13 @@ h1 {
 	background-color: #CCCCCC;
 }
 
-.signOutLinkStyle{
+.socialStyle{
 	padding-top: 35px;
+	padding-right: 20px;
+	padding-right: 
+	vertical-align: center;
+}
+.signOutLinkStyle{
 	padding-right: 20px;
 	font-size: 20px;
 	float: right;

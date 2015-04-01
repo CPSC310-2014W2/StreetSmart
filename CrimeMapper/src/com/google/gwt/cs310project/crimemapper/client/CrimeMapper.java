@@ -80,7 +80,7 @@ public class CrimeMapper implements EntryPoint {
 
 	// Social Networking
 	public ShareButton facebookButton = new ShareButton("http://crimemapper310.appspot.com", "Crime Mapper");
-	
+
 
 	private static final String MAP_WIDTH = "1200px";
 	private static final String MAP_HEIGHT = "550px";
@@ -226,10 +226,6 @@ public class CrimeMapper implements EntryPoint {
 				}
 			}
 		});
-		// Social networking stuff
-		Facebook.init("1378776005757292");
-
-
 
 		tabPanel.addSelectionHandler(new SelectionHandler<Integer>() {
 			@Override
@@ -243,6 +239,8 @@ public class CrimeMapper implements EntryPoint {
 				}
 			}
 		});
+		// Social networking stuff
+		Facebook.init("1378776005757292");
 
 	}
 
@@ -603,10 +601,10 @@ public class CrimeMapper implements EntryPoint {
 
 		for(LatLon latlon: dataMap){
 			// Multiple Icons
-			
+
 			Icon icon = new Icon(DOMAIN_NAME+"/images/anonymous.png",
 					new Size(20, 20));
-			
+
 			LonLat p = new LonLat(latlon.getLongitude(), latlon.getLatitude());
 			p.transform(DEFAULT_PROJECTION.getProjectionCode(), mapWidget.getMap().getProjection());
 			final Marker marker = new Marker(p, icon);
@@ -637,7 +635,7 @@ public class CrimeMapper implements EntryPoint {
 
 		if(filterText.equals(""))
 			return;
-		
+
 		if(filterText.equals(SEARCH_PROMPT))
 			return;
 		filterList.clear();  //Clear the filter list
@@ -733,12 +731,15 @@ public class CrimeMapper implements EntryPoint {
 		menuBarPanel.setStyleName("menuBarStyle");
 		Label siteTitleLabel = new Label("Street Smart: Crime Mapper");
 		siteTitleLabel.setStyleName("siteTitleLabelStyle");
+		VerticalPanel socialPanel = new VerticalPanel();
 		logoPanel.add(appLogo);
 		logoPanel.add(siteTitleLabel);
 		menuBarPanel.add(logoPanel);
 		signOutLink.addStyleName("signOutLinkStyle");
 		linkPanel.setStyleName("linkPanelStyle");
-		linkPanel.add(facebookButton);
+		socialPanel.setStyleName("socialStyle");
+		socialPanel.add(facebookButton);
+		linkPanel.add(socialPanel);
 		linkPanel.add(signOutLink);
 		menuBarPanel.add(linkPanel);
 		return menuBarPanel;
@@ -931,7 +932,6 @@ public class CrimeMapper implements EntryPoint {
 		//tableVPanel.add(selectedYearLabel);
 		tableVPanel.add(crimeFlexTable);
 		tableVPanel.add(clearTrendsButtonPanel);
-		tableVPanel.add(signOutLink);
 		tableVPanel.add(lastUploadedDateLabel);
 
 		// return table constructed panel
@@ -952,13 +952,13 @@ public class CrimeMapper implements EntryPoint {
 
 		Label filterLabel = new Label("Filter Crime Data");
 		filterLabel.setStyleName("filterLabelStyle");
-		
+
 		HorizontalPanel listBoxesPanel = new HorizontalPanel();
 		HorizontalPanel searchTextPanel = new HorizontalPanel();
 		HorizontalPanel extraButtonPanel = new HorizontalPanel();
 		HorizontalPanel locationNumberPanel = new HorizontalPanel();
-		
-	
+
+
 		mapsHPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		listBoxesPanel.setSize(WIDTH, HEIGHT);
 		listBoxesPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
@@ -986,14 +986,15 @@ public class CrimeMapper implements EntryPoint {
 		searchTextPanel.add(mapSearchTextBox);
 		searchTextPanel.add(loadFilterButton);
 		filterPanel.add(searchTextPanel);
+
+		// Assemble extra buttons
 		extraButtonPanel.add(clearFilterButton);
 		extraButtonPanel.add(clearSearchHistoryButton);
 		extraButtonPanel.setSize(WIDTH, HEIGHT);
 		extraButtonPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		extraButtonPanel.setSpacing(CLEAR_BUTTON_SPACING);
 		filterPanel.add(extraButtonPanel);
-		
-		
+
 		// Assemble Stat Panel
 		Label statLabel = new Label("Crime Data Facts");
 		Label crimeLocations = new Label("Crime Locations:");
@@ -1004,8 +1005,13 @@ public class CrimeMapper implements EntryPoint {
 		locationNumberLabel.setStyleName("locationNumberLabelStyle");
 		locationNumberPanel.add(locationNumberLabel);
 		filterPanel.add(locationNumberPanel);
+
+
+
 		searchPanel.add(filterPanel);
-		
+
+
+
 		mapsHPanel.add(searchPanel);
 		mapsHPanel.add(mapWidget);
 
