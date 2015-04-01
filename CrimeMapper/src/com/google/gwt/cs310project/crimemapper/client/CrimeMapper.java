@@ -54,6 +54,8 @@ import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.reveregroup.gwt.facebook4gwt.Facebook;
+import com.reveregroup.gwt.facebook4gwt.ShareButton;
 
 
 
@@ -71,9 +73,20 @@ public class CrimeMapper implements EntryPoint {
 	private static final int BASE_YEAR = 2007;
 	private static final int NUM_YEARS = 8;
 	private static final int PADDING = 7;
-	protected static final String DOMAIN_NAME = "http://crimemapper310.appspot.com"; //add your own domain here
-	//protected static final String DOMAIN_NAME = "http://127.0.0.1:8888";
-	private static final int COL_CHART_WIDTH = 1550;
+	//protected static final String DOMAIN_NAME = "http://crimemapper310.appspot.com"; //add your own domain here
+	protected static final String DOMAIN_NAME = "http://127.0.0.1:8888";
+	private static final double VAN_LON = -123.116226;
+	private static final double VAN_LAT = 49.246292;
+
+	// Social Networking
+	public ShareButton facebookButton = new ShareButton("http://crimemapper310.appspot.com", "Crime Mapper");
+	
+
+	private static final String MAP_WIDTH = "1200px";
+	private static final String MAP_HEIGHT = "550px";
+
+
+	private static final int COL_CHART_WIDTH = 1400;
 	private static final int COL_CHART_HEIGHT = 400;
 
 	// Dynamic Panels
@@ -213,6 +226,9 @@ public class CrimeMapper implements EntryPoint {
 				}
 			}
 		});
+		// Social networking stuff
+		Facebook.init("1378776005757292");
+
 
 
 		tabPanel.addSelectionHandler(new SelectionHandler<Integer>() {
@@ -389,7 +405,7 @@ public class CrimeMapper implements EntryPoint {
 	private void loadMainPanel(){
 
 		signOutLink.setHref(loginInfo.getLogoutUrl());
-		applicationHandlers();
+		createApplicationHandlers();
 		// Associate the Main panel with the HTML host page
 		RootPanel.get("crimeList").add(buildMainPanel());
 	}
@@ -403,7 +419,7 @@ public class CrimeMapper implements EntryPoint {
 		RootPanel.get("crimeList").add(loginPanel);
 	}
 	// ===================================================================================== //
-	private void applicationHandlers(){
+	private void createApplicationHandlers(){
 
 		// Clear Text box when mouse places icon
 		newUrlTextBox.getValueBox().addClickHandler(new ClickHandler(){
@@ -673,14 +689,10 @@ public class CrimeMapper implements EntryPoint {
 			if (rowIndex != userSelectedRow) {
 				try {
 					updateUserSelectedRow();
-					// TODO
-					//					userSelectedRow = 0;
-					//					loadUserSelectedRow();
 				} catch (Exception e) {
 					// TODO Add the reload data panel
 					//LOG.log(Level.SEVERE, "CrimeMapper.selectRow()", e);
 				}
-				//				LOG.log(Level.WARNING, "userSelectedRow = " + Integer.toString(userSelectedRow));
 			}
 
 			ArrayList<ArrayList<Double>> trends = getTrends(rowIndex);
@@ -726,7 +738,7 @@ public class CrimeMapper implements EntryPoint {
 		menuBarPanel.add(logoPanel);
 		signOutLink.addStyleName("signOutLinkStyle");
 		linkPanel.setStyleName("linkPanelStyle");
-		
+		linkPanel.add(facebookButton);
 		linkPanel.add(signOutLink);
 		menuBarPanel.add(linkPanel);
 		return menuBarPanel;
@@ -919,6 +931,7 @@ public class CrimeMapper implements EntryPoint {
 		//tableVPanel.add(selectedYearLabel);
 		tableVPanel.add(crimeFlexTable);
 		tableVPanel.add(clearTrendsButtonPanel);
+		tableVPanel.add(signOutLink);
 		tableVPanel.add(lastUploadedDateLabel);
 
 		// return table constructed panel

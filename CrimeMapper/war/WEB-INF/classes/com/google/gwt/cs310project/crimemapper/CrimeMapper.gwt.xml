@@ -23,6 +23,7 @@
 	<!-- Other module inherits -->
 	<inherits name='org.moxieapps.gwt.highcharts.Highcharts' />
 	<inherits name='org.gwtopenmaps.openlayers.OpenLayers'/>
+	<inherits name="com.reveregroup.gwt.facebook4gwt.Facebook4gwt"></inherits>
 	
 
 	<!-- Specify the app entry point class. -->

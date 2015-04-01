@@ -16,7 +16,13 @@ public final class FaqTabPanel extends StackPanel {
 
 	public static StackPanel getFaqTabPanel(){
 
-		String appFact1 = "The Vancouver Police Department (VPD) has changed the way in "
+		String appFact1 = "This interactive web application is designed to display geographical data of various"
+				+ " criminal activities throughout Vancouver Proper.  This application is mainly targeted towards"
+				+ " police precincts, politicians and local residents who have a particular interests in historical"
+				+ " criminal data to be used (interpreted) in various ways.";
+		String appFact2 = "The data is sourced from Vancouver’s Open Data Catalogue and is filtered by various types"
+				+ " of criminal activity.";
+		String appFact3 = "The Vancouver Police Department (VPD) has changed the way in "
 				+ "which it reports its crime statistics. Historically, it reported data "
 				+ "based on Statistics Canada reporting requirements, which meant that "
 				+ "only the most serious offence per incident was counted. Now, the all "
@@ -25,14 +31,19 @@ public final class FaqTabPanel extends StackPanel {
 				+ "the all violations method. It is important to note these differences "
 				+ "in reporting when comparing our crime statistics to other Police "
 				+ "Agencies and Statistics Canada.";
-		String appFact2 = "Fact 2";
-		String appFact3 = "Fact 3";
 
 		// Crime Types
-		String mischiefDiscription = "md";
-		String theftFromAutoDiscription = "tfad";
-		String theftOfAutoDiscription = "toad";
-		String commercialBEDiscription = "cbed";
+		String mischiefDiscription = "Mischief is the offence of damaging another person’s property without intending to steal"
+				+ " it.  A person commits mischief if they intentionally destroy or damage property, render "
+				+ "property dangerous, useless, inoperative or ineffective, or interfere with another person’s "
+				+ "use, enjoyment or operation of the property.”";
+		String theftFromAutoDiscription = "The unlawful taking of motor vehicle contents or parts.";
+		String theftOfAutoDiscription = "Theft of Auto is an offence where a motor vehicle is entered, with an attack of the"
+				+ " steering column or ignition and the vehicle was moved.";
+		String commercialBEDiscription = "Commercial Break and Enter is an offence where the perpetrator enters"
+				+ " a commercial business or financial institution without permission, and commits another"
+				+ " criminal offence. The additional offence most often refers to the theft of valuables. This"
+				+ " category includes break and enter to compounds on a commercial property.";
 
 		faqTabPanel.setSize(WIDTH,HEIGHT);
 
@@ -40,23 +51,23 @@ public final class FaqTabPanel extends StackPanel {
 
 		// Application Facts
 		label = new Label(appFact1);
-		faqTabPanel.add(label, "Comparing Crime Statistics", false);
+		faqTabPanel.add(label, "What is StreetSmart: Crime Mapper?", false);
 
 		label = new Label(appFact2);
-		faqTabPanel.add(label, "App Fact2", false);
+		faqTabPanel.add(label, "Where is the data from?", false);
 
 		label = new Label(appFact3);
-		faqTabPanel.add(label, "App Fact3", false);
-		
+		faqTabPanel.add(label, "How does The Vancouver Police Department report its crime statistics?", false);
+
 		label = new Label(mischiefDiscription);
 		faqTabPanel.add(label, "What is Mischief?", false);
-		
+
 		label = new Label(theftFromAutoDiscription);
 		faqTabPanel.add(label, "What is Theft From Auto?", false);
-		
+
 		label = new Label(theftOfAutoDiscription);
 		faqTabPanel.add(label, "What is Theft Of Auto?", false);
-		
+
 		label = new Label(commercialBEDiscription);
 		faqTabPanel.add(label, "What is Commercial Break and Enter?", false);
 
