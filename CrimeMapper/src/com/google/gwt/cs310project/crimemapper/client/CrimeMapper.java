@@ -99,12 +99,14 @@ public class CrimeMapper implements EntryPoint {
 	private static final String DOMAIN_NAME = "http://127.0.0.1:8888";
 	private static final double VAN_LON = -123.116226;
 	private static final double VAN_LAT = 49.246292;
-<<<<<<< HEAD
+
+	// Social Networking
 	public ShareButton facebookButton = new ShareButton("http://crimemapper310.appspot.com", "Crime Mapper");
-=======
+	
+
 	private static final String MAP_WIDTH = "1200px";
 	private static final String MAP_HEIGHT = "550px";
->>>>>>> fd7739fd2dc1a117ac92b02ff9352a1a858ce659
+
 
 	private static final int COL_CHART_WIDTH = 1400;
 	private static final int COL_CHART_HEIGHT = 400;
@@ -245,10 +247,9 @@ public class CrimeMapper implements EntryPoint {
 				}
 			}
 		});
-<<<<<<< HEAD
 		// Social networking stuff
 		Facebook.init("1378776005757292");
-=======
+
 
 
 		tabPanel.addSelectionHandler(new SelectionHandler<Integer>() {
@@ -264,7 +265,6 @@ public class CrimeMapper implements EntryPoint {
 			}
 		});
 
->>>>>>> fd7739fd2dc1a117ac92b02ff9352a1a858ce659
 	}
 
 	private void loadCrimeDataMap() {
@@ -971,11 +971,8 @@ public class CrimeMapper implements EntryPoint {
 		//tableVPanel.add(selectedYearLabel);
 		tableVPanel.add(crimeFlexTable);
 		tableVPanel.add(clearTrendsButtonPanel);
-<<<<<<< HEAD
 		tableVPanel.add(facebookButton);
 		tableVPanel.add(signOutLink);
-=======
->>>>>>> fd7739fd2dc1a117ac92b02ff9352a1a858ce659
 		tableVPanel.add(lastUploadedDateLabel);
 
 		// return table constructed panel

@@ -29,10 +29,15 @@ public final class FaqTabPanel extends StackPanel {
 		String appFact3 = "Fact 3";
 
 		// Crime Types
-		String mischiefDiscription = "md";
-		String theftFromAutoDiscription = "tfad";
-		String theftOfAutoDiscription = "toad";
-		String commercialBEDiscription = "cbed";
+		String mischiefDiscription = "Mischief is the offence of damaging another person’s property without intending to steal"
+				+ " it.  A person commits mischief if they intentionally destroy or damage property, render "
+
+				+ "property dangerous, useless, inoperative or ineffective, or interfere with another person’s "
+
+				+ "use, enjoyment or operation of the property.”";
+		String theftFromAutoDiscription = "The unlawful taking of motor vehicle contents or parts.";
+		String theftOfAutoDiscription = "Theft of Auto is an offence where a motor vehicle is entered, with an attack of the steering column or ignition and the vehicle was moved.";
+		String commercialBEDiscription = "Commercial Break and Enter is an offence where the perpetrator enters a commercial business or financial institution without permission, and commits another criminal offence. The additional offence most often refers to the theft of valuables. This category includes break and enter to compounds on a commercial property.";
 
 		faqTabPanel.setSize(WIDTH,HEIGHT);
 
@@ -40,8 +45,8 @@ public final class FaqTabPanel extends StackPanel {
 
 		// Application Facts
 		label = new Label(appFact1);
-		faqTabPanel.add(label, "Comparing Crime Statistics", false);
-
+		faqTabPanel.add(label, "How does The Vancouver Police Department report its crime statistics?", false);
+		
 		label = new Label(appFact2);
 		faqTabPanel.add(label, "App Fact2", false);
 
