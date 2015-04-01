@@ -42,6 +42,7 @@ import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -622,11 +623,6 @@ public class CrimeMapper implements EntryPoint {
 		CrimeData cd = null;
 		String tempStr = "";
 
-		if(filterText.equals(""))
-			return;
-
-		if(filterText.equals(SEARCH_PROMPT))
-			return;
 		filterList.clear();  //Clear the filter list
 
 		id = yearListBox.getSelectedIndex();

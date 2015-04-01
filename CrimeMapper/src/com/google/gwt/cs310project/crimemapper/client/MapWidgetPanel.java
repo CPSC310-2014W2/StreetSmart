@@ -25,7 +25,7 @@ public class MapWidgetPanel {
 	private static final String DOMAIN_NAME = CrimeMapper.DOMAIN_NAME;
 	private static final double VAN_LON = -123.116226;
 	private static final double VAN_LAT = 49.246292;
-	private static final String MAP_WIDTH = "1250px";
+	private static final String MAP_WIDTH = "1300px";
 	private static final String MAP_HEIGHT = "550px";
 
 	private static final String BING_API = "Apd8EWF9Ls5tXmyHr22OuL1ay4HRJtI4JG4jgluTDVaJdUXZV6lpSBpX-TwnoRDG";

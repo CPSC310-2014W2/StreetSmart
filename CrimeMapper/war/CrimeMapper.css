@@ -164,7 +164,7 @@ h1 {
 	height: 550px;
 	background-color: #678DC0;
 	vertical-align: center;
-	padding-left: 15px;
+	padding-left: 35px;
 	padding-top: 25px;
 }
 
@@ -257,6 +257,12 @@ h1 {
     text-decoration: bold;
     padding-left: 5px;
     padding-top: 5px;
+}
+
+.gwt-StackPanel {
+    font-weight: normal;
+    font-size: 8pt;
+    color: #0A6AAB;
 }
 
 /* =============================== Settings Tab CSS ===============================*/
