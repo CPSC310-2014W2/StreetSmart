@@ -1,6 +1,5 @@
 package com.google.gwt.cs310project.crimemapper.client;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
@@ -14,13 +13,7 @@ import org.gwtopenmaps.openlayers.client.MapWidget;
 import org.gwtopenmaps.openlayers.client.Marker;
 import org.gwtopenmaps.openlayers.client.Projection;
 import org.gwtopenmaps.openlayers.client.Size;
-import org.gwtopenmaps.openlayers.client.event.EventType;
-import org.gwtopenmaps.openlayers.client.event.MarkerBrowserEventListener;
 import org.gwtopenmaps.openlayers.client.layer.Markers;
-import org.gwtopenmaps.openlayers.client.layer.Vector;
-import org.gwtopenmaps.openlayers.client.layer.VectorOptions;
-import org.gwtopenmaps.openlayers.client.popup.FramedCloud;
-import org.gwtopenmaps.openlayers.client.popup.Popup;
 import org.moxieapps.gwt.highcharts.client.Chart;
 import org.moxieapps.gwt.highcharts.client.Legend;
 import org.moxieapps.gwt.highcharts.client.Series;
@@ -47,6 +40,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -128,9 +122,9 @@ public class CrimeMapper implements EntryPoint {
 			"EPSG:4326");
 	private static final int FILTER_PANEL_SPACING = 10;
 	private static final int CLEAR_BUTTON_SPACING = 30;
-	private static final String SEARCH_PROMPT = "Please Enter Vancouver Street Name";
+	private static final String SEARCH_PROMPT = "Enter Vancouver Street Name";
 	private static Markers layer = new Markers("Crime Type Markers");
-	private Label mapLabel = new Label("");
+	private Label locationNumberLabel = new Label("0");
 
 
 	// Settings Tab elements
@@ -443,8 +437,8 @@ public class CrimeMapper implements EntryPoint {
 		loadFilterButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				loadFilter();
-				//mapLabel.setText("" + filterList.get(0).getLocation() + ": List Size " + filterList.size()); //Test to show first location in filter list
 				loadMapData();
+				locationNumberLabel.setText("  "); 
 				layer.clearMarkers();
 			}
 		});
@@ -453,7 +447,7 @@ public class CrimeMapper implements EntryPoint {
 		clearFilterButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				loadFilter();
-				mapLabel.setText("");
+				locationNumberLabel.setText("0");
 				mapSearchTextBox.setText(SEARCH_PROMPT);
 				dataMap.clear();
 				layer.clearMarkers();
@@ -576,7 +570,7 @@ public class CrimeMapper implements EntryPoint {
 			@Override
 			public void onSuccess(ArrayList<LatLon> result) {
 				dataMap = result;
-				mapLabel.setText("Size of Data from Here Map: " + dataMap.size());
+				locationNumberLabel.setText(""+dataMap.size());
 				plotPoints(dataMap);
 			}
 		}; 
@@ -593,40 +587,16 @@ public class CrimeMapper implements EntryPoint {
 
 		for(LatLon latlon: dataMap){
 			// Multiple Icons
+			
 			Icon icon = new Icon(DOMAIN_NAME+"/images/anonymous.png",
 					new Size(20, 20));
-
+			
 			LonLat p = new LonLat(latlon.getLongitude(), latlon.getLatitude());
 			p.transform(DEFAULT_PROJECTION.getProjectionCode(), mapWidget.getMap().getProjection());
 			final Marker marker = new Marker(p, icon);
 			layer.addMarker(marker);
 
-			final Popup popup = new FramedCloud("id1", marker.getLonLat(), null, "<,h1>Crime Info<,/H1><,BR/>And more text", null, false);
-			marker.addBrowserEventListener(EventType.FEATURE_SELECTED, new MarkerBrowserEventListener() {
-
-				public void onBrowserEvent(MarkerBrowserEventListener.MarkerBrowserEvent markerBrowserEvent) {
-
-					popup.setPanMapIfOutOfView(true); 
-					popup.setAutoSize(true);
-					mapWidget.getMap().addPopup(popup);
-				}
-
-			});
-
-			marker.addBrowserEventListener(EventType.FEATURE_UNSELECTED, new MarkerBrowserEventListener() {
-
-				public void onBrowserEvent(MarkerBrowserEventListener.MarkerBrowserEvent markerBrowserEvent) {
-					if(popup != null) {
-						mapWidget.getMap().removePopup(popup);
-						popup.destroy();
-					}
-				}
-
-			});
-
-		}
-
-
+		}	
 	}
 
 	private void loadCrime(){
@@ -756,6 +726,7 @@ public class CrimeMapper implements EntryPoint {
 		menuBarPanel.add(logoPanel);
 		signOutLink.addStyleName("signOutLinkStyle");
 		linkPanel.setStyleName("linkPanelStyle");
+		
 		linkPanel.add(signOutLink);
 		menuBarPanel.add(linkPanel);
 		return menuBarPanel;
@@ -968,10 +939,12 @@ public class CrimeMapper implements EntryPoint {
 
 		Label filterLabel = new Label("Filter Crime Data");
 		filterLabel.setStyleName("filterLabelStyle");
-
+		
 		HorizontalPanel listBoxesPanel = new HorizontalPanel();
 		HorizontalPanel searchTextPanel = new HorizontalPanel();
 		HorizontalPanel extraButtonPanel = new HorizontalPanel();
+		HorizontalPanel locationNumberPanel = new HorizontalPanel();
+		
 	
 		mapsHPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		listBoxesPanel.setSize(WIDTH, HEIGHT);
@@ -1006,7 +979,20 @@ public class CrimeMapper implements EntryPoint {
 		extraButtonPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		extraButtonPanel.setSpacing(CLEAR_BUTTON_SPACING);
 		filterPanel.add(extraButtonPanel);
+		
+		
+		// Assemble Stat Panel
+		Label statLabel = new Label("Crime Data Facts");
+		Label crimeLocations = new Label("Crime Locations:");
+		crimeLocations.setStyleName("crimeLocationsStyle");
+		statLabel.setStyleName("filterLabelStyle");
+		filterPanel.add(statLabel);
+		locationNumberPanel.add(crimeLocations);
+		locationNumberLabel.setStyleName("locationNumberLabelStyle");
+		locationNumberPanel.add(locationNumberLabel);
+		filterPanel.add(locationNumberPanel);
 		searchPanel.add(filterPanel);
+		
 		mapsHPanel.add(searchPanel);
 		mapsHPanel.add(mapWidget);
 
