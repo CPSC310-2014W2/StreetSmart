@@ -77,8 +77,8 @@ public class CrimeMapper implements EntryPoint {
 	private static final int BASE_YEAR = 2007;
 	private static final int NUM_YEARS = 8;
 	private static final int PADDING = 7;
-	//protected static final String DOMAIN_NAME = "http://crimemapper310.appspot.com"; //add your own domain here
-	protected static final String DOMAIN_NAME = "http://127.0.0.1:8888";
+	protected static final String DOMAIN_NAME = "http://crimemapper310.appspot.com"; //add your own domain here
+	//protected static final String DOMAIN_NAME = "http://127.0.0.1:8888";
 	private static final int COL_CHART_WIDTH = 1550;
 	private static final int COL_CHART_HEIGHT = 400;
 
@@ -127,6 +127,8 @@ public class CrimeMapper implements EntryPoint {
 	private static final Projection DEFAULT_PROJECTION = new Projection(
 			"EPSG:4326");
 	private static final int FILTER_PANEL_SPACING = 10;
+	private static final int CLEAR_BUTTON_SPACING = 30;
+	private static final String SEARCH_PROMPT = "Please Enter Vancouver Street Name";
 	private static Markers layer = new Markers("Crime Type Markers");
 	private Label mapLabel = new Label("");
 
@@ -452,13 +454,13 @@ public class CrimeMapper implements EntryPoint {
 			public void onClick(ClickEvent event) {
 				loadFilter();
 				mapLabel.setText("");
-				mapSearchTextBox.setText("Please Enter Street Name");
+				mapSearchTextBox.setText(SEARCH_PROMPT);
 				dataMap.clear();
 				layer.clearMarkers();
 				layer.redraw();
 			}
 		});
-		
+
 		clearSearchHistoryButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				clearUserSearchHistory();
@@ -598,12 +600,12 @@ public class CrimeMapper implements EntryPoint {
 			p.transform(DEFAULT_PROJECTION.getProjectionCode(), mapWidget.getMap().getProjection());
 			final Marker marker = new Marker(p, icon);
 			layer.addMarker(marker);
-		
+
 			final Popup popup = new FramedCloud("id1", marker.getLonLat(), null, "<,h1>Crime Info<,/H1><,BR/>And more text", null, false);
 			marker.addBrowserEventListener(EventType.FEATURE_SELECTED, new MarkerBrowserEventListener() {
-				
+
 				public void onBrowserEvent(MarkerBrowserEventListener.MarkerBrowserEvent markerBrowserEvent) {
-					
+
 					popup.setPanMapIfOutOfView(true); 
 					popup.setAutoSize(true);
 					mapWidget.getMap().addPopup(popup);
@@ -647,6 +649,11 @@ public class CrimeMapper implements EntryPoint {
 		CrimeData cd = null;
 		String tempStr = "";
 
+		if(filterText.equals(""))
+			return;
+		
+		if(filterText.equals(SEARCH_PROMPT))
+			return;
 		filterList.clear();  //Clear the filter list
 
 		id = yearListBox.getSelectedIndex();
@@ -737,7 +744,7 @@ public class CrimeMapper implements EntryPoint {
 
 		return mainPanel;
 	}
-	
+
 	private Panel buildMenuBarPanel(){
 		Image appLogo = new Image(DOMAIN_NAME+"/images/appLogo.png");
 		appLogo.setStyleName("appLogoStyle");
@@ -958,46 +965,50 @@ public class CrimeMapper implements EntryPoint {
 		mapSearchTextBox.setStyleName("searchTextBoxStyle");
 		yearListBox.setStyleName("yearListBoxStyle");
 		crimeTypeListBox.setStyleName("crimeTypeListBoxStyle");
-		
+
 		Label filterLabel = new Label("Filter Crime Data");
 		filterLabel.setStyleName("filterLabelStyle");
-		
+
 		HorizontalPanel listBoxesPanel = new HorizontalPanel();
 		HorizontalPanel searchTextPanel = new HorizontalPanel();
 		HorizontalPanel extraButtonPanel = new HorizontalPanel();
+	
 		mapsHPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		mapsHPanel.setStyleName("mapPanelStyle");
-		
-		mapsHPanel.add(mapWidget);
+		listBoxesPanel.setSize(WIDTH, HEIGHT);
+		listBoxesPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		mapsHPanel.setSize(WIDTH, HEIGHT);
 		// Load search history from user settings
 		loadUserSearchHistory();
 
 		// Assemble filter panel
 		filterPanel.setSpacing(FILTER_PANEL_SPACING);
 		filterPanel.add(filterLabel);
-		
+
 		for (Map.Entry<Integer,CrimeDataByYear> entry : crimeDataMap.entrySet()){
 			yearListBox.addItem(entry.getKey().toString());
 		}
 		listBoxesPanel.add(yearListBox);
-		
+
 		for (int i = 0; i < CrimeTypes.getNumberOfTypes(); i++) {
 			crimeTypeListBox.addItem(CrimeTypes.getType(i)); 
 		}
 		listBoxesPanel.add(crimeTypeListBox);
 		filterPanel.add(listBoxesPanel);
-		
+
 		mapSearchTextBox.setText("Enter Vancouver Street Name");
-		
+
 		searchTextPanel.add(mapSearchTextBox);
 		searchTextPanel.add(loadFilterButton);
 		filterPanel.add(searchTextPanel);
 		extraButtonPanel.add(clearFilterButton);
 		extraButtonPanel.add(clearSearchHistoryButton);
-		extraButtonPanel.setSpacing(30);
+		extraButtonPanel.setSize(WIDTH, HEIGHT);
+		extraButtonPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		extraButtonPanel.setSpacing(CLEAR_BUTTON_SPACING);
 		filterPanel.add(extraButtonPanel);
 		searchPanel.add(filterPanel);
 		mapsHPanel.add(searchPanel);
+		mapsHPanel.add(mapWidget);
 
 		return mapsHPanel;
 	}

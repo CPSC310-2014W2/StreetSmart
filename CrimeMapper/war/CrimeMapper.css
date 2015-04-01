@@ -153,12 +153,9 @@ h1 {
 
 /* =============================== Map Tab CSS ===============================*/
 
-.mapPanelStyle{
-	padding-left: 30px;
-}
 
 .searchPanelStyle{
-	width: 320px;
+	width: 350px;
 	height: 550px;
 	background-color: #678DC0;
 	vertical-align: center;
@@ -203,12 +200,12 @@ h1 {
 }
 
 .crimeTypeListBoxStyle{
-	width: 220px; 
+	width: 200px; 
 	height: 30px;
+
 }
 
 .yearListBoxStyle{
-	padding-right: 30px;
 	width: 60px; 
 	height: 30px;
 	 
