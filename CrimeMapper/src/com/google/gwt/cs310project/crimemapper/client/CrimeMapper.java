@@ -411,7 +411,7 @@ public class CrimeMapper implements EntryPoint {
 	private void loadMainPanel(){
 
 		signOutLink.setHref(loginInfo.getLogoutUrl());
-		applicationHandlers();
+		createApplicationHandlers();
 		// Associate the Main panel with the HTML host page
 		RootPanel.get("crimeList").add(buildMainPanel());
 	}
@@ -425,7 +425,7 @@ public class CrimeMapper implements EntryPoint {
 		RootPanel.get("crimeList").add(loginPanel);
 	}
 	// ===================================================================================== //
-	private void applicationHandlers(){
+	private void createApplicationHandlers(){
 
 		// Clear Text box when mouse places icon
 		newUrlTextBox.getValueBox().addClickHandler(new ClickHandler(){
@@ -719,14 +719,10 @@ public class CrimeMapper implements EntryPoint {
 			if (rowIndex != userSelectedRow) {
 				try {
 					updateUserSelectedRow();
-					// TODO
-					//					userSelectedRow = 0;
-					//					loadUserSelectedRow();
 				} catch (Exception e) {
 					// TODO Add the reload data panel
 					//LOG.log(Level.SEVERE, "CrimeMapper.selectRow()", e);
 				}
-				//				LOG.log(Level.WARNING, "userSelectedRow = " + Integer.toString(userSelectedRow));
 			}
 
 			ArrayList<ArrayList<Double>> trends = getTrends(rowIndex);
