@@ -949,6 +949,7 @@ public class CrimeMapper implements EntryPoint {
 
 
 		mapsHPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		mapsHPanel.setStyleName("mapsPanelSyle");
 		listBoxesPanel.setSize(WIDTH, HEIGHT);
 		listBoxesPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		mapsHPanel.setSize(WIDTH, HEIGHT);
