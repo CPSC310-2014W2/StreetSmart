@@ -2,7 +2,6 @@ package com.google.gwt.cs310project.crimemapper.server;
 
 
 import java.util.ArrayList;
-import java.util.Date;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.IdentityType;

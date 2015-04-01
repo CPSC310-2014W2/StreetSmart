@@ -1,7 +1,6 @@
 package com.google.gwt.cs310project.crimemapper.server;
 
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
 import java.net.*;

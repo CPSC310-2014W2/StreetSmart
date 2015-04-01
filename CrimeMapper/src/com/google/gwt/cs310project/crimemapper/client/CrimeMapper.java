@@ -40,7 +40,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -58,7 +57,6 @@ import com.reveregroup.gwt.facebook4gwt.Facebook;
 import com.reveregroup.gwt.facebook4gwt.ShareButton;
 
 
-
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
@@ -73,21 +71,13 @@ public class CrimeMapper implements EntryPoint {
 	private static final int BASE_YEAR = 2007;
 	private static final int NUM_YEARS = 8;
 	private static final int PADDING = 7;
-	//protected static final String DOMAIN_NAME = "http://crimemapper310.appspot.com"; //add your own domain here
-	protected static final String DOMAIN_NAME = "http://127.0.0.1:8888";
-	private static final double VAN_LON = -123.116226;
-	private static final double VAN_LAT = 49.246292;
-
+	private static final int COL_CHART_WIDTH = 1400;
+	private static final int COL_CHART_HEIGHT = 400;
+	protected static final String DOMAIN_NAME = "http://crimemapper310.appspot.com"; //add your own domain here
+	//protected static final String DOMAIN_NAME = "http://127.0.0.1:8888";
 	// Social Networking
 	public ShareButton facebookButton = new ShareButton("http://crimemapper310.appspot.com", "Crime Mapper");
 
-
-	private static final String MAP_WIDTH = "1200px";
-	private static final String MAP_HEIGHT = "550px";
-
-
-	private static final int COL_CHART_WIDTH = 1400;
-	private static final int COL_CHART_HEIGHT = 400;
 
 	// Dynamic Panels
 	private TabPanel tabPanel = new TabPanel();
@@ -136,6 +126,7 @@ public class CrimeMapper implements EntryPoint {
 	private static final int FILTER_PANEL_SPACING = 10;
 	private static final int CLEAR_BUTTON_SPACING = 30;
 	private static final String SEARCH_PROMPT = "Enter Vancouver Street Name";
+	private static final String CRIME_ICON = "/images/anonymous.png";
 	private static Markers layer = new Markers("Crime Type Markers");
 	private Label locationNumberLabel = new Label("0");
 
@@ -180,11 +171,11 @@ public class CrimeMapper implements EntryPoint {
 
 	//Admin Account
 	private ListBox localAccountListBox = new ListBox();
-	private Button localAccountAddButton = new Button("Add");
-	private Button localAccountDelButton = new Button("Delete");
+	//private Button localAccountAddButton = new Button("Add");
+	//private Button localAccountDelButton = new Button("Delete");
 	private List<String> lst;
 	private boolean isAdmin = false;
-	private TextBox adminTextBox = new TextBox();
+	//private TextBox adminTextBox = new TextBox();
 	private Label adminLabel = new Label("Admin Account List");
 
 	//Filter
@@ -546,7 +537,7 @@ public class CrimeMapper implements EntryPoint {
 		});
 
 		// Listen for mouse events on local Account Add button
-		localAccountAddButton.addClickHandler(new ClickHandler() {
+		/*localAccountAddButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if(adminTextBox.getText() == "")
 					Window.alert("Please input new account!!!");
@@ -564,7 +555,7 @@ public class CrimeMapper implements EntryPoint {
 					localAccountListBox.addItem(str);
 				}
 			}
-		});
+		});*/
 
 	}
 
@@ -578,7 +569,6 @@ public class CrimeMapper implements EntryPoint {
 
 		AsyncCallback<ArrayList<LatLon>> callback = new AsyncCallback<ArrayList<LatLon>>(){
 			public void onFailure(Throwable caught){
-				//TODO: Do something with errors.
 			}
 
 			@Override
@@ -593,7 +583,6 @@ public class CrimeMapper implements EntryPoint {
 		mapDataSvc.getHereMapData(filterList, callback);
 	}
 
-	// TODO: refactor to use vector points instead of marker to allow selectability
 	private void plotPoints(ArrayList<LatLon> dataMap) {
 		layer.redraw();
 		mapWidget.getMap().addLayer(layer);
@@ -602,7 +591,7 @@ public class CrimeMapper implements EntryPoint {
 		for(LatLon latlon: dataMap){
 			// Multiple Icons
 
-			Icon icon = new Icon(DOMAIN_NAME+"/images/anonymous.png",
+			Icon icon = new Icon(DOMAIN_NAME+CRIME_ICON,
 					new Size(20, 20));
 
 			LonLat p = new LonLat(latlon.getLongitude(), latlon.getLatitude());
