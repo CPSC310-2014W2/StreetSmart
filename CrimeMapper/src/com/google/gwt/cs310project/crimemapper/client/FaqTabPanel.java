@@ -16,7 +16,9 @@ public final class FaqTabPanel extends StackPanel {
 
 	public static StackPanel getFaqTabPanel(){
 
-		String appFact1 = "The Vancouver Police Department (VPD) has changed the way in "
+		String appFact1 = "Fact 1";
+		String appFact2 = "Fact 2";
+		String appFact3 = "The Vancouver Police Department (VPD) has changed the way in "
 				+ "which it reports its crime statistics. Historically, it reported data "
 				+ "based on Statistics Canada reporting requirements, which meant that "
 				+ "only the most serious offence per incident was counted. Now, the all "
@@ -25,8 +27,6 @@ public final class FaqTabPanel extends StackPanel {
 				+ "the all violations method. It is important to note these differences "
 				+ "in reporting when comparing our crime statistics to other Police "
 				+ "Agencies and Statistics Canada.";
-		String appFact2 = "Fact 2";
-		String appFact3 = "Fact 3";
 
 		// Crime Types
 		String mischiefDiscription = "Mischief is the offence of damaging another person’s property without intending to steal"
@@ -45,13 +45,13 @@ public final class FaqTabPanel extends StackPanel {
 
 		// Application Facts
 		label = new Label(appFact1);
-		faqTabPanel.add(label, "How does The Vancouver Police Department report its crime statistics?", false);
+		faqTabPanel.add(label, "App Fact1", false);
 		
 		label = new Label(appFact2);
 		faqTabPanel.add(label, "App Fact2", false);
 
 		label = new Label(appFact3);
-		faqTabPanel.add(label, "App Fact3", false);
+		faqTabPanel.add(label, "How does The Vancouver Police Department report its crime statistics?", false);
 		
 		label = new Label(mischiefDiscription);
 		faqTabPanel.add(label, "What is Mischief?", false);

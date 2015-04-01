@@ -14,13 +14,6 @@ h1 {
 	font-style: normal;
 }
 
-#menuBar {
-	padding-top: 0px;
-	background-color: #CCCCCC;
-	width: 100%;
-	height: 60px;
-}
-
 .menuBarStyle{
 	width: 100%;
 	height: 60px;
@@ -28,9 +21,8 @@ h1 {
 }
 
 .signOutLinkStyle{
-	width: 150px;
-	height: 35px;
-	padding-top: 25px;
+	padding-top: 35px;
+	padding-right: 20px;
 	font-size: 20px;
 	float: right;
 	
@@ -40,9 +32,14 @@ h1 {
 	color: #0A6AAB;
 	font-family: arial, sans-serif;
 	font-style: bold;
-	padding-top: 20px;
+	padding-top: 25px;
 	font-size: 40px;
 	float: left;
+	text-decoration: underline;
+}
+
+.linkPanelStyle{
+	float: right;
 }	
 
 .appLogoStyle{
@@ -155,23 +152,79 @@ h1 {
 
 
 /* =============================== Map Tab CSS ===============================*/
+
+
+.searchPanelStyle{
+	width: 350px;
+	height: 550px;
+	background-color: #678DC0;
+	vertical-align: center;
+	padding-left: 15px;
+	padding-top: 25px;
+}
+
+.filterLabelStyle{
+	width: 280px;
+	height: 25px;
+	radius: 15px;
+	text-align: center;
+	text-size: 20px;
+	color: #FFFFFF;
+	padding-top: 10px;
+	background-color: #CCCCCC;
+	border-radius: 25px;
+}
+
+.searchTextBoxStyle{
+	border-top-left-radius: 20px;
+	border-bottom-left-radius: 20px;
+	border-style: solid;
+    border-color: #7B7B7B;
+    text-align: center;
+    text-size: 20px;
+    color: #7B7B7B;
+    text-decoration: bold;
+    width: 190px;
+    height: 30px;
+}
+
 .filterButtonStyle {
+	border-top-right-radius: 20px;
+	border-bottom-right-radius: 20px;
+	border-style: solid;
+    border-color: #7B7B7B;
+	width: 90px;
+	height: 35px;
+	text-align: center;
+	color: #FFFFFF;
+}
+
+.crimeTypeListBoxStyle{
+	width: 200px; 
+	height: 30px;
+
+}
+
+.yearListBoxStyle{
+	width: 60px; 
+	height: 30px;
+	 
+}
+.clearMapButtonStyle {
 	width: 100px;
 	height: 25px;
 	text-align: center;
-	padding-top: 4px;
-	padding-left: 3px;
-	padding-right: 3px;
+	color: #7B7B7B;
+	
 }
 
-.searchPanelStyle{
-	width: 1200px;
-	height: 50px;
-	background-color: #678DC0;
-	vertical-align: center;
+.clearSearchButtonStyle {
+	width: 100px;
+	height: 25px;
+	text-align: center;
+	color: #7B7B7B;
 	
-	}
-
+}
 /* =============================== Settings Tab CSS ===============================*/
 .loadDataButtonStyle {
 	width: 100px;

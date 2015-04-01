@@ -10,32 +10,17 @@ import java.util.TreeMap;
 
 import org.gwtopenmaps.openlayers.client.Icon;
 import org.gwtopenmaps.openlayers.client.LonLat;
-import org.gwtopenmaps.openlayers.client.MapOptions;
 import org.gwtopenmaps.openlayers.client.MapWidget;
 import org.gwtopenmaps.openlayers.client.Marker;
 import org.gwtopenmaps.openlayers.client.Projection;
 import org.gwtopenmaps.openlayers.client.Size;
-import org.gwtopenmaps.openlayers.client.control.LayerSwitcher;
-import org.gwtopenmaps.openlayers.client.control.OverviewMap;
-import org.gwtopenmaps.openlayers.client.control.ScaleLine;
-import org.gwtopenmaps.openlayers.client.control.SelectFeature;
 import org.gwtopenmaps.openlayers.client.event.EventType;
 import org.gwtopenmaps.openlayers.client.event.MarkerBrowserEventListener;
-import org.gwtopenmaps.openlayers.client.event.VectorFeatureSelectedListener;
-import org.gwtopenmaps.openlayers.client.format.KML;
-import org.gwtopenmaps.openlayers.client.layer.Bing;
-import org.gwtopenmaps.openlayers.client.layer.BingOptions;
-import org.gwtopenmaps.openlayers.client.layer.BingType;
 import org.gwtopenmaps.openlayers.client.layer.Markers;
 import org.gwtopenmaps.openlayers.client.layer.Vector;
 import org.gwtopenmaps.openlayers.client.layer.VectorOptions;
+import org.gwtopenmaps.openlayers.client.popup.FramedCloud;
 import org.gwtopenmaps.openlayers.client.popup.Popup;
-import org.gwtopenmaps.openlayers.client.protocol.HTTPProtocol;
-import org.gwtopenmaps.openlayers.client.protocol.HTTPProtocolOptions;
-import org.gwtopenmaps.openlayers.client.protocol.Protocol;
-import org.gwtopenmaps.openlayers.client.protocol.ProtocolType;
-import org.gwtopenmaps.openlayers.client.strategy.FixedStrategy;
-import org.gwtopenmaps.openlayers.client.strategy.Strategy;
 import org.moxieapps.gwt.highcharts.client.Chart;
 import org.moxieapps.gwt.highcharts.client.Legend;
 import org.moxieapps.gwt.highcharts.client.Series;
@@ -43,7 +28,6 @@ import org.moxieapps.gwt.highcharts.client.ToolTip;
 import org.moxieapps.gwt.highcharts.client.ToolTipData;
 import org.moxieapps.gwt.highcharts.client.ToolTipFormatter;
 import org.moxieapps.gwt.highcharts.client.plotOptions.ColumnPlotOptions;
-import org.xml.sax.SAXException;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -95,8 +79,8 @@ public class CrimeMapper implements EntryPoint {
 	private static final int BASE_YEAR = 2007;
 	private static final int NUM_YEARS = 8;
 	private static final int PADDING = 7;
-	//private static final String DOMAIN_NAME = "http://crimemapper310.appspot.com"; //add your own domain here
-	private static final String DOMAIN_NAME = "http://127.0.0.1:8888";
+	//protected static final String DOMAIN_NAME = "http://crimemapper310.appspot.com"; //add your own domain here
+	protected static final String DOMAIN_NAME = "http://127.0.0.1:8888";
 	private static final double VAN_LON = -123.116226;
 	private static final double VAN_LAT = 49.246292;
 
@@ -116,15 +100,16 @@ public class CrimeMapper implements EntryPoint {
 
 	// Static Panels
 	private HorizontalPanel menuBarPanel = new HorizontalPanel();
+	private HorizontalPanel logoPanel = new HorizontalPanel();
+	private VerticalPanel linkPanel = new VerticalPanel();
 	private VerticalPanel mainPanel = new VerticalPanel();
 	private VerticalPanel tableVPanel = new VerticalPanel();
 	private VerticalPanel settingsVPanel = new VerticalPanel();
-	private VerticalPanel mapsVPanel = new VerticalPanel();
+	private HorizontalPanel mapsHPanel = new HorizontalPanel();
 	private HorizontalPanel clearTrendsButtonPanel = new HorizontalPanel();
 	private VerticalPanel accountVPanel = new VerticalPanel();
 	private HorizontalPanel trendsHPanel1 = new HorizontalPanel();
 	private VerticalPanel trendsHPanel2 = new VerticalPanel();
-	private HorizontalPanel pieChartPanel = new HorizontalPanel();
 	private VerticalPanel colChartPanel = new VerticalPanel();
 	private VerticalPanel mainTrendsPanel = new VerticalPanel();
 
@@ -144,20 +129,20 @@ public class CrimeMapper implements EntryPoint {
 	// Map Tab elements
 	private MultiWordSuggestOracle mapSearchOracle = new MultiWordSuggestOracle();
 	private SuggestBox mapSearchTextBox = new SuggestBox(mapSearchOracle);
-	private HorizontalPanel searchPanel = new HorizontalPanel();
-	private HorizontalPanel buttonPanel = new HorizontalPanel();
+	private VerticalPanel searchPanel = new VerticalPanel();
+	private VerticalPanel filterPanel = new VerticalPanel();
 	private ListBox yearListBox = new ListBox();
 	private ListBox crimeTypeListBox = new ListBox();
 	private Button loadFilterButton = new Button("Filter");
 	private Button clearFilterButton = new Button("Clear Map");
-	private Button clearSearchHistoryButton = new Button("Clear Search History");
-	private static final String BING_API = "Apd8EWF9Ls5tXmyHr22OuL1ay4HRJtI4JG4jgluTDVaJdUXZV6lpSBpX-TwnoRDG";
-	private MapOptions defaultMapOptions = new MapOptions();
-	private MapWidget mapWidget = new MapWidget(MAP_WIDTH, MAP_HEIGHT, defaultMapOptions);
+	private Button clearSearchHistoryButton = new Button("Clear Search");
+	private MapWidget mapWidget = MapWidgetPanel.getMapWidget();
 	private static final Projection DEFAULT_PROJECTION = new Projection(
 			"EPSG:4326");
+	private static final int FILTER_PANEL_SPACING = 10;
+	private static final int CLEAR_BUTTON_SPACING = 30;
+	private static final String SEARCH_PROMPT = "Please Enter Vancouver Street Name";
 	private static Markers layer = new Markers("Crime Type Markers");
-	private Popup popup;
 	private Label mapLabel = new Label("");
 
 
@@ -485,13 +470,13 @@ public class CrimeMapper implements EntryPoint {
 			public void onClick(ClickEvent event) {
 				loadFilter();
 				mapLabel.setText("");
-				mapSearchTextBox.setText("Please Enter Street Name");
+				mapSearchTextBox.setText(SEARCH_PROMPT);
 				dataMap.clear();
 				layer.clearMarkers();
 				layer.redraw();
 			}
 		});
-		
+
 		clearSearchHistoryButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				clearUserSearchHistory();
@@ -612,10 +597,11 @@ public class CrimeMapper implements EntryPoint {
 			}
 		}; 
 
-		// Make the call to the crime data service.
+		// Make the call to the geocode data service.
 		mapDataSvc.getHereMapData(filterList, callback);
 	}
 
+	// TODO: refactor to use vector points instead of marker to allow selectability
 	private void plotPoints(ArrayList<LatLon> dataMap) {
 		layer.redraw();
 		mapWidget.getMap().addLayer(layer);
@@ -631,10 +617,11 @@ public class CrimeMapper implements EntryPoint {
 			final Marker marker = new Marker(p, icon);
 			layer.addMarker(marker);
 
-			/*marker.addBrowserEventListener(EventType.VECTOR_FEATURE_SELECTED, new MarkerBrowserEventListener() {
+			final Popup popup = new FramedCloud("id1", marker.getLonLat(), null, "<,h1>Crime Info<,/H1><,BR/>And more text", null, false);
+			marker.addBrowserEventListener(EventType.FEATURE_SELECTED, new MarkerBrowserEventListener() {
 
 				public void onBrowserEvent(MarkerBrowserEventListener.MarkerBrowserEvent markerBrowserEvent) {
-					popup = new FramedCloud("id1", marker.getLonLat(), null, "<,h1>Crime Info<,/H1><,BR/>And more text", null, false);
+
 					popup.setPanMapIfOutOfView(true); 
 					popup.setAutoSize(true);
 					mapWidget.getMap().addPopup(popup);
@@ -642,7 +629,7 @@ public class CrimeMapper implements EntryPoint {
 
 			});
 
-			marker.addBrowserEventListener(EventType.VECTOR_FEATURE_UNSELECTED, new MarkerBrowserEventListener() {
+			marker.addBrowserEventListener(EventType.FEATURE_UNSELECTED, new MarkerBrowserEventListener() {
 
 				public void onBrowserEvent(MarkerBrowserEventListener.MarkerBrowserEvent markerBrowserEvent) {
 					if(popup != null) {
@@ -651,7 +638,7 @@ public class CrimeMapper implements EntryPoint {
 					}
 				}
 
-			});*/
+			});
 
 		}
 
@@ -678,6 +665,11 @@ public class CrimeMapper implements EntryPoint {
 		CrimeData cd = null;
 		String tempStr = "";
 
+		if(filterText.equals(""))
+			return;
+		
+		if(filterText.equals(SEARCH_PROMPT))
+			return;
 		filterList.clear();  //Clear the filter list
 
 		id = yearListBox.getSelectedIndex();
@@ -768,19 +760,22 @@ public class CrimeMapper implements EntryPoint {
 
 		return mainPanel;
 	}
-	
+
 	private Panel buildMenuBarPanel(){
 		Image appLogo = new Image(DOMAIN_NAME+"/images/appLogo.png");
 		appLogo.setStyleName("appLogoStyle");
 		menuBarPanel.setStyleName("menuBarStyle");
-		menuBarPanel.add(appLogo);
 		Label siteTitleLabel = new Label("Street Smart: Crime Mapper");
 		siteTitleLabel.setStyleName("siteTitleLabelStyle");
-		menuBarPanel.add(siteTitleLabel);
+		logoPanel.add(appLogo);
+		logoPanel.add(siteTitleLabel);
+		menuBarPanel.add(logoPanel);
 		signOutLink.addStyleName("signOutLinkStyle");
-		menuBarPanel.add(signOutLink);
+		linkPanel.setStyleName("linkPanelStyle");
+		linkPanel.add(facebookButton);
+		linkPanel.add(signOutLink);
+		menuBarPanel.add(linkPanel);
 		return menuBarPanel;
-		
 	}
 
 	/**
@@ -844,7 +839,6 @@ public class CrimeMapper implements EntryPoint {
 		trendsHPanel2.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		trendsHPanel1.setSpacing(SPACING);
 		trendsHPanel1.add(buildTableVPanel());
-		trendsHPanel1.add(pieChartPanel);
 		trendsHPanel2.add(colChartPanel);
 		trendsHPanel2.add(lastUploadedDateLabel);
 		mainTrendsPanel.add(trendsHPanel1);
@@ -971,7 +965,6 @@ public class CrimeMapper implements EntryPoint {
 		//tableVPanel.add(selectedYearLabel);
 		tableVPanel.add(crimeFlexTable);
 		tableVPanel.add(clearTrendsButtonPanel);
-		tableVPanel.add(facebookButton);
 		tableVPanel.add(signOutLink);
 		tableVPanel.add(lastUploadedDateLabel);
 
@@ -983,110 +976,59 @@ public class CrimeMapper implements EntryPoint {
 	 *  Method for Constructing Map tab panel
 	 */
 	private Panel buildMapTabPanel(){
-		mapsVPanel.setSize(WIDTH, HEIGHT);
-		mapsVPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		//mapsVPanel.setSpacing(SPACING);
-		mapsVPanel.add(mapLabel);
-		
+		searchPanel.setStyleName("searchPanelStyle");
+		clearFilterButton.setStyleName("clearMapButtonStyle");
+		clearSearchHistoryButton.setStyleName("clearSearchButtonStyle");
+		loadFilterButton.setStyleName("filterButtonStyle");
+		mapSearchTextBox.setStyleName("searchTextBoxStyle");
+		yearListBox.setStyleName("yearListBoxStyle");
+		crimeTypeListBox.setStyleName("crimeTypeListBoxStyle");
+
+		Label filterLabel = new Label("Filter Crime Data");
+		filterLabel.setStyleName("filterLabelStyle");
+
+		HorizontalPanel listBoxesPanel = new HorizontalPanel();
+		HorizontalPanel searchTextPanel = new HorizontalPanel();
+		HorizontalPanel extraButtonPanel = new HorizontalPanel();
+	
+		mapsHPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		listBoxesPanel.setSize(WIDTH, HEIGHT);
+		listBoxesPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		mapsHPanel.setSize(WIDTH, HEIGHT);
 		// Load search history from user settings
 		loadUserSearchHistory();
 
 		// Assemble filter panel
-		searchPanel.setSpacing(SPACING);
-		searchPanel.setStyleName("searchPanelStyle");
-		mapSearchTextBox.setText("Enter Vancouver Street Location");
-		mapSearchTextBox.setSize("250px", "25px");
-		searchPanel.add(mapSearchTextBox);
-		yearListBox.setSize("60px", "30px");
+		filterPanel.setSpacing(FILTER_PANEL_SPACING);
+		filterPanel.add(filterLabel);
+
 		for (Map.Entry<Integer,CrimeDataByYear> entry : crimeDataMap.entrySet()){
 			yearListBox.addItem(entry.getKey().toString());
 		}
-		searchPanel.add(yearListBox);
-		crimeTypeListBox.setSize("190px", "30px");
+		listBoxesPanel.add(yearListBox);
+
 		for (int i = 0; i < CrimeTypes.getNumberOfTypes(); i++) {
 			crimeTypeListBox.addItem(CrimeTypes.getType(i)); 
 		}
-		searchPanel.add(crimeTypeListBox);
-		mapsVPanel.add(searchPanel);
+		listBoxesPanel.add(crimeTypeListBox);
+		filterPanel.add(listBoxesPanel);
 
-		// Assemble button panel
-		//buttonPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		//buttonPanel.setSpacing(SPACING);
-		loadFilterButton.setStyleName("filterButtonStyle");
-		clearFilterButton.setStyleName("filterButtonStyle");
-		clearSearchHistoryButton.setStyleName("filterButtonStyle");
-		searchPanel.add(loadFilterButton);
-		searchPanel.add(clearFilterButton);
-		searchPanel.add(clearSearchHistoryButton);
-		//mapsVPanel.add(buttonPanel);
+		mapSearchTextBox.setText("Enter Vancouver Street Name");
 
-		// Bing Layer
-		//Create some Bing layers
-		final String key = BING_API;
-		// configuring road options
-		BingOptions bingOptionRoad = new BingOptions("Bing Road Layer", key,
-				BingType.ROAD);
-		bingOptionRoad.setProtocol(ProtocolType.HTTP);
-		Bing road = new Bing(bingOptionRoad);
+		searchTextPanel.add(mapSearchTextBox);
+		searchTextPanel.add(loadFilterButton);
+		filterPanel.add(searchTextPanel);
+		extraButtonPanel.add(clearFilterButton);
+		extraButtonPanel.add(clearSearchHistoryButton);
+		extraButtonPanel.setSize(WIDTH, HEIGHT);
+		extraButtonPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		extraButtonPanel.setSpacing(CLEAR_BUTTON_SPACING);
+		filterPanel.add(extraButtonPanel);
+		searchPanel.add(filterPanel);
+		mapsHPanel.add(searchPanel);
+		mapsHPanel.add(mapWidget);
 
-		// configuring hybrid options
-		BingOptions bingOptionHybrid = new BingOptions("Bing Hybrid Layer", key,
-				BingType.HYBRID);
-		bingOptionRoad.setProtocol(ProtocolType.HTTP);
-		Bing hybrid = new Bing(bingOptionHybrid);
-
-		// configuring aerial options
-		BingOptions bingOptionAerial = new BingOptions("Bing Aerial Layer", key,
-				BingType.AERIAL);
-		bingOptionRoad.setProtocol(ProtocolType.HTTP);
-		Bing aerial = new Bing(bingOptionAerial);
-
-		//Add layers to map
-		mapWidget.getMap().addLayer(road);
-		mapWidget.getMap().addLayer(hybrid);
-		mapWidget.getMap().addLayer(aerial);
-
-		//Map Controls
-		//mapWidget.getMap().addControl(new LayerSwitcher()); //+ sign in the upperright corner to display the layer switcher
-		mapWidget.getMap().addControl(new OverviewMap()); //+ sign in the lowerright to display the overviewmap
-		mapWidget.getMap().addControl(new ScaleLine()); //Display the scaleline
-
-		// Vancouver coordinates
-		LonLat lonLat = new LonLat(VAN_LON, VAN_LAT);
-		lonLat.transform("EPSG:4326", mapWidget.getMap().getProjection());
-		mapWidget.getMap().setCenter(lonLat, 12);
-
-		//Create a KML layer using Vancouver's boundary kml file
-		VectorOptions kmlOptions = new VectorOptions();
-		kmlOptions.setStrategies(new Strategy[]{new FixedStrategy()});
-		HTTPProtocolOptions protocolOptions = new HTTPProtocolOptions();
-		protocolOptions.setUrl(DOMAIN_NAME+"/data/cov_localareas.kml");
-		KML kml = new KML();
-		kml.setExtractStyles(true);
-		kml.setExtractAttributes(true);
-		kml.setMaxDepth(2);
-		protocolOptions.setFormat(kml);
-		Protocol protocol = new HTTPProtocol(protocolOptions);
-		kmlOptions.setProtocol(protocol);
-		Vector kmlLayer = new Vector("KML", kmlOptions);
-		kmlLayer.setOpacity(1);
-
-		mapWidget.getMap().addLayer(kmlLayer);
-
-		final SelectFeature selectFeature = new SelectFeature(kmlLayer);
-		selectFeature.setAutoActivate(true);
-		mapWidget.getMap().addControl(selectFeature);
-
-		kmlLayer.addVectorFeatureSelectedListener(new VectorFeatureSelectedListener(){
-			public void onFeatureSelected(FeatureSelectedEvent eventObject){
-				Window.alert("clicked a neighbourhood boundary");
-				selectFeature.unSelect(eventObject.getVectorFeature());
-			}
-		});
-
-		mapsVPanel.add(mapWidget);
-
-		return mapsVPanel;
+		return mapsHPanel;
 	}
 
 	/**
