@@ -20,8 +20,13 @@ h1 {
 	background-color: #CCCCCC;
 }
 
-.signOutLinkStyle{
+.socialStyle{
 	padding-top: 35px;
+	padding-right: 20px;
+	padding-right: 
+	vertical-align: center;
+}
+.signOutLinkStyle{
 	padding-right: 20px;
 	font-size: 20px;
 	float: right;
@@ -225,6 +230,35 @@ h1 {
 	color: #7B7B7B;
 	
 }
+
+.crimeLocationsStyle {
+	border-top-left-radius: 20px;
+	border-bottom-left-radius: 20px;
+	vertical-align: center;
+	width: 105px;
+	height: 25px;
+	background-color: #CCCCCC;
+	text-size: 20px;
+    color: #FFFFFF;
+    text-decoration: bold;
+    padding-left: 5px;
+    padding-top: 5px;
+}
+
+.locationNumberLabelStyle{
+	border-top-right-radius: 20px;
+	border-bottom-right-radius: 20px;
+	vertical-align: center;
+	width: 35px;
+	height: 25px;
+	background-color: #CCCCCC;
+	text-size: 20px;
+    color: #FFFFFF;
+    text-decoration: bold;
+    padding-left: 5px;
+    padding-top: 5px;
+}
+
 /* =============================== Settings Tab CSS ===============================*/
 .loadDataButtonStyle {
 	width: 100px;

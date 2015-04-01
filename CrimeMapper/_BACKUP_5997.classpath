@@ -15,10 +15,7 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/objectify-3.1.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/objectify-gwt-1.2.1.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-openlayers-client-1.0-SNAPSHOT.jar"/>
-<<<<<<< HEAD
 	<classpathentry kind="lib" path="war/WEB-INF/lib/appengine-endpoints.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/facebook4gwt-1.0.8.jar"/>
-=======
->>>>>>> fd7739fd2dc1a117ac92b02ff9352a1a858ce659
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
