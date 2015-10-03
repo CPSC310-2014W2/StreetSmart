@@ -34,8 +34,8 @@ MapDataService {
 	/**
 	 * Here Maps Keys
 	 */
-	private final static String APP_ID = "DemoAppId01082013GAL";
-	private final static String APP_CODE = "AJKnXv84fjrb0KIHawS0Tg";
+	private final static String APP_ID = "Removed";
+	private final static String APP_CODE = "Removed";
 	private final static String GEN = "8";
 	private final static String CITY = "Vancouver";
 
@@ -75,10 +75,9 @@ MapDataService {
 
 
 		} catch (MalformedURLException e) {
-			// Do something
-
+		
 		} catch (IOException e){
-			// Do something
+		
 		}
 		return latlon;
 	}
